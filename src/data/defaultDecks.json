@@ -1,0 +1,94 @@
+[
+  {
+    "deckId": "uk-invasion-01",
+    "deckName": "The UK Crossover Special",
+    "deckDescription": "Classic British animations, legendary UK-developed gaming hits, and World of Sport wrestling heroes.",
+    "cards": [
+      {
+        "cardId": "uk-chain-001",
+        "parentTheme": "Baker Street and Beyond",
+        "bridgeLinkExplanation": "Links a 1980s cartoon hamster living in Baker Street to the voice work of Sir David Jason, bridging to Scotland's DMA Design and finishing with the biggest World of Sport legend.",
+        "questions": [
+          {
+            "step": 0,
+            "category": "Animation",
+            "questionText": "Who is Danger Mouse's cowardly, spectacle-wearing hamster sidekick who famously lives with him in a red pillar box on London's Baker Street?",
+            "answer": "Penfold",
+            "acceptedVariants": ["Ernest Penfold"],
+            "points": 1
+          },
+          {
+            "step": 1,
+            "category": "Video Games",
+            "questionText": "Penfold is voiced by David Jason in the 1981 series, who also voiced Toad in The Wind in the Willows. Toad's reckless love of driving links us to what classic 1997 UK-developed action game by Dundee's DMA Design, where players hijack cars and run missions?",
+            "answer": "Grand Theft Auto",
+            "acceptedVariants": ["GTA", "Grand Theft Auto 1"],
+            "points": 1
+          },
+          {
+            "step": 2,
+            "category": "Pro Wrestling",
+            "questionText": "DMA Design later became Rockstar North, based in Edinburgh. Just down the motorway in northern England, which legendary British professional wrestler, known for his signature blue-and-red singlet and 'easy, easy' chant, dominated ITV's World of Sport?",
+            "answer": "Big Daddy",
+            "acceptedVariants": ["Shirley Crabtree"],
+            "points": 1
+          }
+        ],
+        "listQuestion": {
+          "enabled": true,
+          "listCategory": "Video Games",
+          "promptText": "Name 4 of the 6 fictional cities that serve as locations across the main Grand Theft Auto video game series.",
+          "correctItems": ["Liberty City", "Vice City", "Los Santos", "San Fierro", "Las Venturas", "Carcer City"],
+          "requiredToPass": 4,
+          "points": 3
+        }
+      }
+    ]
+  },
+  {
+    "deckId": "robots-and-rebel-01",
+    "deckName": "Sparks & Sledgehammers",
+    "deckDescription": "Global mechanical titans, tactical gameplay systems, and high-impact weapons of choice.",
+    "cards": [
+      {
+        "cardId": "mech-chain-001",
+        "parentTheme": "A Taste of Iron",
+        "bridgeLinkExplanation": "Bridges from an iconic metallic giant to a game featuring a literal iron fortress, leading to a legendary superstar who wields an iron sledgehammer.",
+        "questions": [
+          {
+            "step": 0,
+            "category": "Animation",
+            "questionText": "Directed by Brad Bird, what 1999 animated sci-fi film tells the story of a young boy named Hogarth Hughes who befriends a massive metal robot from outer space?",
+            "answer": "The Iron Giant",
+            "acceptedVariants": ["Iron Giant"],
+            "points": 1
+          },
+          {
+            "step": 1,
+            "category": "Video Games",
+            "questionText": "The Iron Giant was voiced by Vin Diesel. Which tactical 1990s real-time computer strategy game series from Westwood Studios tasks players with commanding the Global Defense Initiative against the Brotherhood of Nod?",
+            "answer": "Command & Conquer",
+            "acceptedVariants": ["C&C", "Command and Conquer"],
+            "points": 1
+          },
+          {
+            "step": 2,
+            "category": "Pro Wrestling",
+            "questionText": "Westwood's Command & Conquer franchise features a faction known as NOD. If you reverse the spelling to DON, we reach 'The King of Kings', Triple H. What is the real, legal first and last name of this legendary WWE superstar?",
+            "answer": "Paul Levesque",
+            "acceptedVariants": ["Paul Michael Levesque"],
+            "points": 1
+          }
+        ],
+        "listQuestion": {
+          "enabled": false,
+          "listCategory": "Animation",
+          "promptText": "",
+          "correctItems": [],
+          "requiredToPass": 0,
+          "points": 0
+        }
+      }
+    ]
+  }
+]
