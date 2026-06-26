@@ -10,7 +10,10 @@ export const LobbyHub: React.FC = () => {
   const handleStart = () => {
     const deck = defaultDecks.find((d) => d.deckId === selectedDeckId);
     if (deck) {
-      startMatch(deck, teamAName, teamBName);
+      // 🛡️ Sentinel: Sanitize and limit team names to prevent UI breaking and excessively large state
+      const sanitizedTeamA = teamAName.trim().substring(0, 50) || 'Team 1';
+      const sanitizedTeamB = teamBName.trim().substring(0, 50) || 'Team 2';
+      startMatch(deck, sanitizedTeamA, sanitizedTeamB);
     }
   };
 
@@ -29,6 +32,7 @@ export const LobbyHub: React.FC = () => {
             value={teamAName}
             onChange={(e) => setTeamAName(e.target.value)}
             placeholder="Enter Team Name"
+            maxLength={50}
           />
         </div>
 
@@ -40,6 +44,7 @@ export const LobbyHub: React.FC = () => {
             value={teamBName}
             onChange={(e) => setTeamBName(e.target.value)}
             placeholder="Enter Team Name"
+            maxLength={50}
           />
         </div>
       </div>
