@@ -1,8 +1,16 @@
 import React from 'react';
 import { useGameStore } from '../hooks/useGameStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const SummaryPodium: React.FC = () => {
-  const { teams, resetGame } = useGameStore();
+  // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow so this component
+  // only re-renders when the `teams` or `resetGame` state changes.
+  const { teams, resetGame } = useGameStore(
+    useShallow((state) => ({
+      teams: state.teams,
+      resetGame: state.resetGame,
+    }))
+  );
 
   const winner = teams.teamA.score > teams.teamB.score ? teams.teamA :
                  teams.teamB.score > teams.teamA.score ? teams.teamB : null;

@@ -1,8 +1,16 @@
 import React from 'react';
 import { useGameStore } from '../hooks/useGameStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const RedCardModal: React.FC = () => {
-  const { activeRedCard, setActiveRedCard } = useGameStore();
+  // ⚡ Bolt Optimization: Use useShallow to prevent the modal from re-rendering
+  // when unrelated game state changes occur.
+  const { activeRedCard, setActiveRedCard } = useGameStore(
+    useShallow((state) => ({
+      activeRedCard: state.activeRedCard,
+      setActiveRedCard: state.setActiveRedCard,
+    }))
+  );
 
   if (!activeRedCard) return null;
 

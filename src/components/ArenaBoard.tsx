@@ -1,7 +1,11 @@
 import React from 'react';
 import { useGameStore } from '../hooks/useGameStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const ArenaBoard: React.FC = () => {
+  // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow to strictly subscribe
+  // only to the requested fields. This prevents ArenaBoard from re-rendering
+  // when other unused global state properties change.
   const {
     teams,
     activeTeam,
@@ -18,7 +22,25 @@ export const ArenaBoard: React.FC = () => {
     setActiveRedCard,
     setTimerSeconds,
     setTimerActive
-  } = useGameStore();
+  } = useGameStore(
+    useShallow((state) => ({
+      teams: state.teams,
+      activeTeam: state.activeTeam,
+      selectedDeck: state.selectedDeck,
+      currentCardIndex: state.currentCardIndex,
+      currentStepIndex: state.currentStepIndex,
+      questionStage: state.questionStage,
+      timerSeconds: state.timerSeconds,
+      addScore: state.addScore,
+      switchTurn: state.switchTurn,
+      nextStep: state.nextStep,
+      nextCard: state.nextCard,
+      setQuestionStage: state.setQuestionStage,
+      setActiveRedCard: state.setActiveRedCard,
+      setTimerSeconds: state.setTimerSeconds,
+      setTimerActive: state.setTimerActive,
+    }))
+  );
 
   const activeCard = selectedDeck?.cards[currentCardIndex];
   const activeQuestion = activeCard?.questions[currentStepIndex];

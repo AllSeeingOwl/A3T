@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const LobbyHub: React.FC = () => {
-  const { startMatch, defaultDecks } = useGameStore();
+  // ⚡ Bolt Optimization: Use useShallow to prevent the Lobby from re-rendering
+  // on unrelated game store changes.
+  const { startMatch, defaultDecks } = useGameStore(
+    useShallow((state) => ({
+      startMatch: state.startMatch,
+      defaultDecks: state.defaultDecks,
+    }))
+  );
   const [teamAName, setTeamAName] = useState('Team A');
   const [teamBName, setTeamBName] = useState('Team B');
   const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
