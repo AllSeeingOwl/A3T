@@ -124,10 +124,15 @@ export const ArenaBoard: React.FC = () => {
             {activeQuestion.questionText}
           </p>
 
-          <div className="bg-arena-slate p-6 rounded-xl border border-slate-700 mt-8 relative group overflow-hidden">
-             <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md group-hover:backdrop-blur-none transition-all duration-300 flex items-center justify-center z-10 group-hover:opacity-0 cursor-pointer">
+          <div
+            tabIndex={0}
+            role="button"
+            aria-label="Reveal Answer"
+            className="bg-arena-slate p-6 rounded-xl border border-slate-700 mt-8 relative group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-magenta"
+          >
+             <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md group-hover:backdrop-blur-none group-focus:backdrop-blur-none transition-all duration-300 flex items-center justify-center z-10 group-hover:opacity-0 group-focus:opacity-0 cursor-pointer">
                 <span className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
-                   Hover to Reveal Answer
+                   Hover or Focus to Reveal Answer
                 </span>
              </div>
              <div className="text-center">
