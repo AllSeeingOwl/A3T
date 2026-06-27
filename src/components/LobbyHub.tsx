@@ -33,8 +33,9 @@ export const LobbyHub: React.FC = () => {
 
       <div className="flex w-full max-w-4xl gap-8 mb-12">
         <div className="flex-1 bg-arena-navy p-6 rounded-xl border-t-4 border-arena-magenta shadow-lg flex flex-col">
-          <h2 className="text-2xl font-display text-arena-magenta mb-4 uppercase">Team 1</h2>
+          <label htmlFor="team1" className="text-2xl font-display text-arena-magenta mb-4 uppercase block">Team 1</label>
           <input
+            id="team1"
             type="text"
             className="w-full bg-arena-slate text-white p-3 rounded border border-arena-navy focus:border-arena-magenta focus:outline-none text-xl"
             value={teamAName}
@@ -45,8 +46,9 @@ export const LobbyHub: React.FC = () => {
         </div>
 
         <div className="flex-1 bg-arena-navy p-6 rounded-xl border-t-4 border-arena-cobalt shadow-lg flex flex-col">
-          <h2 className="text-2xl font-display text-arena-cobalt mb-4 uppercase">Team 2</h2>
+          <label htmlFor="team2" className="text-2xl font-display text-arena-cobalt mb-4 uppercase block">Team 2</label>
           <input
+            id="team2"
             type="text"
             className="w-full bg-arena-slate text-white p-3 rounded border border-arena-navy focus:border-arena-cobalt focus:outline-none text-xl"
             value={teamBName}
@@ -64,7 +66,8 @@ export const LobbyHub: React.FC = () => {
             <button
               key={deck.deckId}
               onClick={() => setSelectedDeckId(deck.deckId)}
-              className={`p-4 rounded-lg border-2 text-left transition-all ${
+              aria-pressed={selectedDeckId === deck.deckId}
+              className={`p-4 rounded-lg border-2 text-left transition-all focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none ${
                 selectedDeckId === deck.deckId
                   ? 'border-arena-gold bg-arena-slate scale-105'
                   : 'border-slate-600 bg-arena-slate hover:border-slate-400'
@@ -81,7 +84,8 @@ export const LobbyHub: React.FC = () => {
       <button
         onClick={handleStart}
         disabled={!selectedDeckId}
-        className={`mt-12 px-12 py-4 rounded-full text-2xl font-display uppercase tracking-widest transition-all ${
+        title={!selectedDeckId ? "Select a deck to start the match" : undefined}
+        className={`mt-12 px-12 py-4 rounded-full text-2xl font-display uppercase tracking-widest transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-emerald-500 focus:outline-none ${
           selectedDeckId
             ? 'bg-emerald-600 text-white hover:bg-emerald-500 hover:scale-105 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
             : 'bg-slate-700 text-slate-400 cursor-not-allowed'
