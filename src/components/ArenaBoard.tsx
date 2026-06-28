@@ -2,6 +2,25 @@ import React from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 
+// ⚡ Bolt Optimization: Extract fast-changing state into isolated components.
+// This prevents the heavy ArenaBoard parent from re-rendering on every timer tick.
+const StealTimer: React.FC = () => {
+  const { questionStage, timerSeconds } = useGameStore(
+    useShallow((state) => ({
+      questionStage: state.questionStage,
+      timerSeconds: state.timerSeconds,
+    }))
+  );
+
+  if (questionStage !== 'STEAL_WINDOW') return null;
+
+  return (
+    <div className="text-4xl font-display text-arena-amber animate-pulse">
+      STEAL: {timerSeconds}s
+    </div>
+  );
+};
+
 export const ArenaBoard: React.FC = () => {
   // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow to strictly subscribe
   // only to the requested fields. This prevents ArenaBoard from re-rendering
@@ -12,8 +31,6 @@ export const ArenaBoard: React.FC = () => {
     selectedDeck,
     currentCardIndex,
     currentStepIndex,
-    questionStage,
-    timerSeconds,
     addScore,
     switchTurn,
     nextStep,
@@ -29,8 +46,6 @@ export const ArenaBoard: React.FC = () => {
       selectedDeck: state.selectedDeck,
       currentCardIndex: state.currentCardIndex,
       currentStepIndex: state.currentStepIndex,
-      questionStage: state.questionStage,
-      timerSeconds: state.timerSeconds,
       addScore: state.addScore,
       switchTurn: state.switchTurn,
       nextStep: state.nextStep,
@@ -132,11 +147,7 @@ export const ArenaBoard: React.FC = () => {
         <div className="w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border border-slate-600 shadow-2xl relative mb-8">
 
           <div className="absolute top-0 right-0 p-4">
-             {questionStage === 'STEAL_WINDOW' && (
-                <div className="text-4xl font-display text-arena-amber animate-pulse">
-                   STEAL: {timerSeconds}s
-                </div>
-             )}
+             <StealTimer />
           </div>
 
           <h3 className="text-2xl font-display text-slate-400 mb-4 uppercase">
