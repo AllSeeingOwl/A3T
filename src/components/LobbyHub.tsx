@@ -18,9 +18,11 @@ export const LobbyHub: React.FC = () => {
   const handleStart = () => {
     const deck = defaultDecks.find((d) => d.deckId === selectedDeckId);
     if (deck) {
-      // 🛡️ Sentinel: Sanitize and limit team names to prevent UI breaking and excessively large state
-      const sanitizedTeamA = teamAName.trim().substring(0, 50) || 'Team 1';
-      const sanitizedTeamB = teamBName.trim().substring(0, 50) || 'Team 2';
+      // 🛡️ Sentinel: Sanitize inputs by stripping HTML characters to prevent XSS (Defense in Depth)
+      // and limit team names to prevent UI breaking and excessively large state
+      const stripHtml = (str: string) => str.replace(/[<>]/g, '');
+      const sanitizedTeamA = stripHtml(teamAName).trim().substring(0, 50) || 'Team 1';
+      const sanitizedTeamB = stripHtml(teamBName).trim().substring(0, 50) || 'Team 2';
       startMatch(deck, sanitizedTeamA, sanitizedTeamB);
     }
   };
