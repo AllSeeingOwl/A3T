@@ -159,12 +159,10 @@ export const ArenaBoard: React.FC = () => {
 
           <div
             tabIndex={0}
-            role="button"
-            aria-label="Reveal Answer"
             className="bg-arena-slate p-6 rounded-xl border border-slate-700 mt-8 relative group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-magenta"
           >
              <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md group-hover:backdrop-blur-none group-focus:backdrop-blur-none transition-all duration-300 flex items-center justify-center z-10 group-hover:opacity-0 group-focus:opacity-0 cursor-pointer">
-                <span className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
+                <span aria-hidden="true" className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
                    Hover or Focus to Reveal Answer
                 </span>
              </div>
@@ -184,13 +182,13 @@ export const ArenaBoard: React.FC = () => {
         <div className="flex gap-6 mt-4 mb-20">
           <button
             onClick={handleCorrect}
-            className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg"
+            className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
           >
             Correct (+{activeQuestion.points})
           </button>
           <button
             onClick={handleMissed}
-            className="px-10 py-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg"
+            className="px-10 py-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
           >
             Missed / Steal
           </button>
@@ -199,16 +197,16 @@ export const ArenaBoard: React.FC = () => {
 
       {/* Footer - Red Cards */}
       <div className="bg-arena-navy border-t border-slate-700 p-4 fixed bottom-0 w-full flex justify-center gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-20">
-        <button onClick={() => handleRedCard('KAYFABE')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors">
+        <button onClick={() => handleRedCard('KAYFABE')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
           Kayfabe
         </button>
-        <button onClick={() => handleRedCard('VFX')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors">
+        <button onClick={() => handleRedCard('VFX')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
           VFX
         </button>
-        <button onClick={() => handleRedCard('MUPPET')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors">
+        <button onClick={() => handleRedCard('MUPPET')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
           Muppet
         </button>
-        <button onClick={() => handleRedCard('SEMANTICS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors">
+        <button onClick={() => handleRedCard('SEMANTICS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
           Semantics
         </button>
       </div>

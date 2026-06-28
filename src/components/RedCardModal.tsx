@@ -48,7 +48,12 @@ export const RedCardModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-900/95 backdrop-blur-md p-4 w-full h-full">
-      <div className="bg-arena-slate border-4 border-arena-crimson rounded-3xl p-12 max-w-2xl w-full text-center shadow-[0_0_50px_rgba(239,68,68,0.5)] relative overflow-hidden">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="red-card-title"
+        className="bg-arena-slate border-4 border-arena-crimson rounded-3xl p-12 max-w-2xl w-full text-center shadow-[0_0_50px_rgba(239,68,68,0.5)] relative overflow-hidden"
+      >
 
         {/* Background visual element */}
         <div className="absolute -right-20 -top-20 opacity-10">
@@ -62,7 +67,7 @@ export const RedCardModal: React.FC = () => {
           </svg>
         </div>
 
-        <h2 className="text-4xl font-display text-arena-crimson mb-2 uppercase tracking-widest relative z-10">
+        <h2 id="red-card-title" className="text-4xl font-display text-arena-crimson mb-2 uppercase tracking-widest relative z-10">
           Frozen Board
         </h2>
         <h3 className="text-2xl font-display text-white mb-8 uppercase relative z-10">
@@ -76,7 +81,7 @@ export const RedCardModal: React.FC = () => {
 
         <button
           onClick={() => setActiveRedCard(null)}
-          className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10"
+          className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
         >
           Release Board & Resume Play
         </button>
