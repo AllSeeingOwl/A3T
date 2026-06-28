@@ -77,7 +77,7 @@ export const SummaryPodium: React.FC = () => {
 
       <button
         onClick={resetGame}
-        className="px-12 py-4 bg-arena-navy hover:bg-slate-700 border-2 border-slate-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-lg z-10"
+        className="px-12 py-4 bg-arena-navy hover:bg-slate-700 border-2 border-slate-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-lg z-10 focus-visible:ring-2 focus-visible:ring-white focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
       >
         Play Again
       </button>
