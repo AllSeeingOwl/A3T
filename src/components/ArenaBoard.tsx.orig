@@ -1,34 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 
 // ⚡ Bolt Optimization: Extract fast-changing state into isolated components.
 // This prevents the heavy ArenaBoard parent from re-rendering on every timer tick.
 const StealTimer: React.FC = () => {
-  const { questionStage, timerSeconds, decrementTimer, setQuestionStage, timerActive, setTimerActive } = useGameStore(
+  const { questionStage, timerSeconds } = useGameStore(
     useShallow((state) => ({
       questionStage: state.questionStage,
       timerSeconds: state.timerSeconds,
-      decrementTimer: state.decrementTimer,
-      setQuestionStage: state.setQuestionStage,
-      timerActive: state.timerActive,
-      setTimerActive: state.setTimerActive,
     }))
   );
-
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (timerActive && timerSeconds > 0) {
-      interval = setInterval(() => {
-        decrementTimer();
-      }, 1000);
-    } else if (timerActive && timerSeconds === 0) {
-      setTimerActive(false);
-      // Timer ran out, reveal answer
-      setQuestionStage('REVEALED_ANSWER');
-    }
-    return () => clearInterval(interval);
-  }, [timerActive, timerSeconds, decrementTimer, setTimerActive, setQuestionStage]);
 
   if (questionStage !== 'STEAL_WINDOW') return null;
 
@@ -49,7 +31,6 @@ export const ArenaBoard: React.FC = () => {
     selectedDeck,
     currentCardIndex,
     currentStepIndex,
-    questionStage,
     addScore,
     switchTurn,
     nextStep,
@@ -65,7 +46,6 @@ export const ArenaBoard: React.FC = () => {
       selectedDeck: state.selectedDeck,
       currentCardIndex: state.currentCardIndex,
       currentStepIndex: state.currentStepIndex,
-      questionStage: state.questionStage,
       addScore: state.addScore,
       switchTurn: state.switchTurn,
       nextStep: state.nextStep,
@@ -102,50 +82,42 @@ export const ArenaBoard: React.FC = () => {
     setTimerActive(true);
   };
 
-  const handleRedCard = (type: 'KAYFABE' | 'VFX' | 'MUPPET' | 'SEMANTICS' | 'HOST_DISCRETION' | 'TIME_PENALTY') => {
+  const handleRedCard = (type: 'KAYFABE' | 'VFX' | 'MUPPET' | 'SEMANTICS') => {
     setActiveRedCard(type);
   };
 
   const renderPipeline = () => {
-    const totalQuestions = activeCard.questions.length;
-    const questionsRemaining = totalQuestions - currentStepIndex - 1;
-
     return (
-      <div className="flex flex-col items-center mb-8">
-        <ol aria-label="Question progress" className="flex justify-center items-center gap-4">
-          {activeCard.questions.map((q, idx) => {
-            const isCompleted = currentStepIndex > idx;
-            const isActive = currentStepIndex === idx;
-            let baseClass = "px-6 py-2 rounded-full border-2 font-display text-lg uppercase transition-all duration-300";
+      <ol aria-label="Question progress" className="flex justify-center items-center gap-4 mb-8">
+        {activeCard.questions.map((q, idx) => {
+          const isCompleted = currentStepIndex > idx;
+          const isActive = currentStepIndex === idx;
+          let baseClass = "px-6 py-2 rounded-full border-2 font-display text-lg uppercase transition-all duration-300";
 
-            if (isCompleted) {
-               baseClass += " bg-emerald-600 border-emerald-400 text-white shadow-[0_0_10px_rgba(16,185,129,0.8)]";
-            } else if (isActive) {
-               const teamColor = activeTeam === 'teamA' ? 'border-arena-magenta shadow-[0_0_10px_rgba(236,72,153,0.8)]' : 'border-arena-cobalt shadow-[0_0_10px_rgba(59,130,246,0.8)]';
-               baseClass += ` bg-arena-navy text-white ${teamColor} scale-110`;
-            } else {
-               baseClass += " bg-arena-slate border-slate-600 text-slate-400 opacity-50";
-            }
+          if (isCompleted) {
+             baseClass += " bg-emerald-600 border-emerald-400 text-white shadow-[0_0_10px_rgba(16,185,129,0.8)]";
+          } else if (isActive) {
+             const teamColor = activeTeam === 'teamA' ? 'border-arena-magenta shadow-[0_0_10px_rgba(236,72,153,0.8)]' : 'border-arena-cobalt shadow-[0_0_10px_rgba(59,130,246,0.8)]';
+             baseClass += ` bg-arena-navy text-white ${teamColor} scale-110`;
+          } else {
+             baseClass += " bg-arena-slate border-slate-600 text-slate-400 opacity-50";
+          }
 
-            return (
-              <li key={idx} className="flex items-center" aria-current={isActive ? "step" : undefined}>
-                <div className={baseClass}>
-                  <span className="sr-only">
-                    {isCompleted ? "Completed step: " : isActive ? "Current step: " : "Pending step: "}
-                  </span>
-                  {q.category}
-                </div>
-                {idx < totalQuestions - 1 && (
-                  <div aria-hidden="true" className="w-8 h-1 bg-slate-600 mx-2" />
-                )}
-              </li>
-            )
-          })}
-        </ol>
-        <p className="mt-4 text-slate-400 font-display text-sm tracking-widest uppercase">
-          {questionsRemaining > 0 ? `${questionsRemaining} Link${questionsRemaining > 1 ? 's' : ''} Remaining in Chain` : "Final Link in Chain"}
-        </p>
-      </div>
+          return (
+            <li key={idx} className="flex items-center" aria-current={isActive ? "step" : undefined}>
+              <div className={baseClass}>
+                <span className="sr-only">
+                  {isCompleted ? "Completed step: " : isActive ? "Current step: " : "Pending step: "}
+                </span>
+                {q.category}
+              </div>
+              {idx < 2 && (
+                <div aria-hidden="true" className="w-8 h-1 bg-slate-600 mx-2" />
+              )}
+            </li>
+          )
+        })}
+      </ol>
     );
   };
 
@@ -192,13 +164,9 @@ export const ArenaBoard: React.FC = () => {
             tabIndex={0}
             className="bg-arena-slate p-6 rounded-xl border border-slate-700 mt-8 relative group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-magenta"
           >
-             <div className={`absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-all duration-300 flex items-center justify-center z-10 cursor-pointer ${
-                 questionStage === 'REVEALED_ANSWER'
-                   ? 'opacity-0 pointer-events-none'
-                   : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus:opacity-0 group-focus:backdrop-blur-none'
-               }`}>
+             <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md group-hover:backdrop-blur-none group-focus:backdrop-blur-none transition-all duration-300 flex items-center justify-center z-10 group-hover:opacity-0 group-focus:opacity-0 cursor-pointer">
                 <span aria-hidden="true" className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
-                   {questionStage === 'STEAL_WINDOW' ? 'Wait for steal timer or Hover/Focus to Override' : 'Hover or Focus to Reveal Answer'}
+                   Hover or Focus to Reveal Answer
                 </span>
              </div>
              <div className="text-center">
@@ -231,7 +199,7 @@ export const ArenaBoard: React.FC = () => {
       </div>
 
       {/* Footer - Red Cards */}
-      <div className="bg-arena-navy border-t border-slate-700 p-4 fixed bottom-0 w-full flex flex-wrap justify-center gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-20">
+      <div className="bg-arena-navy border-t border-slate-700 p-4 fixed bottom-0 w-full flex justify-center gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-20">
         <button onClick={() => handleRedCard('KAYFABE')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
           Kayfabe
         </button>
@@ -243,12 +211,6 @@ export const ArenaBoard: React.FC = () => {
         </button>
         <button onClick={() => handleRedCard('SEMANTICS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
           Semantics
-        </button>
-        <button onClick={() => handleRedCard('HOST_DISCRETION')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-          Host Discretion
-        </button>
-        <button onClick={() => handleRedCard('TIME_PENALTY')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-          Time Penalty
         </button>
       </div>
 

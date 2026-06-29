@@ -36,6 +36,16 @@ export const RedCardModal: React.FC = () => {
           title: "The Semantics Shield",
           description: "Minor mispronunciations or slight naming variations are accepted provided the core intent and identification are unmistakably correct."
         };
+      case 'HOST_DISCRETION':
+        return {
+          title: "Host Discretion",
+          description: "The host has the ultimate final say in resolving a dispute or granting a subjective point based on situational context."
+        };
+      case 'TIME_PENALTY':
+        return {
+          title: "Time Penalty",
+          description: "Interference, talking out of turn, or stalling will result in a time reduction or point deduction as deemed fit by the referee."
+        };
       default:
         return {
           title: "Official Warning",
