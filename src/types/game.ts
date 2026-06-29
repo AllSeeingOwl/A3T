@@ -29,6 +29,7 @@ export interface ChainCard {
 }
 
 export interface Deck {
+  _comment?: string;
   deckId: string;
   deckName: string;
   deckDescription: string;
