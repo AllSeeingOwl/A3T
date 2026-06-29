@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -11,8 +11,13 @@ export const LobbyHub: React.FC = () => {
       defaultDecks: state.defaultDecks,
     }))
   );
-  const [teamAName, setTeamAName] = useState('Team A');
-  const [teamBName, setTeamBName] = useState('Team B');
+
+  // ⚡ Bolt Optimization: Replace useState with useRef for team name inputs.
+  // This prevents the entire LobbyHub component (and its map iterations)
+  // from re-rendering on every single keystroke.
+  const teamARef = useRef<HTMLInputElement>(null);
+  const teamBRef = useRef<HTMLInputElement>(null);
+
   const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
 
   const handleStart = () => {
@@ -21,8 +26,10 @@ export const LobbyHub: React.FC = () => {
       // 🛡️ Sentinel: Sanitize inputs by stripping HTML characters to prevent XSS (Defense in Depth)
       // and limit team names to prevent UI breaking and excessively large state
       const stripHtml = (str: string) => str.replace(/[<>]/g, '');
-      const sanitizedTeamA = stripHtml(teamAName).trim().substring(0, 50) || 'Team 1';
-      const sanitizedTeamB = stripHtml(teamBName).trim().substring(0, 50) || 'Team 2';
+      const rawTeamA = teamARef.current?.value ?? 'Team A';
+      const rawTeamB = teamBRef.current?.value ?? 'Team B';
+      const sanitizedTeamA = stripHtml(rawTeamA).trim().substring(0, 50) || 'Team 1';
+      const sanitizedTeamB = stripHtml(rawTeamB).trim().substring(0, 50) || 'Team 2';
       startMatch(deck, sanitizedTeamA, sanitizedTeamB);
     }
   };
@@ -40,8 +47,8 @@ export const LobbyHub: React.FC = () => {
             id="team1"
             type="text"
             className="w-full bg-arena-slate text-white p-3 rounded border border-arena-navy focus:border-arena-magenta focus:outline-none text-xl"
-            value={teamAName}
-            onChange={(e) => setTeamAName(e.target.value)}
+            defaultValue="Team A"
+            ref={teamARef}
             placeholder="Enter Team Name"
             maxLength={50}
           />
@@ -53,8 +60,8 @@ export const LobbyHub: React.FC = () => {
             id="team2"
             type="text"
             className="w-full bg-arena-slate text-white p-3 rounded border border-arena-navy focus:border-arena-cobalt focus:outline-none text-xl"
-            value={teamBName}
-            onChange={(e) => setTeamBName(e.target.value)}
+            defaultValue="Team B"
+            ref={teamBRef}
             placeholder="Enter Team Name"
             maxLength={50}
           />
