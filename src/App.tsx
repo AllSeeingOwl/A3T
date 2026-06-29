@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { useGameStore } from './hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { RedCardModal } from './components/RedCardModal';
+import { RedCardGuide } from './components/RedCardGuide';
 
 // ⚡ Bolt Optimization: Implement route-level code splitting using React.lazy
 // This reduces the initial bundle size by loading screen components only when needed,
@@ -30,6 +31,9 @@ export const App: React.FC = () => {
 
       {/* Kept RedCardModal eager to avoid replacing the entire screen with a loading state when triggered */}
       {activeRedCard && <RedCardModal />}
+
+      {/* Global Red Card Guide Panel */}
+      <RedCardGuide />
     </div>
   );
 };
