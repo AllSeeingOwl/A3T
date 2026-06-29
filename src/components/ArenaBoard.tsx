@@ -88,7 +88,7 @@ export const ArenaBoard: React.FC = () => {
 
   const renderPipeline = () => {
     return (
-      <div className="flex justify-center items-center gap-4 mb-8">
+      <ol aria-label="Question progress" className="flex justify-center items-center gap-4 mb-8">
         {activeCard.questions.map((q, idx) => {
           const isCompleted = currentStepIndex > idx;
           const isActive = currentStepIndex === idx;
@@ -104,17 +104,20 @@ export const ArenaBoard: React.FC = () => {
           }
 
           return (
-            <div key={idx} className="flex items-center">
+            <li key={idx} className="flex items-center" aria-current={isActive ? "step" : undefined}>
               <div className={baseClass}>
+                <span className="sr-only">
+                  {isCompleted ? "Completed step: " : isActive ? "Current step: " : "Pending step: "}
+                </span>
                 {q.category}
               </div>
               {idx < 2 && (
-                <div className="w-8 h-1 bg-slate-600 mx-2" />
+                <div aria-hidden="true" className="w-8 h-1 bg-slate-600 mx-2" />
               )}
-            </div>
+            </li>
           )
         })}
-      </div>
+      </ol>
     );
   };
 
