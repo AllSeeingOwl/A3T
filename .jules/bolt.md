@@ -9,3 +9,7 @@
 ## 2024-06-28 - Fast-Changing State Extraction
 **Learning:** Even with `useShallow`, if a component binds to a frequently updating state property (like a ticking `timerSeconds`), it will re-render on every update. In heavy parent components like `ArenaBoard`, this creates significant re-render overhead.
 **Action:** When part of a UI requires fast-changing state, extract that specific UI into a small, isolated child component (`StealTimer`) and have *only* the child component subscribe to the fast-changing state via Zustand.
+
+## 2024-06-29 - Uncontrolled Inputs for Top-Level Setup Screens
+**Learning:** Top-level components like `LobbyHub` often contain state that doesn't need to be reactive (like team names before submitting). Using `useState` for text inputs in these components causes the entire component (and its map iterations over large data sets like `defaultDecks`) to re-render on every keystroke, introducing typing latency.
+**Action:** Use uncontrolled components with `useRef` for text inputs when the value is only needed on a final submit action (like starting a match). This is especially critical in large components or setup screens that render multiple child elements based on static data.
