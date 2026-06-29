@@ -53,5 +53,5 @@ export interface GameState {
   questionStage: 'HIDDEN' | 'REVEALED_QUESTION' | 'REVEALED_ANSWER' | 'STEAL_WINDOW' | 'LIST_ACTIVE' | 'LIST_REVEALED';
   timerSeconds: number;
   timerActive: boolean;
-  activeRedCard: 'KAYFABE' | 'VFX' | 'MUPPET' | 'SEMANTICS' | null;
+  activeRedCard: 'KAYFABE' | 'VFX' | 'MUPPET' | 'SEMANTICS' | 'HOST_DISCRETION' | 'TIME_PENALTY' | null;
 }
