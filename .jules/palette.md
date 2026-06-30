@@ -9,3 +9,4 @@
 ## 2026-06-29 - Accessible Progress Pipelines
 **Learning:** Custom visual progress pipelines using `div`s fail to communicate structural order to screen readers. They must utilize `<ol>` semantics and `aria-current` attributes to be fully accessible.
 **Action:** Always use ordered lists (`<ol>`/`<li>`) combined with visually hidden (`sr-only`) text and `aria-current` for step/progress pipelines rather than flat decorative components.
+\n## 2024-10-24 - Communicating Visual-Only Game State\n**Learning:** When game state such as "active turn" is communicated entirely via visual cues (like borders, shadows, or background colors on a scoreboard), screen reader users are completely left in the dark about whose turn it is or when it changes.\n**Action:** Always complement visual-only state indicators with `sr-only` text (e.g., "(Current Turn)") and use `aria-live="polite"` on scoreboards so changes are announced as they occur.

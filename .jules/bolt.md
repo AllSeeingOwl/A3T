@@ -13,3 +13,7 @@
 ## 2024-06-29 - Uncontrolled Inputs for Top-Level Setup Screens
 **Learning:** Top-level components like `LobbyHub` often contain state that doesn't need to be reactive (like team names before submitting). Using `useState` for text inputs in these components causes the entire component (and its map iterations over large data sets like `defaultDecks`) to re-render on every keystroke, introducing typing latency.
 **Action:** Use uncontrolled components with `useRef` for text inputs when the value is only needed on a final submit action (like starting a match). This is especially critical in large components or setup screens that render multiple child elements based on static data.
+
+## 2024-07-28 - [Pre-compute Normalized Strings for Database Filtering]
+**Learning:** Calling `.toLowerCase()` repeatedly within array `.filter()` loops during database searches (e.g., `getQuestionsByDifficulty`, `getQuestionsByDeck`) introduces unnecessary overhead, especially as the CSV database grows.
+**Action:** When parsing static datasets (like `parseDatabaseCSV`), pre-compute normalized string properties (like `normalizedDifficulty` and `normalizedDeckTheme`). Hoist the search target normalization outside the filter loop to achieve O(n) string comparisons without O(n) re-allocations and conversions.
