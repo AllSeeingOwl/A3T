@@ -25,8 +25,11 @@ export const useQuestionDatabase = create<QuestionDatabaseState>((set, get) => (
 
   getQuestionsByDifficulty: (difficulty: string) => {
     const state = get();
+    // ⚡ Bolt Optimization: Hoist .toLowerCase() out of the filter callback and use pre-computed normalized strings
+    // to avoid recalculating the lowercased strings for every question in the database during each filter pass.
+    const targetDifficulty = difficulty.toLowerCase();
     return state.questions.filter(q =>
-      q.rawDifficulty.toLowerCase().includes(difficulty.toLowerCase())
+      q.normalizedDifficulty.includes(targetDifficulty)
     );
   },
 
@@ -37,8 +40,11 @@ export const useQuestionDatabase = create<QuestionDatabaseState>((set, get) => (
 
   getQuestionsByDeck: (deckName: string) => {
     const state = get();
+    // ⚡ Bolt Optimization: Hoist .toLowerCase() out of the filter callback and use pre-computed normalized strings
+    // to avoid recalculating the lowercased strings for every question in the database during each filter pass.
+    const targetDeckName = deckName.toLowerCase();
     return state.questions.filter(q =>
-      q.deckTheme.toLowerCase() === deckName.toLowerCase()
+      q.normalizedDeckTheme === targetDeckName
     );
   },
 
