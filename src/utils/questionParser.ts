@@ -86,6 +86,8 @@ export interface DatabaseQuestion extends Question {
   rawDifficulty: string;
   deckTheme: string;
   rawDomain: string;
+  normalizedDifficulty: string;
+  normalizedDeckTheme: string;
 }
 
 export const parseDatabaseCSV = (csvData: string): DatabaseQuestion[] => {
@@ -99,6 +101,9 @@ export const parseDatabaseCSV = (csvData: string): DatabaseQuestion[] => {
   result.data.forEach((row) => {
     if (!row['Question'] || !row['Answer'] || !row['Category / Domain']) return;
 
+    const rawDifficulty = row['Difficulty'] || 'Casual (Level 1)';
+    const deckTheme = row['Deck / Theme'] || 'General';
+
     dbQuestions.push({
       step: mapSequenceToStep(row['Sequence / Q#'] || ''),
       category: mapCategory(row['Category / Domain']),
@@ -106,9 +111,11 @@ export const parseDatabaseCSV = (csvData: string): DatabaseQuestion[] => {
       answer: row['Answer'],
       acceptedVariants: [],
       points: getPointsForDifficulty(row['Difficulty'] || ''),
-      rawDifficulty: row['Difficulty'] || 'Casual (Level 1)',
-      deckTheme: row['Deck / Theme'] || 'General',
+      rawDifficulty,
+      deckTheme,
       rawDomain: row['Category / Domain'],
+      normalizedDifficulty: rawDifficulty.toLowerCase(),
+      normalizedDeckTheme: deckTheme.toLowerCase(),
     });
   });
 
