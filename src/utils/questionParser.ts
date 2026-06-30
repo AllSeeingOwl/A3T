@@ -115,6 +115,10 @@ export const parseDatabaseCSV = (csvData: string): DatabaseQuestion[] => {
     const rawDifficulty = row['Difficulty'] || 'Casual (Level 1)';
     const deckTheme = row['Deck / Theme'] || 'General';
 
+    const safeRawDifficulty = sanitizeHTML(rawDifficulty);
+    const safeDeckTheme = sanitizeHTML(deckTheme);
+    const safeRawDomain = sanitizeHTML(row['Category / Domain']);
+
     dbQuestions.push({
       step: mapSequenceToStep(row['Sequence / Q#'] || ''),
       category: mapCategory(row['Category / Domain']),
@@ -122,14 +126,11 @@ export const parseDatabaseCSV = (csvData: string): DatabaseQuestion[] => {
       answer: sanitizeHTML(row['Answer']),
       acceptedVariants: [],
       points: getPointsForDifficulty(row['Difficulty'] || ''),
-      rawDifficulty: sanitizeHTML(row['Difficulty'] || 'Casual (Level 1)'),
-      deckTheme: sanitizeHTML(row['Deck / Theme'] || 'General'),
-      rawDomain: sanitizeHTML(row['Category / Domain']),
-      rawDifficulty,
-      deckTheme,
-      rawDomain: row['Category / Domain'],
-      normalizedDifficulty: rawDifficulty.toLowerCase(),
-      normalizedDeckTheme: deckTheme.toLowerCase(),
+      rawDifficulty: safeRawDifficulty,
+      deckTheme: safeDeckTheme,
+      rawDomain: safeRawDomain,
+      normalizedDifficulty: safeRawDifficulty.toLowerCase(),
+      normalizedDeckTheme: safeDeckTheme.toLowerCase(),
     });
   });
 
