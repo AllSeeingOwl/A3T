@@ -54,5 +54,5 @@ export interface GameState {
   questionStage: 'HIDDEN' | 'REVEALED_QUESTION' | 'REVEALED_ANSWER' | 'STEAL_WINDOW' | 'LIST_ACTIVE' | 'LIST_REVEALED';
   timerSeconds: number;
   timerActive: boolean;
-  activeRedCard: 'KAYFABE' | 'VFX' | 'MUPPET' | 'SEMANTICS' | 'HOST_DISCRETION' | 'TIME_PENALTY' | null;
+  activeRedCard: 'CATEGORY_VIOLATIONS' | 'MEDIUM_VIOLATIONS' | 'CANON_VIOLATIONS' | 'GAMEPLAY_VIOLATIONS' | 'REFEREE_TOOLS' | null;
 }

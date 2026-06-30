@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
+import { RED_CARD_CATEGORIES, RedCardCategory } from './RedCardGuide';
 
 export const RedCardModal: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the modal from re-rendering
@@ -14,47 +15,24 @@ export const RedCardModal: React.FC = () => {
 
   if (!activeRedCard) return null;
 
-  const getRedCardDetails = (type: string) => {
+  const getRedCardCategory = (type: string): RedCardCategory | undefined => {
     switch (type) {
-      case 'KAYFABE':
-        return {
-          title: "The Kayfabe Rule",
-          description: "Wrestling names must be the performer's in-ring persona unless specifically asked for their legal name. Staying in character is mandatory."
-        };
-      case 'VFX':
-        return {
-          title: "The VFX Clarification",
-          description: "Distinction between purely animated films and live-action films with heavy VFX elements. Only primary mediums count."
-        };
-      case 'MUPPET':
-        return {
-          title: "The Muppet Clause",
-          description: "Muppets are considered real entities within their own universe, distinct from standard animation or costumes."
-        };
-      case 'SEMANTICS':
-        return {
-          title: "The Semantics Shield",
-          description: "Minor mispronunciations or slight naming variations are accepted provided the core intent and identification are unmistakably correct."
-        };
-      case 'HOST_DISCRETION':
-        return {
-          title: "Host Discretion",
-          description: "The host has the ultimate final say in resolving a dispute or granting a subjective point based on situational context."
-        };
-      case 'TIME_PENALTY':
-        return {
-          title: "Time Penalty",
-          description: "Interference, talking out of turn, or stalling will result in a time reduction or point deduction as deemed fit by the referee."
-        };
+      case 'CATEGORY_VIOLATIONS':
+        return RED_CARD_CATEGORIES.find(c => c.title === 'Category Violations');
+      case 'MEDIUM_VIOLATIONS':
+        return RED_CARD_CATEGORIES.find(c => c.title === 'Medium Violations');
+      case 'CANON_VIOLATIONS':
+        return RED_CARD_CATEGORIES.find(c => c.title === 'Canon Violations');
+      case 'GAMEPLAY_VIOLATIONS':
+        return RED_CARD_CATEGORIES.find(c => c.title === 'Gameplay & Mechanics Violations');
+      case 'REFEREE_TOOLS':
+        return RED_CARD_CATEGORIES.find(c => c.title === 'Referee Tools');
       default:
-        return {
-          title: "Official Warning",
-          description: "Please refer to the official tournament rules."
-        };
+        return undefined;
     }
   };
 
-  const details = getRedCardDetails(activeRedCard);
+  const category = getRedCardCategory(activeRedCard);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-900/95 backdrop-blur-md p-4 w-full h-full">
@@ -62,11 +40,11 @@ export const RedCardModal: React.FC = () => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="red-card-title"
-        className="bg-arena-slate border-4 border-arena-crimson rounded-3xl p-12 max-w-2xl w-full text-center shadow-[0_0_50px_rgba(239,68,68,0.5)] relative overflow-hidden"
+        className="bg-arena-slate border-4 border-arena-crimson rounded-3xl p-8 max-w-4xl w-full text-center shadow-[0_0_50px_rgba(239,68,68,0.5)] relative overflow-hidden flex flex-col max-h-[90vh]"
       >
 
         {/* Background visual element */}
-        <div className="absolute -right-20 -top-20 opacity-10">
+        <div className="absolute -right-20 -top-20 opacity-10 pointer-events-none">
           <svg width="300" height="300" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
             <path d="M8.5 8.5v.01"/>
@@ -77,24 +55,56 @@ export const RedCardModal: React.FC = () => {
           </svg>
         </div>
 
-        <h2 id="red-card-title" className="text-4xl font-display text-arena-crimson mb-2 uppercase tracking-widest relative z-10">
-          Frozen Board
-        </h2>
-        <h3 className="text-2xl font-display text-white mb-8 uppercase relative z-10">
-          Referee Intercession
-        </h3>
-
-        <div className="bg-slate-800 p-8 rounded-xl border border-slate-600 mb-10 relative z-10">
-          <h4 className="text-3xl font-display text-arena-amber mb-4">{details.title}</h4>
-          <p className="text-xl text-slate-300 leading-relaxed">{details.description}</p>
+        <div className="flex-shrink-0">
+          <h2 id="red-card-title" className="text-4xl font-display text-arena-crimson mb-2 uppercase tracking-widest relative z-10">
+            Frozen Board
+          </h2>
+          <h3 className="text-2xl font-display text-white mb-6 uppercase relative z-10">
+            Referee Intercession
+          </h3>
         </div>
 
-        <button
-          onClick={() => setActiveRedCard(null)}
-          className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
-        >
-          Release Board & Resume Play
-        </button>
+        <div className="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8 relative z-10 flex-grow overflow-y-auto custom-scrollbar text-left">
+          {category ? (
+            <>
+              <h4 className="text-3xl font-display text-arena-amber mb-6 text-center border-b border-slate-700 pb-4">{category.title}</h4>
+              <div className="space-y-6">
+                {category.cards.map((card) => (
+                  <div key={card.type} className="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+                    <h5 className="text-xl font-display text-white mb-2 uppercase">{card.title}</h5>
+                    <p className="text-slate-300 mb-3">{card.description}</p>
+                    {card.examples && card.examples.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Examples:</span>
+                        <ul className="list-disc list-inside space-y-1">
+                          {card.examples.map((example, idx) => (
+                            <li key={idx} className="text-sm text-slate-200 italic">
+                              {example}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="text-center">
+              <h4 className="text-3xl font-display text-arena-amber mb-4">Official Warning</h4>
+              <p className="text-xl text-slate-300 leading-relaxed">Please refer to the official tournament rules.</p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex-shrink-0">
+          <button
+            onClick={() => setActiveRedCard(null)}
+            className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
+          >
+            Release Board & Resume Play
+          </button>
+        </div>
       </div>
     </div>
   );
