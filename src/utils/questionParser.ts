@@ -19,6 +19,16 @@ interface CSVRow {
   'Sub-Theme': string;
 }
 
+// 🛡️ Sentinel: Escape HTML characters to prevent XSS attacks (Defense in Depth) without destroying valid math/code text.
+const sanitizeHTML = (str: string): string => {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+};
+
 // Utility to determine points based on difficulty
 const getPointsForDifficulty = (difficulty: string): number => {
   const diffUpper = difficulty.toUpperCase();
@@ -64,12 +74,13 @@ export const parseQuestionsCSV = (csvData: string): Question[] => {
     }
 
     try {
+      const answer = sanitizeHTML(row['Answer']);
       const q: Question = {
         step: mapSequenceToStep(row['Sequence / Q#'] || ''),
         category: mapCategory(row['Category / Domain']),
-        questionText: row['Question'],
-        answer: row['Answer'],
-        acceptedVariants: row['Answer'].includes(',') ? row['Answer'].split(',').map(s => s.trim()) : [],
+        questionText: sanitizeHTML(row['Question']),
+        answer: answer,
+        acceptedVariants: answer.includes(',') ? answer.split(',').map(s => s.trim()) : [],
         points: getPointsForDifficulty(row['Difficulty'] || ''),
       };
       validQuestions.push(q);
@@ -102,13 +113,13 @@ export const parseDatabaseCSV = (csvData: string): DatabaseQuestion[] => {
     dbQuestions.push({
       step: mapSequenceToStep(row['Sequence / Q#'] || ''),
       category: mapCategory(row['Category / Domain']),
-      questionText: row['Question'],
-      answer: row['Answer'],
+      questionText: sanitizeHTML(row['Question']),
+      answer: sanitizeHTML(row['Answer']),
       acceptedVariants: [],
       points: getPointsForDifficulty(row['Difficulty'] || ''),
-      rawDifficulty: row['Difficulty'] || 'Casual (Level 1)',
-      deckTheme: row['Deck / Theme'] || 'General',
-      rawDomain: row['Category / Domain'],
+      rawDifficulty: sanitizeHTML(row['Difficulty'] || 'Casual (Level 1)'),
+      deckTheme: sanitizeHTML(row['Deck / Theme'] || 'General'),
+      rawDomain: sanitizeHTML(row['Category / Domain']),
     });
   });
 
