@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
+import { ChainCard, QuestionStep } from '../types/game';
 
 // ⚡ Bolt Optimization: Extract fast-changing state into isolated components.
 // This prevents the heavy ArenaBoard parent from re-rendering on every timer tick.
@@ -38,6 +39,59 @@ const StealTimer: React.FC = () => {
     </div>
   );
 };
+
+
+// ⚡ Bolt Optimization: Extract and memoize the pipeline rendering
+// The pipeline only needs to re-render when the active step or team changes.
+// This prevents layout recalculations when unrelated state (like the steal timer) ticks.
+interface PipelineProps {
+  activeCard: ChainCard;
+  currentStepIndex: QuestionStep;
+  activeTeam: string;
+}
+
+const Pipeline = memo(({ activeCard, currentStepIndex, activeTeam }: PipelineProps) => {
+  const totalQuestions = activeCard.questions.length;
+  const questionsRemaining = totalQuestions - currentStepIndex - 1;
+
+  return (
+    <div className="flex flex-col items-center mb-8">
+      <ol aria-label="Question progress" className="flex justify-center items-center gap-4">
+        {activeCard.questions.map((q, idx: number) => {
+          const isCompleted = currentStepIndex > idx;
+          const isActive = currentStepIndex === idx;
+          let baseClass = "px-6 py-2 rounded-full border-2 font-display text-lg uppercase transition-all duration-300";
+
+          if (isCompleted) {
+             baseClass += " bg-emerald-600 border-emerald-400 text-white shadow-[0_0_10px_rgba(16,185,129,0.8)]";
+          } else if (isActive) {
+             const teamColor = activeTeam === 'teamA' ? 'border-arena-magenta shadow-[0_0_10px_rgba(236,72,153,0.8)]' : 'border-arena-cobalt shadow-[0_0_10px_rgba(59,130,246,0.8)]';
+             baseClass += ` bg-arena-navy text-white ${teamColor} scale-110`;
+          } else {
+             baseClass += " bg-arena-slate border-slate-600 text-slate-400 opacity-50";
+          }
+
+          return (
+            <li key={idx} className="flex items-center" aria-current={isActive ? "step" : undefined}>
+              <div className={baseClass}>
+                <span className="sr-only">
+                  {isCompleted ? "Completed step: " : isActive ? "Current step: " : "Pending step: "}
+                </span>
+                {q.category}
+              </div>
+              {idx < totalQuestions - 1 && (
+                <div aria-hidden="true" className="w-8 h-1 bg-slate-600 mx-2" />
+              )}
+            </li>
+          )
+        })}
+      </ol>
+      <p className="mt-4 text-slate-400 font-display text-sm tracking-widest uppercase">
+        {questionsRemaining > 0 ? `${questionsRemaining} Link${questionsRemaining > 1 ? 's' : ''} Remaining in Chain` : "Final Link in Chain"}
+      </p>
+    </div>
+  );
+});
 
 export const ArenaBoard: React.FC = () => {
   // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow to strictly subscribe
@@ -106,48 +160,7 @@ export const ArenaBoard: React.FC = () => {
     setActiveRedCard(type);
   };
 
-  const renderPipeline = () => {
-    const totalQuestions = activeCard.questions.length;
-    const questionsRemaining = totalQuestions - currentStepIndex - 1;
 
-    return (
-      <div className="flex flex-col items-center mb-8">
-        <ol aria-label="Question progress" className="flex justify-center items-center gap-4">
-          {activeCard.questions.map((q, idx) => {
-            const isCompleted = currentStepIndex > idx;
-            const isActive = currentStepIndex === idx;
-            let baseClass = "px-6 py-2 rounded-full border-2 font-display text-lg uppercase transition-all duration-300";
-
-            if (isCompleted) {
-               baseClass += " bg-emerald-600 border-emerald-400 text-white shadow-[0_0_10px_rgba(16,185,129,0.8)]";
-            } else if (isActive) {
-               const teamColor = activeTeam === 'teamA' ? 'border-arena-magenta shadow-[0_0_10px_rgba(236,72,153,0.8)]' : 'border-arena-cobalt shadow-[0_0_10px_rgba(59,130,246,0.8)]';
-               baseClass += ` bg-arena-navy text-white ${teamColor} scale-110`;
-            } else {
-               baseClass += " bg-arena-slate border-slate-600 text-slate-400 opacity-50";
-            }
-
-            return (
-              <li key={idx} className="flex items-center" aria-current={isActive ? "step" : undefined}>
-                <div className={baseClass}>
-                  <span className="sr-only">
-                    {isCompleted ? "Completed step: " : isActive ? "Current step: " : "Pending step: "}
-                  </span>
-                  {q.category}
-                </div>
-                {idx < totalQuestions - 1 && (
-                  <div aria-hidden="true" className="w-8 h-1 bg-slate-600 mx-2" />
-                )}
-              </li>
-            )
-          })}
-        </ol>
-        <p className="mt-4 text-slate-400 font-display text-sm tracking-widest uppercase">
-          {questionsRemaining > 0 ? `${questionsRemaining} Link${questionsRemaining > 1 ? 's' : ''} Remaining in Chain` : "Final Link in Chain"}
-        </p>
-      </div>
-    );
-  };
 
   return (
     <div className="flex flex-col min-h-screen bg-arena-slate font-sans relative w-full">
@@ -192,7 +205,7 @@ export const ArenaBoard: React.FC = () => {
       {/* Main Play Area */}
       <div className="flex-grow flex flex-col items-center justify-center p-8">
 
-        {renderPipeline()}
+        <Pipeline activeCard={activeCard} currentStepIndex={currentStepIndex} activeTeam={activeTeam} />
 
         {/* Question Card */}
         <div className="w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border border-slate-600 shadow-2xl relative mb-8">

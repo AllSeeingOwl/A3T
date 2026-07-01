@@ -17,3 +17,6 @@
 ## 2024-07-28 - [Pre-compute Normalized Strings for Database Filtering]
 **Learning:** Calling `.toLowerCase()` repeatedly within array `.filter()` loops during database searches (e.g., `getQuestionsByDifficulty`, `getQuestionsByDeck`) introduces unnecessary overhead, especially as the CSV database grows.
 **Action:** When parsing static datasets (like `parseDatabaseCSV`), pre-compute normalized string properties (like `normalizedDifficulty` and `normalizedDeckTheme`). Hoist the search target normalization outside the filter loop to achieve O(n) string comparisons without O(n) re-allocations and conversions.
+## 2026-07-01 - [Memoize ArenaBoard Render Pipeline]
+**Learning:** In React components with complex layouts like ArenaBoard, rendering large nested structures like the step pipeline on every timer tick can be expensive and cause unnecessary layout recalculation and DOM updates.
+**Action:** Extract expensive rendering blocks into isolated components or wrap them in `useMemo()` if they only depend on specific state fields (like `activeCard`, `currentStepIndex`, `activeTeam`), keeping fast-changing unrelated state (like timers) from triggering heavy re-renders.
