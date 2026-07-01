@@ -10,3 +10,8 @@
 **Vulnerability:** XSS vulnerability via external CSV upload (`data/questions.csv`) if parsed without sanitization.
 **Learning:** While stripping HTML tags (`str.replace(/[<>]/g, '')`) prevents XSS, it is a destructive operation that corrupts legitimate game data (like math formulas or programming snippets containing `<` or `>`).
 **Prevention:** Use an HTML escaping function (converting `<` to `&lt;`, etc.) to sanitize text meant for display. This neutralizes the XSS threat while preserving the integrity of the trivia content.
+
+## 2024-07-01 - [Vite CSP Production Security]
+**Vulnerability:** Weak Content-Security-Policy (CSP) allowing `'unsafe-inline'` for `script-src` in `index.html`.
+**Learning:** While `'unsafe-inline'` scripts might be necessary for certain Vite development server features, Vite production builds compile and inject module scripts standardly and do not fundamentally require `'unsafe-inline'` to function securely. Leaving it in production needlessly weakens defense-in-depth against XSS.
+**Prevention:** Ensure CSP meta tags manually defined in `index.html` are strictly configured for the production environment, omitting `'unsafe-inline'` for `script-src` unless specifically required by a third-party script.
