@@ -286,6 +286,8 @@ export const RedCardGuide: React.FC = () => {
 
   return (
     <div
+      role="dialog"
+      aria-label="Red Card Guide"
       className={`fixed top-0 bottom-0 ${
         isRightSide ? 'right-0 border-l-4' : 'left-0 border-r-4'
       } w-80 bg-arena-navy/95 backdrop-blur-md border-arena-crimson shadow-[-10px_0_30px_rgba(0,0,0,0.5)] z-50 flex flex-col transition-all duration-300 overflow-hidden`}
@@ -306,6 +308,7 @@ export const RedCardGuide: React.FC = () => {
             <ArrowLeftRight className="w-5 h-5" />
           </button>
           <button
+            autoFocus
             onClick={() => setIsOpen(false)}
             className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
             title="Close Guide"
