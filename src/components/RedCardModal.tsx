@@ -99,6 +99,7 @@ export const RedCardModal: React.FC = () => {
 
         <div className="flex-shrink-0">
           <button
+            autoFocus
             onClick={() => setActiveRedCard(null)}
             className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
           >
