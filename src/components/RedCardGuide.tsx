@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { BookOpen, X, ArrowLeftRight } from 'lucide-react';
 
 export interface RedCardCategory {
@@ -227,6 +227,45 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
 
 
 
+// ⚡ Bolt Optimization: Memoize the long list of static rules and examples.
+// This prevents over 100 DOM nodes from re-rendering every time the user
+// toggles the RedCardGuide from the left side of the screen to the right side.
+const RedCardList = memo(() => (
+  <div className="flex-1 overflow-y-auto p-4 space-y-8 custom-scrollbar">
+    {RED_CARD_CATEGORIES.map((category) => (
+      <div key={category.title} className="space-y-4">
+        <h3 className="text-xl font-display text-white border-b border-slate-700 pb-2">{category.title}</h3>
+        <div className="space-y-6">
+          {category.cards.map((card) => {
+            const isRefereeTool = category.title === 'Referee Tools';
+            const borderColor = isRefereeTool ? 'border-amber-500' : 'border-slate-700';
+            const headerColor = isRefereeTool ? 'text-amber-500' : 'text-arena-amber';
+            const bgColor = isRefereeTool ? 'bg-amber-950/30' : 'bg-slate-800/50';
+
+            return (
+              <div key={card.type} className={`p-4 rounded-lg border ${borderColor} ${bgColor}`}>
+                <h4 className={`text-lg font-display ${headerColor} mb-2 uppercase`}>{card.title}</h4>
+                <p className="text-sm text-slate-300 mb-3">{card.description}</p>
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Examples:</span>
+                  <ul className="list-disc list-inside space-y-1">
+                    {card.examples.map((example, idx) => (
+                      <li key={idx} className="text-sm text-slate-200 italic">
+                        {example}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    ))}
+  </div>
+));
+RedCardList.displayName = 'RedCardList';
+
 export const RedCardGuide: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isRightSide, setIsRightSide] = useState(true);
@@ -279,38 +318,7 @@ export const RedCardGuide: React.FC = () => {
 
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-8 custom-scrollbar">
-        {RED_CARD_CATEGORIES.map((category) => (
-          <div key={category.title} className="space-y-4">
-            <h3 className="text-xl font-display text-white border-b border-slate-700 pb-2">{category.title}</h3>
-            <div className="space-y-6">
-              {category.cards.map((card) => {
-                const isRefereeTool = category.title === 'Referee Tools';
-                const borderColor = isRefereeTool ? 'border-amber-500' : 'border-slate-700';
-                const headerColor = isRefereeTool ? 'text-amber-500' : 'text-arena-amber';
-                const bgColor = isRefereeTool ? 'bg-amber-950/30' : 'bg-slate-800/50';
-
-                return (
-                  <div key={card.type} className={`p-4 rounded-lg border ${borderColor} ${bgColor}`}>
-                    <h4 className={`text-lg font-display ${headerColor} mb-2 uppercase`}>{card.title}</h4>
-                    <p className="text-sm text-slate-300 mb-3">{card.description}</p>
-                    <div className="space-y-2">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Examples:</span>
-                      <ul className="list-disc list-inside space-y-1">
-                        {card.examples.map((example, idx) => (
-                          <li key={idx} className="text-sm text-slate-200 italic">
-                            {example}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+      <RedCardList />
     </div>
   );
 };

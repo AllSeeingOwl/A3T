@@ -20,3 +20,7 @@
 ## 2026-07-01 - [Memoize ArenaBoard Render Pipeline]
 **Learning:** In React components with complex layouts like ArenaBoard, rendering large nested structures like the step pipeline on every timer tick can be expensive and cause unnecessary layout recalculation and DOM updates.
 **Action:** Extract expensive rendering blocks into isolated components or wrap them in `useMemo()` if they only depend on specific state fields (like `activeCard`, `currentStepIndex`, `activeTeam`), keeping fast-changing unrelated state (like timers) from triggering heavy re-renders.
+
+## 2024-07-02 - React.memo() For Large Static Lists in Dynamic Panels
+**Learning:** In panels like `RedCardGuide` where position (e.g., left/right screen toggling) is managed by parent state, large static DOM structures (like long lists of rules with over 100 DOM nodes) will re-render unnecessarily on every toggle if kept inline.
+**Action:** Always extract heavy, static JSX into a standalone component wrapped in `React.memo()` when the parent component has unrelated state that triggers frequent re-renders.
