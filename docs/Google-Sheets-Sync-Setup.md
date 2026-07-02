@@ -41,7 +41,7 @@ To securely access your private Google Sheet without making it public, we use a 
 5. Uncheck "Notify people" (since it's a bot account) and click **Share**.
 
 ## 6. Configure Local Environment (For Local Syncing)
-To run the sync script on your local computer (`pnpm run sync-questions`):
+To run the sync script on your local computer (`pnpm run update-questions`):
 1. In the root directory of this project, create a file named `.env`.
 2. Add the following line to the `.env` file:
    ```
@@ -69,4 +69,4 @@ To allow GitHub Actions to automatically sync the questions:
 9. Open your downloaded JSON file, copy the entire contents, paste it into the Secret field, and click **Add secret**.
 
 ## You're All Set!
-You can now run `pnpm run sync-questions` locally, or trigger the "Sync Google Sheets Questions" workflow from the GitHub Actions tab.
+You can now run `pnpm run update-questions` locally, or trigger the "Sync Google Sheets Questions" workflow from the GitHub Actions tab.

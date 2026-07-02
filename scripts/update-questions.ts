@@ -31,7 +31,7 @@ async function syncQuestions() {
   let credentials;
   try {
     credentials = JSON.parse(CREDENTIALS_JSON);
-  } catch (error) {
+  } catch {
     console.error('❌ Error parsing GOOGLE_SERVICE_ACCOUNT_CREDENTIALS. Ensure it is valid JSON.');
     process.exit(1);
   }
