@@ -279,7 +279,7 @@ export const RedCardGuide: React.FC = () => {
         } bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none`}
         aria-label="Open Red Card Guide"
       >
-        <BookOpen className="w-6 h-6 group-hover:scale-110 transition-transform" />
+        <BookOpen aria-hidden="true" className="w-6 h-6 group-hover:scale-110 transition-transform" />
       </button>
     );
   }
@@ -295,7 +295,7 @@ export const RedCardGuide: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-slate-800 border-b border-slate-700">
         <h2 className="text-xl font-display text-arena-crimson uppercase tracking-wider flex items-center gap-2">
-          <BookOpen className="w-5 h-5" />
+          <BookOpen aria-hidden="true" className="w-5 h-5" />
           Red Cards
         </h2>
         <div className="flex items-center gap-2">
@@ -305,7 +305,7 @@ export const RedCardGuide: React.FC = () => {
             title="Swap Side"
             aria-label={`Move guide to ${isRightSide ? 'left' : 'right'} side`}
           >
-            <ArrowLeftRight className="w-5 h-5" />
+            <ArrowLeftRight aria-hidden="true" className="w-5 h-5" />
           </button>
           <button
             autoFocus
@@ -314,7 +314,7 @@ export const RedCardGuide: React.FC = () => {
             title="Close Guide"
             aria-label="Close Red Card Guide"
           >
-            <X className="w-5 h-5" />
+            <X aria-hidden="true" className="w-5 h-5" />
           </button>
         </div>
       </div>
