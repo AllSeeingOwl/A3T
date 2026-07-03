@@ -13,3 +13,7 @@
 ## 2024-07-02 - Added Dialog Role and AutoFocus to RedCard UI
 **Learning:** React conditionally rendered component triggers (e.g. RedCardGuide trigger button unmounting) can drop keyboard focus to the document body when removed, preventing screen readers and keyboard users from easily entering the freshly opened modal/drawer unless a primary action is immediately given `autoFocus`.
 **Action:** Always add `autoFocus` on the primary close/action button when a conditionally-rendered modal or overlay unmounts the trigger element that opened it.
+
+## 2024-07-03 - Decorative SVG Screen Reader Annoyance
+**Learning:** Decorative inline `<svg>` and icon components (like `lucide-react`) used as pure decoration without explicit `aria-hidden="true"` can be inconsistently parsed by screen readers or cause unnecessary pauses in narration.
+**Action:** Always add `aria-hidden="true"` to purely decorative SVG elements and icon-only components that are within larger labeled controls or serve as background visuals, so they do not pollute the accessibility tree.

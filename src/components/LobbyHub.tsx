@@ -107,8 +107,8 @@ export const LobbyHub: React.FC = () => {
       </div>
 
       <button
-        onClick={handleStart}
-        disabled={!selectedDeckId}
+        onClick={selectedDeckId ? handleStart : undefined}
+        aria-disabled={!selectedDeckId}
         title={!selectedDeckId ? "Select a deck to start the match" : undefined}
         className={`mt-12 px-12 py-4 rounded-full text-2xl font-display uppercase tracking-widest transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-emerald-500 focus:outline-none ${
           selectedDeckId
