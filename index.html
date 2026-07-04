@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <!-- 🛡️ Sentinel: Strict Content Security Policy to prevent XSS and data injection -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss:; object-src 'none'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss:; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; block-all-mixed-content; form-action 'none';" />
     <!-- 🛡️ Sentinel: Prevent sending Referer header to external domains to avoid leaking application URL information -->
     <meta name="referrer" content="no-referrer" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
