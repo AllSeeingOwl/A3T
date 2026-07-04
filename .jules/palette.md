@@ -17,3 +17,7 @@
 ## 2024-07-03 - Decorative SVG Screen Reader Annoyance
 **Learning:** Decorative inline `<svg>` and icon components (like `lucide-react`) used as pure decoration without explicit `aria-hidden="true"` can be inconsistently parsed by screen readers or cause unnecessary pauses in narration.
 **Action:** Always add `aria-hidden="true"` to purely decorative SVG elements and icon-only components that are within larger labeled controls or serve as background visuals, so they do not pollute the accessibility tree.
+
+## 2024-11-20 - Keyboard Navigation for Dialogs
+**Learning:** Custom React modals and side-drawers (like RedCardModal and RedCardGuide) that lack built-in `<dialog>` semantics often trap keyboard-only users if they don't support the `Escape` key to close.
+**Action:** Always implement a `keydown` listener for the `Escape` key to close custom overlays/dialogs, ensuring they match standard browser accessibility expectations.
