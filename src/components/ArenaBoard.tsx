@@ -6,30 +6,24 @@ import { ChainCard, QuestionStep } from '../types/game';
 // ⚡ Bolt Optimization: Extract fast-changing state into isolated components.
 // This prevents the heavy ArenaBoard parent from re-rendering on every timer tick.
 const StealTimer: React.FC = () => {
-  const { questionStage, timerSeconds, decrementTimer, setQuestionStage, timerActive, setTimerActive } = useGameStore(
+  const { questionStage, timerSeconds, decrementTimer, timerActive } = useGameStore(
     useShallow((state) => ({
       questionStage: state.questionStage,
       timerSeconds: state.timerSeconds,
       decrementTimer: state.decrementTimer,
-      setQuestionStage: state.setQuestionStage,
       timerActive: state.timerActive,
-      setTimerActive: state.setTimerActive,
     }))
   );
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    if (timerActive && timerSeconds > 0) {
+    if (timerActive) {
       interval = setInterval(() => {
         decrementTimer();
       }, 1000);
-    } else if (timerActive && timerSeconds === 0) {
-      setTimerActive(false);
-      // Timer ran out, reveal answer
-      setQuestionStage('REVEALED_ANSWER');
     }
     return () => clearInterval(interval);
-  }, [timerActive, timerSeconds, decrementTimer, setTimerActive, setQuestionStage]);
+  }, [timerActive, decrementTimer]);
 
   if (questionStage !== 'STEAL_WINDOW') return null;
 
