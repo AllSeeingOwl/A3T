@@ -82,9 +82,17 @@ export const useGameStore = create<GameStore>((set) => ({
   setTimerActive: (active) => set({ timerActive: active }),
 
   decrementTimer: () =>
-    set((state) => ({
-      timerSeconds: Math.max(0, state.timerSeconds - 1),
-    })),
+    set((state) => {
+      const newSeconds = Math.max(0, state.timerSeconds - 1);
+      if (newSeconds === 0 && state.timerSeconds > 0) {
+        return {
+          timerSeconds: 0,
+          timerActive: false,
+          questionStage: 'REVEALED_ANSWER',
+        };
+      }
+      return { timerSeconds: newSeconds };
+    }),
 
   setQuestionStage: (stage) => set({ questionStage: stage }),
 
