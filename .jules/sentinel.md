@@ -15,3 +15,7 @@
 **Vulnerability:** Weak Content-Security-Policy (CSP) allowing `'unsafe-inline'` for `script-src` in `index.html`.
 **Learning:** While `'unsafe-inline'` scripts might be necessary for certain Vite development server features, Vite production builds compile and inject module scripts standardly and do not fundamentally require `'unsafe-inline'` to function securely. Leaving it in production needlessly weakens defense-in-depth against XSS.
 **Prevention:** Ensure CSP meta tags manually defined in `index.html` are strictly configured for the production environment, omitting `'unsafe-inline'` for `script-src` unless specifically required by a third-party script.
+## 2025-02-28 - [Form Hijacking and Mixed Content Protection]
+**Vulnerability:** The application's Content Security Policy lacked directives to restrict form submissions and upgrade insecure requests. Even in pure client-side SPAs, an injected form could exfiltrate data, and missing HTTPS enforcement risks data interception.
+**Learning:** Adding `form-action 'none'` prevents HTML forms from navigating away or submitting data, which is ideal for React SPAs that handle all submissions via JavaScript. `upgrade-insecure-requests` and `block-all-mixed-content` ensure that HTTPS is always enforced and mixed content is blocked by the browser.
+**Prevention:** Always include `form-action 'none'`, `upgrade-insecure-requests`, and `block-all-mixed-content` in the base Content Security Policy for Single Page Applications to provide robust defense in depth.
