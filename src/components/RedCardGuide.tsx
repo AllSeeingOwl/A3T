@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { BookOpen, X, ArrowLeftRight } from 'lucide-react';
 
 export interface RedCardCategory {
@@ -270,6 +270,16 @@ export const RedCardGuide: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isRightSide, setIsRightSide] = useState(true);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   if (!isOpen) {
     return (
       <button
@@ -311,7 +321,7 @@ export const RedCardGuide: React.FC = () => {
             autoFocus
             onClick={() => setIsOpen(false)}
             className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
-            title="Close Guide"
+            title="Close Guide (Esc)"
             aria-label="Close Red Card Guide"
           >
             <X aria-hidden="true" className="w-5 h-5" />

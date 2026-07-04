@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { RED_CARD_CATEGORIES, RedCardCategory } from './RedCardGuide';
@@ -12,6 +12,16 @@ export const RedCardModal: React.FC = () => {
       setActiveRedCard: state.setActiveRedCard,
     }))
   );
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activeRedCard) {
+        setActiveRedCard(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeRedCard, setActiveRedCard]);
 
   if (!activeRedCard) return null;
 
@@ -101,6 +111,7 @@ export const RedCardModal: React.FC = () => {
           <button
             autoFocus
             onClick={() => setActiveRedCard(null)}
+            title="Resume Play (Esc)"
             className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
           >
             Release Board & Resume Play
