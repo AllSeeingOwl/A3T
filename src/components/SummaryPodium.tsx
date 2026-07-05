@@ -37,11 +37,17 @@ export const SummaryPodium: React.FC = () => {
         <div className="flex flex-col items-center justify-end w-1/3">
           <div className="text-center mb-4">
             <h2 className="text-2xl font-display text-arena-magenta uppercase">{teams.teamA.name}</h2>
-            <span className="text-5xl font-display text-white">{teams.teamA.score}</span>
+            <span className="text-5xl font-display text-white">
+              <span className="sr-only">Score: </span>
+              {teams.teamA.score}
+            </span>
           </div>
           <div className={`w-full bg-arena-magenta/80 rounded-t-lg border-2 border-arena-magenta shadow-[0_0_20px_rgba(236,72,153,0.4)] ${winner?.name === teams.teamA.name ? 'h-48' : 'h-32'}`}>
             <div className="w-full h-full bg-gradient-to-b from-white/20 to-transparent rounded-t-lg flex justify-center pt-4">
-              <span className="text-4xl font-display text-white/50">{winner?.name === teams.teamA.name ? '1' : isTie ? '-' : '2'}</span>
+              <span className="text-4xl font-display text-white/50">
+                <span className="sr-only">{winner?.name === teams.teamA.name ? '1st Place' : isTie ? 'Tie' : '2nd Place'}</span>
+                <span aria-hidden="true">{winner?.name === teams.teamA.name ? '1' : isTie ? '-' : '2'}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -64,11 +70,17 @@ export const SummaryPodium: React.FC = () => {
         <div className="flex flex-col items-center justify-end w-1/3">
           <div className="text-center mb-4">
             <h2 className="text-2xl font-display text-arena-cobalt uppercase">{teams.teamB.name}</h2>
-            <span className="text-5xl font-display text-white">{teams.teamB.score}</span>
+            <span className="text-5xl font-display text-white">
+              <span className="sr-only">Score: </span>
+              {teams.teamB.score}
+            </span>
           </div>
           <div className={`w-full bg-arena-cobalt/80 rounded-t-lg border-2 border-arena-cobalt shadow-[0_0_20px_rgba(59,130,246,0.4)] ${winner?.name === teams.teamB.name ? 'h-48' : 'h-32'}`}>
             <div className="w-full h-full bg-gradient-to-b from-white/20 to-transparent rounded-t-lg flex justify-center pt-4">
-              <span className="text-4xl font-display text-white/50">{winner?.name === teams.teamB.name ? '1' : isTie ? '-' : '2'}</span>
+              <span className="text-4xl font-display text-white/50">
+                <span className="sr-only">{winner?.name === teams.teamB.name ? '1st Place' : isTie ? 'Tie' : '2nd Place'}</span>
+                <span aria-hidden="true">{winner?.name === teams.teamB.name ? '1' : isTie ? '-' : '2'}</span>
+              </span>
             </div>
           </div>
         </div>

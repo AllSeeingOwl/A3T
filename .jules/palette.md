@@ -21,3 +21,7 @@
 ## 2024-11-20 - Keyboard Navigation for Dialogs
 **Learning:** Custom React modals and side-drawers (like RedCardModal and RedCardGuide) that lack built-in `<dialog>` semantics often trap keyboard-only users if they don't support the `Escape` key to close.
 **Action:** Always implement a `keydown` listener for the `Escape` key to close custom overlays/dialogs, ensuring they match standard browser accessibility expectations.
+
+## 2024-07-06 - Summary Podiums Context
+**Learning:** Purely visual representations of rank (like a podium displaying '1' or '2' with different heights) and unlabelled score numbers lose all context when read by a screen reader.
+**Action:** Always provide `sr-only` labels for final scores and translate visual ranking placements (e.g., '1') into explicit contextual text (e.g., '1st Place') alongside an `aria-hidden` visual element.
