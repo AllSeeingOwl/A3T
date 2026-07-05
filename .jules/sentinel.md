@@ -19,3 +19,8 @@
 **Vulnerability:** The application's Content Security Policy lacked directives to restrict form submissions and upgrade insecure requests. Even in pure client-side SPAs, an injected form could exfiltrate data, and missing HTTPS enforcement risks data interception.
 **Learning:** Adding `form-action 'none'` prevents HTML forms from navigating away or submitting data, which is ideal for React SPAs that handle all submissions via JavaScript. `upgrade-insecure-requests` and `block-all-mixed-content` ensure that HTTPS is always enforced and mixed content is blocked by the browser.
 **Prevention:** Always include `form-action 'none'`, `upgrade-insecure-requests`, and `block-all-mixed-content` in the base Content Security Policy for Single Page Applications to provide robust defense in depth.
+
+## 2026-07-05 - [Dependency Management and Local Tooling Security]
+**Vulnerability:** Known CVEs in local development and build tooling (vite, vitest, esbuild) exposed via `pnpm audit`.
+**Learning:** While vulnerabilities in devDependencies often do not affect the shipped production bundle, they still expose local developer machines and CI/CD pipelines to potential exploits (like path traversals or local server data leaks).
+**Prevention:** Keep build and test tooling proactively updated, and regularly monitor `pnpm audit` even for non-production dependencies.
