@@ -87,7 +87,45 @@ const Pipeline = memo(({ activeCard, currentStepIndex, activeTeam }: PipelinePro
   );
 });
 
+
+// ⚡ Bolt Optimization: Extract and memoize the static Red Card footer controls.
+// This prevents these static 5 buttons from re-rendering every time the active team,
+// question step, or timer ticks, isolating state subscriptions to just what's needed.
+const RedCardFooter = memo(() => {
+  const { setActiveRedCard } = useGameStore(
+    useShallow((state) => ({
+      setActiveRedCard: state.setActiveRedCard,
+    }))
+  );
+
+  const handleRedCard = (type: 'CATEGORY_VIOLATIONS' | 'MEDIUM_VIOLATIONS' | 'CANON_VIOLATIONS' | 'GAMEPLAY_VIOLATIONS' | 'REFEREE_TOOLS') => {
+    setActiveRedCard(type);
+  };
+
+  return (
+    <section aria-label="Red Card Controls" className="bg-arena-navy border-t border-slate-700 p-4 fixed bottom-0 w-full flex flex-wrap justify-center gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-20">
+      <button aria-label="Issue Category Violation Red Card" onClick={() => handleRedCard('CATEGORY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        Category
+      </button>
+      <button aria-label="Issue Medium Violation Red Card" onClick={() => handleRedCard('MEDIUM_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        Medium
+      </button>
+      <button aria-label="Issue Canon Violation Red Card" onClick={() => handleRedCard('CANON_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        Canon
+      </button>
+      <button aria-label="Issue Gameplay Violation Red Card" onClick={() => handleRedCard('GAMEPLAY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        Gameplay
+      </button>
+      <button aria-label="Open Referee Tools" onClick={() => handleRedCard('REFEREE_TOOLS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-amber-500 text-amber-500 rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        Referee Tools
+      </button>
+    </section>
+  );
+});
+RedCardFooter.displayName = 'RedCardFooter';
+
 export const ArenaBoard: React.FC = () => {
+
   // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow to strictly subscribe
   // only to the requested fields. This prevents ArenaBoard from re-rendering
   // when other unused global state properties change.
@@ -103,7 +141,6 @@ export const ArenaBoard: React.FC = () => {
     nextStep,
     nextCard,
     setQuestionStage,
-    setActiveRedCard,
     setTimerSeconds,
     setTimerActive
   } = useGameStore(
@@ -119,7 +156,6 @@ export const ArenaBoard: React.FC = () => {
       nextStep: state.nextStep,
       nextCard: state.nextCard,
       setQuestionStage: state.setQuestionStage,
-      setActiveRedCard: state.setActiveRedCard,
       setTimerSeconds: state.setTimerSeconds,
       setTimerActive: state.setTimerActive,
     }))
@@ -149,12 +185,6 @@ export const ArenaBoard: React.FC = () => {
     setTimerSeconds(5);
     setTimerActive(true);
   };
-
-  const handleRedCard = (type: 'CATEGORY_VIOLATIONS' | 'MEDIUM_VIOLATIONS' | 'CANON_VIOLATIONS' | 'GAMEPLAY_VIOLATIONS' | 'REFEREE_TOOLS') => {
-    setActiveRedCard(type);
-  };
-
-
 
   return (
     <div className="flex flex-col min-h-screen bg-arena-slate font-sans relative w-full">
@@ -258,23 +288,7 @@ export const ArenaBoard: React.FC = () => {
       </div>
 
       {/* Footer - Red Cards */}
-      <section aria-label="Red Card Controls" className="bg-arena-navy border-t border-slate-700 p-4 fixed bottom-0 w-full flex flex-wrap justify-center gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-20">
-        <button aria-label="Issue Category Violation Red Card" onClick={() => handleRedCard('CATEGORY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-          Category
-        </button>
-        <button aria-label="Issue Medium Violation Red Card" onClick={() => handleRedCard('MEDIUM_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-          Medium
-        </button>
-        <button aria-label="Issue Canon Violation Red Card" onClick={() => handleRedCard('CANON_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-          Canon
-        </button>
-        <button aria-label="Issue Gameplay Violation Red Card" onClick={() => handleRedCard('GAMEPLAY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-          Gameplay
-        </button>
-        <button aria-label="Open Referee Tools" onClick={() => handleRedCard('REFEREE_TOOLS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-amber-500 text-amber-500 rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-          Referee Tools
-        </button>
-      </section>
+      <RedCardFooter />
 
     </div>
   );
