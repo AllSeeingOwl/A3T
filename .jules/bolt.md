@@ -31,3 +31,7 @@
 ## 2025-02-12 - Prevent StealTimer Interval Re-creation
 **Learning:** In React components that rely on a global Zustand store for fast-changing state like countdown timers (`timerSeconds`), including that state in a `useEffect` dependency array causes the `setInterval` to be destroyed and recreated every single tick (e.g., every 1000ms). This leads to timer drift and unnecessary React re-renders.
 **Action:** Move boundary logic (e.g., `if (newSeconds === 0) { ... }`) directly into the Zustand store's update action (`decrementTimer`). This allows the React component's `useEffect` to depend *only* on the active toggle (`timerActive`), allowing the interval to be created exactly once and run cleanly without interruption.
+
+## 2024-05-19 - Extracted and Memoized Red Card Footer
+**Learning:** In heavily interactive components like `ArenaBoard`, large static control sections (like the 5 Red Card buttons) can re-render unnecessarily on every turn change or timer tick, wasting cycles evaluating `useGameStore` selector results and diffing complex class strings.
+**Action:** Extract large static button banks into isolated components wrapped in `React.memo()`. Push their specific state subscriptions (e.g., `setActiveRedCard`) directly into the extracted component to prevent the parent from tracking unused state updates.
