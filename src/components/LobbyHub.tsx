@@ -1,16 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
-
-// ⚡ Bolt Optimization: Extract static dictionary outside the component function
-// so it is not re-created on every render cycle.
-const HTML_ENTITIES: Record<string, string> = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;'
-};
+import { sanitizeHTML } from '../utils/sanitize';
 
 export const LobbyHub: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the Lobby from re-rendering
@@ -33,15 +24,6 @@ export const LobbyHub: React.FC = () => {
   const handleStart = () => {
     const deck = defaultDecks.find((d) => d.deckId === selectedDeckId);
     if (deck) {
-      // 🛡️ Sentinel: Escape HTML characters to prevent XSS (Defense in Depth) without destroying valid text.
-      // Limits team names to prevent UI breaking and excessively large state
-      // ⚡ Bolt Optimization: Replaced chained .replace() calls with a single-pass RegExp and dictionary lookup
-      // for better string allocation performance during input sanitization.
-      const sanitizeHTML = (str: string): string => {
-        if (!str) return '';
-        return str.replace(/[&<>"']/g, match => HTML_ENTITIES[match]);
-      };
-
       const rawTeamA = teamARef.current?.value ?? 'Team A';
       const rawTeamB = teamBRef.current?.value ?? 'Team B';
       const sanitizedTeamA = sanitizeHTML(rawTeamA).trim().substring(0, 50) || 'Team 1';

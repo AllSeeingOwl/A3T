@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import { Question, Category, QuestionStep } from '../types/game';
+import { sanitizeHTML } from './sanitize';
 
 // Define the expected CSV row structure
 interface CSVRow {
@@ -18,22 +19,6 @@ interface CSVRow {
   'Safety Checks Passed': string;
   'Sub-Theme': string;
 }
-
-// 🛡️ Sentinel: Escape HTML characters to prevent XSS attacks (Defense in Depth) without destroying valid math/code text.
-// ⚡ Bolt Optimization: Replaced chained .replace() calls with a single-pass RegExp and dictionary lookup.
-// This reduces intermediate string allocations and improves CSV parsing speed by ~15-20% when processing thousands of rows.
-const HTML_ENTITIES: Record<string, string> = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;'
-};
-
-const sanitizeHTML = (str: string): string => {
-  if (!str) return '';
-  return str.replace(/[&<>"']/g, match => HTML_ENTITIES[match]);
-};
 
 // ⚡ Bolt Optimization: Added memoization caches for low-cardinality fields.
 // This prevents redundant string manipulations and array checks on thousands of rows,
