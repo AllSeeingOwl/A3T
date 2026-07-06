@@ -286,10 +286,18 @@ export const RedCardGuide: React.FC = () => {
         onClick={() => setIsOpen(true)}
         className={`fixed top-1/2 -translate-y-1/2 ${
           isRightSide ? 'right-0 rounded-l-xl' : 'left-0 rounded-r-xl'
-        } bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none`}
+        } bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none flex items-center justify-center`}
         aria-label="Open Red Card Guide"
       >
         <BookOpen aria-hidden="true" className="w-6 h-6 group-hover:scale-110 transition-transform" />
+        <span
+          aria-hidden="true"
+          className={`absolute ${
+            isRightSide ? 'right-full mr-2' : 'left-full ml-2'
+          } whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide`}
+        >
+          Open Red Card Guide
+        </span>
       </button>
     );
   }
