@@ -24,3 +24,7 @@
 **Vulnerability:** Known CVEs in local development and build tooling (vite, vitest, esbuild) exposed via `pnpm audit`.
 **Learning:** While vulnerabilities in devDependencies often do not affect the shipped production bundle, they still expose local developer machines and CI/CD pipelines to potential exploits (like path traversals or local server data leaks).
 **Prevention:** Keep build and test tooling proactively updated, and regularly monitor `pnpm audit` even for non-production dependencies.
+## 2026-07-06 - [Centralized Enhanced HTML Sanitization]
+**Vulnerability:** Duplicated and basic HTML sanitization functions (`sanitizeHTML`) existed across multiple files, only escaping standard HTML entities (`&`, `<`, `>`, `"`, `'`). This approach lacked protection against advanced XSS vectors like attribute injection and template literal execution.
+**Learning:** Duplicating critical security functions, such as HTML sanitization, across the codebase makes maintaining consistent and robust security policies difficult. Furthermore, a baseline escaping mechanism is often insufficient against modern injection payloads utilizing characters like `/`, `=`, and `` ` ``.
+**Prevention:** Centralize security-critical utilities into dedicated files (e.g., `src/utils/sanitize.ts`). Ensure HTML entity escaping covers a broader range of potentially dangerous characters to provide stronger defense-in-depth against XSS.
