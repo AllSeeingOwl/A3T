@@ -35,3 +35,6 @@
 ## 2024-05-19 - Extracted and Memoized Red Card Footer
 **Learning:** In heavily interactive components like `ArenaBoard`, large static control sections (like the 5 Red Card buttons) can re-render unnecessarily on every turn change or timer tick, wasting cycles evaluating `useGameStore` selector results and diffing complex class strings.
 **Action:** Extract large static button banks into isolated components wrapped in `React.memo()`. Push their specific state subscriptions (e.g., `setActiveRedCard`) directly into the extracted component to prevent the parent from tracking unused state updates.
+## 2026-07-07 - [Cache Sanitization for Low-Cardinality Fields]
+**Learning:** During large CSV parsing loops, applying regular expression replacements (like `sanitizeHTML`) to every row individually causes significant redundant allocations for fields that only contain a few unique values across the entire dataset (e.g., Difficulty, Category, Deck Theme).
+**Action:** When parsing large datasets, use a local `Map` to memoize expensive string operations (like regex sanitization) on low-cardinality fields. This reduces allocations from O(n) per row to O(1) cache lookups after the initial unique values are processed.
