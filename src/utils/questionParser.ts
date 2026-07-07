@@ -123,15 +123,27 @@ export const parseDatabaseCSV = (csvData: string): DatabaseQuestion[] => {
 
   const dbQuestions: DatabaseQuestion[] = [];
 
+  // ⚡ Bolt Optimization: Cache sanitized strings for low-cardinality fields.
+  // This prevents allocating and executing Regex replacements thousands of times
+  // for fields that only have a handful of unique values across the entire dataset.
+  const sanitizeCache = new Map<string, string>();
+  const memoSanitize = (val: string) => {
+    let res = sanitizeCache.get(val);
+    if (res !== undefined) return res;
+    res = sanitizeHTML(val);
+    sanitizeCache.set(val, res);
+    return res;
+  };
+
   result.data.forEach((row) => {
     if (!row['Question'] || !row['Answer'] || !row['Category / Domain']) return;
 
     const rawDifficulty = row['Difficulty'] || 'Casual (Level 1)';
     const deckTheme = row['Deck / Theme'] || 'General';
 
-    const safeRawDifficulty = sanitizeHTML(rawDifficulty);
-    const safeDeckTheme = sanitizeHTML(deckTheme);
-    const safeRawDomain = sanitizeHTML(row['Category / Domain']);
+    const safeRawDifficulty = memoSanitize(rawDifficulty);
+    const safeDeckTheme = memoSanitize(deckTheme);
+    const safeRawDomain = memoSanitize(row['Category / Domain']);
 
     dbQuestions.push({
       step: mapSequenceToStep(row['Sequence / Q#'] || ''),
