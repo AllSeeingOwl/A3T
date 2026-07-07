@@ -319,20 +319,30 @@ export const RedCardGuide: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsRightSide(!isRightSide)}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
-            title="Swap Side"
+            className="group relative p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
             aria-label={`Move guide to ${isRightSide ? 'left' : 'right'} side`}
           >
             <ArrowLeftRight aria-hidden="true" className="w-5 h-5" />
+            <span
+              aria-hidden="true"
+              className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50"
+            >
+              Swap Side
+            </span>
           </button>
           <button
             autoFocus
             onClick={() => setIsOpen(false)}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
-            title="Close Guide (Esc)"
+            className="group relative p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
             aria-label="Close Red Card Guide"
           >
             <X aria-hidden="true" className="w-5 h-5" />
+            <span
+              aria-hidden="true"
+              className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50"
+            >
+              Close Guide (Esc)
+            </span>
           </button>
         </div>
       </div>

@@ -25,3 +25,6 @@
 ## 2024-07-06 - Summary Podiums Context
 **Learning:** Purely visual representations of rank (like a podium displaying '1' or '2' with different heights) and unlabelled score numbers lose all context when read by a screen reader.
 **Action:** Always provide `sr-only` labels for final scores and translate visual ranking placements (e.g., '1') into explicit contextual text (e.g., '1st Place') alongside an `aria-hidden` visual element.
+## 2024-07-07 - CSS-only Tooltips for Icon Buttons
+**Learning:** Using native HTML `title` attributes on icon buttons with existing `aria-label`s provides poor UX due to delayed native tooltips and potential screen reader redundancy.
+**Action:** Always implement custom CSS-based tooltips (e.g., via Tailwind `group-hover`) accompanied by `aria-hidden="true"` inside the tooltip element. This ensures instant visual feedback for sighted users while preserving the primary `aria-label` for screen reader accessibility.
