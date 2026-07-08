@@ -71,8 +71,9 @@ async function syncQuestions() {
     fs.writeFileSync(OUTPUT_FILE, csvContent, 'utf-8');
     console.log('🎉 Update complete! data/questions.csv has been synchronized.');
 
-  } catch (error) {
-    console.error('❌ Failed to fetch or save questions:', error);
+  } catch {
+    // 🛡️ Sentinel: Prevent leaking stack traces or sensitive API error details in CI/CD logs
+    console.error('❌ Failed to fetch or save questions. Please check API connectivity and permissions.');
     process.exit(1);
   }
 }

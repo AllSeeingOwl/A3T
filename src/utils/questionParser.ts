@@ -77,7 +77,8 @@ export const parseQuestionsCSV = (csvData: string): Question[] => {
   });
 
   if (result.errors.length > 0) {
-    console.error('Errors parsing CSV:', result.errors);
+    // 🛡️ Sentinel: Prevent leaking raw CSV data or internal parser errors
+    console.error(`Encountered ${result.errors.length} error(s) parsing questions CSV.`);
   }
 
   const validQuestions: Question[] = [];
@@ -98,8 +99,9 @@ export const parseQuestionsCSV = (csvData: string): Question[] => {
         points: getPointsForDifficulty(row['Difficulty'] || ''),
       };
       validQuestions.push(q);
-    } catch (e) {
-      console.warn(`Failed to parse row ${index}:`, row, e);
+    } catch {
+      // 🛡️ Sentinel: Prevent leaking row data or internal error traces
+      console.warn(`Failed to parse question at row ${index + 1}.`);
     }
   });
 
