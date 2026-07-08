@@ -28,3 +28,6 @@
 ## 2024-07-07 - CSS-only Tooltips for Icon Buttons
 **Learning:** Using native HTML `title` attributes on icon buttons with existing `aria-label`s provides poor UX due to delayed native tooltips and potential screen reader redundancy.
 **Action:** Always implement custom CSS-based tooltips (e.g., via Tailwind `group-hover`) accompanied by `aria-hidden="true"` inside the tooltip element. This ensures instant visual feedback for sighted users while preserving the primary `aria-label` for screen reader accessibility.
+## 2024-07-08 - Accessible Tooltips for Disabled Buttons
+**Learning:** Adding custom CSS tooltips (using Tailwind `group-hover` and `group-focus-within`) to disabled buttons requires linking the tooltip to the button via `aria-describedby` so screen readers narrate the reason for the disabled state, improving accessibility over native `title` attributes. Additionally, ensuring the tooltip container itself is centered (`left-1/2 -translate-x-1/2`) is crucial when using centered pointer arrows.
+**Action:** Always use `aria-describedby` to link disabled buttons with their custom CSS tooltips, and verify centering classes are applied to the tooltip container, not just its pointer arrow.
