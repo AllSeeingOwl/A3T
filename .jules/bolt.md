@@ -38,3 +38,6 @@
 ## 2026-07-07 - [Cache Sanitization for Low-Cardinality Fields]
 **Learning:** During large CSV parsing loops, applying regular expression replacements (like `sanitizeHTML`) to every row individually causes significant redundant allocations for fields that only contain a few unique values across the entire dataset (e.g., Difficulty, Category, Deck Theme).
 **Action:** When parsing large datasets, use a local `Map` to memoize expensive string operations (like regex sanitization) on low-cardinality fields. This reduces allocations from O(n) per row to O(1) cache lookups after the initial unique values are processed.
+## 2026-07-08 - Prevent Unnecessary Top-Level Re-Renders
+**Learning:** Checking state conditions unconditionally like `{activeRedCard && <RedCardModal />}` inside the main `App.tsx` component forces the entire app and all of its heavy children components (like `ArenaBoard`) to re-render when that condition changes, even if the condition could just as easily be evaluated locally inside the child component.
+**Action:** Extract conditionally rendered components so that their visibility conditions are checked internally by the component itself (e.g. by returning `null` locally). In `App.tsx`, removing the explicit condition and leaving the subscription in the component avoids triggering parent re-renders.

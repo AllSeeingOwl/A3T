@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from 'react';
 import { useGameStore } from './hooks/useGameStore';
-import { useShallow } from 'zustand/react/shallow';
 import { RedCardModal } from './components/RedCardModal';
 import { RedCardGuide } from './components/RedCardGuide';
 
@@ -12,14 +11,10 @@ const ArenaBoard = lazy(() => import('./components/ArenaBoard').then(m => ({ def
 const SummaryPodium = lazy(() => import('./components/SummaryPodium').then(m => ({ default: m.SummaryPodium })));
 
 export const App: React.FC = () => {
-  // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow to prevent unnecessary re-renders
-  // when unrelated state changes (like the active timer counting down).
-  const { currentScreen, activeRedCard } = useGameStore(
-    useShallow((state) => ({
-      currentScreen: state.currentScreen,
-      activeRedCard: state.activeRedCard,
-    }))
-  );
+  // ⚡ Bolt Optimization: Subscribe only to currentScreen.
+  // By delegating activeRedCard to the RedCardModal itself, we prevent the entire App
+  // (and thus the heavy ArenaBoard) from re-rendering when a Red Card is issued or cleared.
+  const currentScreen = useGameStore((state) => state.currentScreen);
 
   return (
     <div className="w-full min-h-screen">
@@ -30,7 +25,7 @@ export const App: React.FC = () => {
       </Suspense>
 
       {/* Kept RedCardModal eager to avoid replacing the entire screen with a loading state when triggered */}
-      {activeRedCard && <RedCardModal />}
+      <RedCardModal />
 
       {/* Global Red Card Guide Panel */}
       <RedCardGuide />
