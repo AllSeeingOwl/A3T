@@ -32,3 +32,7 @@
 **Vulnerability:** The application was vulnerable to Clickjacking because it could be framed by malicious third-party sites.
 **Learning:** Due to GitHub Pages hosting limitations, server-side HTTP security headers like `X-Frame-Options` or CSP `frame-ancestors` cannot be enforced. Clickjacking protection must therefore rely on a client-side frame-busting script.
 **Prevention:** Implement a resilient frame-busting script (`if (window.self !== window.top) ...`) at the application's entry point (`src/main.tsx`), ensuring a "fail secure" fallback (e.g., catching exceptions from sandboxed iframes) to prevent the application from rendering if it is embedded without authorization.
+## 2026-07-08 - [Information Leakage in Error Logs]
+**Vulnerability:** Detailed error logging during API requests and CSV parsing exposed stack traces, potentially sensitive Google Sheets API error responses, and raw data rows to CI/CD logs and browser consoles.
+**Learning:** While detailed logging is useful for local debugging, leaving `console.error(error)` and `console.warn(row, e)` in production or CI-facing scripts violates the principle of failing securely. It can inadvertently expose internal architecture, dependency versions, or raw sensitive data.
+**Prevention:** Implement "fail secure" error handling. Catch exceptions and log generic, safe error messages indicating the failure without dumping raw error objects, stack traces, or original data inputs into the console.
