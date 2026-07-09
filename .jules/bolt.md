@@ -41,3 +41,6 @@
 ## 2026-07-08 - Prevent Unnecessary Top-Level Re-Renders
 **Learning:** Checking state conditions unconditionally like `{activeRedCard && <RedCardModal />}` inside the main `App.tsx` component forces the entire app and all of its heavy children components (like `ArenaBoard`) to re-render when that condition changes, even if the condition could just as easily be evaluated locally inside the child component.
 **Action:** Extract conditionally rendered components so that their visibility conditions are checked internally by the component itself (e.g. by returning `null` locally). In `App.tsx`, removing the explicit condition and leaving the subscription in the component avoids triggering parent re-renders.
+## 2024-07-30 - O(1) Indexed Lookups for Database Filtering
+**Learning:** During queries to the question database, repeatedly iterating through the entire loaded array with O(N) operations like `array.filter` introduces unnecessary performance overhead as the dataset grows (e.g., getting questions by deck or domain).
+**Action:** Move expensive data preparation tasks to the initial data ingestion/parsing phase by creating `Map` indices (e.g., `domainIndex`, `deckIndex`). This transforms runtime queries like `getQuestionsByDomain` from O(N) filters into O(1) direct Map lookups.
