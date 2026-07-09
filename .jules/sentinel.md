@@ -36,3 +36,7 @@
 **Vulnerability:** Detailed error logging during API requests and CSV parsing exposed stack traces, potentially sensitive Google Sheets API error responses, and raw data rows to CI/CD logs and browser consoles.
 **Learning:** While detailed logging is useful for local debugging, leaving `console.error(error)` and `console.warn(row, e)` in production or CI-facing scripts violates the principle of failing securely. It can inadvertently expose internal architecture, dependency versions, or raw sensitive data.
 **Prevention:** Implement "fail secure" error handling. Catch exceptions and log generic, safe error messages indicating the failure without dumping raw error objects, stack traces, or original data inputs into the console.
+## 2025-02-28 - [Local Dev MIME Sniffing Prevention]
+**Vulnerability:** Missing `X-Content-Type-Options: nosniff` header in Vite's local dev/preview servers could lead to MIME-sniffing vulnerabilities, where browsers incorrectly execute non-script files (like images or stylesheets) as scripts.
+**Learning:** While meta tags handle CSP and referrers in SPAs, `X-Content-Type-Options` cannot be set via meta tags. It must be sent as an HTTP response header, which means configuring it explicitly in `vite.config.ts` for local tooling, even if production servers handle it differently.
+**Prevention:** Always configure `server.headers` and `preview.headers` in Vite to include `X-Content-Type-Options: nosniff` to mirror production security standards and protect local dev environments.
