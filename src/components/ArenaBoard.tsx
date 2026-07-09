@@ -178,12 +178,29 @@ export const ArenaBoard: React.FC = () => {
     }
   };
 
-  const handleMissed = () => {
-    // Initiate steal window
-    setQuestionStage('STEAL_WINDOW');
-    switchTurn();
-    setTimerSeconds(5);
-    setTimerActive(true);
+  const handleMissedOrNext = () => {
+    if (questionStage === 'REVEALED_ANSWER') {
+      if (currentStepIndex === 2) {
+        nextCard();
+      } else {
+        nextStep();
+      }
+    } else if (questionStage === 'STEAL_WINDOW') {
+      setTimerSeconds(0);
+      setTimerActive(false);
+      setQuestionStage('REVEALED_ANSWER');
+    } else {
+      setQuestionStage('STEAL_WINDOW');
+      switchTurn();
+      setTimerSeconds(5);
+      setTimerActive(true);
+    }
+  };
+
+  const getSecondaryButtonText = () => {
+    if (questionStage === 'REVEALED_ANSWER') return currentStepIndex === 2 ? 'Next Chain' : 'Next Question';
+    if (questionStage === 'STEAL_WINDOW') return 'Steal Failed';
+    return 'Missed / Steal';
   };
 
   return (
@@ -272,17 +289,27 @@ export const ArenaBoard: React.FC = () => {
 
         {/* Host Controls */}
         <div className="flex gap-6 mt-4 mb-20">
+          <div className="relative group flex">
+            <button
+              onClick={questionStage === 'REVEALED_ANSWER' ? undefined : handleCorrect}
+              aria-disabled={questionStage === 'REVEALED_ANSWER'}
+              aria-describedby={questionStage === 'REVEALED_ANSWER' ? "correct-disabled-tooltip" : undefined}
+              className={`px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate ${questionStage === 'REVEALED_ANSWER' ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}`}
+            >
+              Correct (+{activeQuestion.points})
+            </button>
+            {questionStage === 'REVEALED_ANSWER' && (
+              <div id="correct-disabled-tooltip" role="tooltip" aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-10">
+                Answer revealed. Proceed to next.
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+              </div>
+            )}
+          </div>
           <button
-            onClick={handleCorrect}
-            className="px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
+            onClick={handleMissedOrNext}
+            className={`px-10 py-4 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate ${questionStage === 'REVEALED_ANSWER' ? 'bg-arena-cobalt hover:bg-blue-500' : 'bg-slate-600 hover:bg-slate-500'}`}
           >
-            Correct (+{activeQuestion.points})
-          </button>
-          <button
-            onClick={handleMissed}
-            className="px-10 py-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
-          >
-            Missed / Steal
+            {getSecondaryButtonText()}
           </button>
         </div>
       </div>
