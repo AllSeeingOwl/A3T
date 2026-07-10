@@ -165,6 +165,8 @@ export const ArenaBoard: React.FC = () => {
     }))
   );
 
+  const [showEasyModal, setShowEasyModal] = React.useState(false);
+
   const activeCard = selectedDeck?.cards[currentCardIndex];
   const activeQuestion = activeCard?.questions[currentStepIndex];
 
@@ -226,8 +228,6 @@ export const ArenaBoard: React.FC = () => {
     if (questionStage === 'STEAL_WINDOW') return 'Steal Failed';
     return 'Missed / Steal';
   };
-
-  const [showEasyModal, setShowEasyModal] = React.useState(false);
 
   const handleEasyTrigger = () => {
     if ('speechSynthesis' in window) {
