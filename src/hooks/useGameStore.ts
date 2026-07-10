@@ -15,6 +15,7 @@ interface GameActions {
   decrementTimer: () => void;
   setQuestionStage: (stage: GameState['questionStage']) => void;
   setActiveRedCard: (card: GameState['activeRedCard']) => void;
+  setEasyModeTeam: (team: GameState['easyModeTeam']) => void;
   nextStep: () => void;
   nextCard: () => void;
   resetGame: () => void;
@@ -36,6 +37,7 @@ const initialState: GameState = {
   timerSeconds: 0,
   timerActive: false,
   activeRedCard: null,
+  easyModeTeam: null,
 };
 
 export const useGameStore = create<GameStore>((set) => ({
@@ -56,6 +58,7 @@ export const useGameStore = create<GameStore>((set) => ({
       timerSeconds: 0,
       timerActive: false,
       activeRedCard: null,
+      easyModeTeam: null,
       activeTeam: 'teamA',
     }),
 
@@ -98,6 +101,8 @@ export const useGameStore = create<GameStore>((set) => ({
 
   setActiveRedCard: (card) => set({ activeRedCard: card }),
 
+  setEasyModeTeam: (team) => set({ easyModeTeam: team }),
+
   nextStep: () =>
     set((state) => {
       const nextStepIndex = (state.currentStepIndex + 1) as QuestionStep;
@@ -105,9 +110,10 @@ export const useGameStore = create<GameStore>((set) => ({
         return {
           currentStepIndex: nextStepIndex,
           questionStage: 'HIDDEN',
+          easyModeTeam: null,
         };
       }
-      return {};
+      return { easyModeTeam: null };
     }),
 
   nextCard: () =>
@@ -117,9 +123,10 @@ export const useGameStore = create<GameStore>((set) => ({
           currentCardIndex: state.currentCardIndex + 1,
           currentStepIndex: 0,
           questionStage: 'HIDDEN',
+          easyModeTeam: null,
         };
       }
-      return {};
+      return { easyModeTeam: null };
     }),
 
   resetGame: () => set(initialState),
