@@ -44,3 +44,6 @@
 ## 2024-07-30 - O(1) Indexed Lookups for Database Filtering
 **Learning:** During queries to the question database, repeatedly iterating through the entire loaded array with O(N) operations like `array.filter` introduces unnecessary performance overhead as the dataset grows (e.g., getting questions by deck or domain).
 **Action:** Move expensive data preparation tasks to the initial data ingestion/parsing phase by creating `Map` indices (e.g., `domainIndex`, `deckIndex`). This transforms runtime queries like `getQuestionsByDomain` from O(N) filters into O(1) direct Map lookups.
+## 2024-07-31 - O(1) Indexed Lookups for Difficulty Filtering
+**Learning:** Even though the dataset can be large (thousands of rows), fields like `difficulty` often have very low cardinality (e.g., 4 or 5 distinct values). Repeatedly calling `array.filter` over the entire dataset of questions based on difficulty incurs an O(N) penalty.
+**Action:** Extend the O(1) indexing strategy used for domains and decks by creating a `difficultyIndex` (Map) during initial data ingestion. When querying by difficulty, iterating over the Map's handful of keys and concatenating matching arrays reduces the query time to effectively O(1).

@@ -9,6 +9,7 @@ interface QuestionDatabaseState {
   // ⚡ Bolt Optimization: Add O(1) indices for fast lookups
   domainIndex: Map<string, DatabaseQuestion[]>;
   deckIndex: Map<string, DatabaseQuestion[]>;
+  difficultyIndex: Map<string, DatabaseQuestion[]>;
 
   // Actions
   loadQuestions: (csvData: string) => void;
@@ -23,6 +24,7 @@ export const useQuestionDatabase = create<QuestionDatabaseState>((set, get) => (
   isLoaded: false,
   domainIndex: new Map(),
   deckIndex: new Map(),
+  difficultyIndex: new Map(),
 
   loadQuestions: (csvData: string) => {
     const parsed = parseDatabaseCSV(csvData);
@@ -31,6 +33,7 @@ export const useQuestionDatabase = create<QuestionDatabaseState>((set, get) => (
     // This reduces O(n) filter operations to O(1) lookups.
     const domainIndex = new Map<string, DatabaseQuestion[]>();
     const deckIndex = new Map<string, DatabaseQuestion[]>();
+    const difficultyIndex = new Map<string, DatabaseQuestion[]>();
 
     for (const q of parsed) {
       if (!domainIndex.has(q.category)) domainIndex.set(q.category, []);
@@ -38,19 +41,27 @@ export const useQuestionDatabase = create<QuestionDatabaseState>((set, get) => (
 
       if (!deckIndex.has(q.normalizedDeckTheme)) deckIndex.set(q.normalizedDeckTheme, []);
       deckIndex.get(q.normalizedDeckTheme)!.push(q);
+
+      if (!difficultyIndex.has(q.normalizedDifficulty)) difficultyIndex.set(q.normalizedDifficulty, []);
+      difficultyIndex.get(q.normalizedDifficulty)!.push(q);
     }
 
-    set({ questions: parsed, domainIndex, deckIndex, isLoaded: true });
+    set({ questions: parsed, domainIndex, deckIndex, difficultyIndex, isLoaded: true });
   },
 
   getQuestionsByDifficulty: (difficulty: string) => {
     const state = get();
-    // ⚡ Bolt Optimization: Hoist .toLowerCase() out of the filter callback and use pre-computed normalized strings
-    // to avoid recalculating the lowercased strings for every question in the database during each filter pass.
+    // ⚡ Bolt Optimization: Use difficultyIndex to avoid O(N) array filter operations over thousands of rows.
+    // We iterate over the small number of unique normalized difficulties instead of the whole dataset.
     const targetDifficulty = difficulty.toLowerCase();
-    return state.questions.filter(q =>
-      q.normalizedDifficulty.includes(targetDifficulty)
-    );
+    const result: DatabaseQuestion[] = [];
+
+    for (const [key, questions] of state.difficultyIndex.entries()) {
+      if (key.includes(targetDifficulty)) {
+        result.push(...questions);
+      }
+    }
+    return result;
   },
 
   getQuestionsByDomain: (domain: Category) => {
