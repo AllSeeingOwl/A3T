@@ -31,3 +31,7 @@
 ## 2024-07-08 - Accessible Tooltips for Disabled Buttons
 **Learning:** Adding custom CSS tooltips (using Tailwind `group-hover` and `group-focus-within`) to disabled buttons requires linking the tooltip to the button via `aria-describedby` so screen readers narrate the reason for the disabled state, improving accessibility over native `title` attributes. Additionally, ensuring the tooltip container itself is centered (`left-1/2 -translate-x-1/2`) is crucial when using centered pointer arrows.
 **Action:** Always use `aria-describedby` to link disabled buttons with their custom CSS tooltips, and verify centering classes are applied to the tooltip container, not just its pointer arrow.
+
+## 2024-11-21 - Accessible Selection States
+**Learning:** Using color (like \`border-arena-gold\`) and minor CSS transformations (like \`scale-105\`) as the *only* visual indicators for a selected state violates WCAG 1.4.1 (Use of Color), leaving users with color vision deficiencies struggling to identify active selections.
+**Action:** Always complement color-based state changes with an explicit, semantic visual indicator (like a checkmark icon or explicit text) to guarantee the state is perceivable to all users.
