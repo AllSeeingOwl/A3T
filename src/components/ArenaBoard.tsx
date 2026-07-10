@@ -142,7 +142,9 @@ export const ArenaBoard: React.FC = () => {
     nextCard,
     setQuestionStage,
     setTimerSeconds,
-    setTimerActive
+    setTimerActive,
+    easyModeTeam,
+    setEasyModeTeam,
   } = useGameStore(
     useShallow((state) => ({
       teams: state.teams,
@@ -158,6 +160,8 @@ export const ArenaBoard: React.FC = () => {
       setQuestionStage: state.setQuestionStage,
       setTimerSeconds: state.setTimerSeconds,
       setTimerActive: state.setTimerActive,
+      easyModeTeam: state.easyModeTeam,
+      setEasyModeTeam: state.setEasyModeTeam,
     }))
   );
 
@@ -197,10 +201,40 @@ export const ArenaBoard: React.FC = () => {
     }
   };
 
+  const handleEasyCorrect = () => {
+    // Correct in easy mode means they get 0 points, then we move on.
+    if (currentStepIndex === 2) {
+      nextCard();
+    } else {
+      nextStep();
+    }
+  };
+
+  const handleEasyIncorrect = () => {
+    // Incorrect in easy mode means the *other* team gets full points, then we move on.
+    const otherTeam = easyModeTeam === 'teamA' ? 'teamB' : 'teamA';
+    addScore(otherTeam, activeQuestion.points);
+    if (currentStepIndex === 2) {
+      nextCard();
+    } else {
+      nextStep();
+    }
+  };
+
   const getSecondaryButtonText = () => {
     if (questionStage === 'REVEALED_ANSWER') return currentStepIndex === 2 ? 'Next Chain' : 'Next Question';
     if (questionStage === 'STEAL_WINDOW') return 'Steal Failed';
     return 'Missed / Steal';
+  };
+
+  const [showEasyModal, setShowEasyModal] = React.useState(false);
+
+  const handleEasyTrigger = () => {
+    if ('speechSynthesis' in window) {
+      const msg = new SpeechSynthesisUtterance("Who said that?");
+      window.speechSynthesis.speak(msg);
+    }
+    setShowEasyModal(true);
   };
 
   return (
@@ -248,6 +282,35 @@ export const ArenaBoard: React.FC = () => {
 
         <Pipeline activeCard={activeCard} currentStepIndex={currentStepIndex} activeTeam={activeTeam} />
 
+        {/* Easy Mode Modal */}
+        {showEasyModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="bg-arena-navy p-8 rounded-2xl border-2 border-arena-magenta shadow-[0_0_30px_rgba(236,72,153,0.5)] max-w-md w-full text-center">
+              <h2 className="text-3xl font-display text-white uppercase mb-6">Who Said Easy?</h2>
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => { setEasyModeTeam('teamA'); setShowEasyModal(false); }}
+                  className="px-6 py-4 bg-arena-magenta/20 hover:bg-arena-magenta text-white border border-arena-magenta rounded font-display text-xl uppercase transition-colors"
+                >
+                  {teams.teamA.name}
+                </button>
+                <button
+                  onClick={() => { setEasyModeTeam('teamB'); setShowEasyModal(false); }}
+                  className="px-6 py-4 bg-arena-cobalt/20 hover:bg-arena-cobalt text-white border border-arena-cobalt rounded font-display text-xl uppercase transition-colors"
+                >
+                  {teams.teamB.name}
+                </button>
+              </div>
+              <button
+                onClick={() => setShowEasyModal(false)}
+                className="mt-8 text-slate-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Question Card */}
         <div className="w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border border-slate-600 shadow-2xl relative mb-8">
 
@@ -288,29 +351,57 @@ export const ArenaBoard: React.FC = () => {
         </div>
 
         {/* Host Controls */}
-        <div className="flex gap-6 mt-4 mb-20">
-          <div className="relative group flex">
-            <button
-              onClick={questionStage === 'REVEALED_ANSWER' ? undefined : handleCorrect}
-              aria-disabled={questionStage === 'REVEALED_ANSWER'}
-              aria-describedby={questionStage === 'REVEALED_ANSWER' ? "correct-disabled-tooltip" : undefined}
-              className={`px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate ${questionStage === 'REVEALED_ANSWER' ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}`}
-            >
-              Correct (+{activeQuestion.points})
-            </button>
-            {questionStage === 'REVEALED_ANSWER' && (
-              <div id="correct-disabled-tooltip" role="tooltip" aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-10">
-                Answer revealed. Proceed to next.
-                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+        <div className="flex flex-col items-center gap-4 mt-4 mb-20">
+          {!easyModeTeam ? (
+            <div className="flex gap-6">
+              <div className="relative group flex">
+                <button
+                onClick={questionStage === 'REVEALED_ANSWER' ? undefined : handleCorrect}
+                aria-disabled={questionStage === 'REVEALED_ANSWER'}
+                aria-describedby={questionStage === 'REVEALED_ANSWER' ? "correct-disabled-tooltip" : undefined}
+                className={`px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate ${questionStage === 'REVEALED_ANSWER' ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}`}
+              >
+                Correct (+{activeQuestion.points})
+              </button>
+              {questionStage === 'REVEALED_ANSWER' && (
+                <div id="correct-disabled-tooltip" role="tooltip" aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-10">
+                  Answer revealed. Proceed to next.
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                </div>
+              )}
               </div>
-            )}
+              <button
+              onClick={handleMissedOrNext}
+              className={`px-10 py-4 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate ${questionStage === 'REVEALED_ANSWER' ? 'bg-arena-cobalt hover:bg-blue-500' : 'bg-slate-600 hover:bg-slate-500'}`}
+            >
+                {getSecondaryButtonText()}
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-6">
+              <button
+                onClick={handleEasyCorrect}
+                className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate bg-emerald-600 hover:bg-emerald-500 text-white"
+              >
+                {teams[easyModeTeam].name} Correct (0 pts)
+              </button>
+              <button
+                onClick={handleEasyIncorrect}
+                className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate bg-arena-crimson hover:bg-red-500 text-white"
+              >
+                {teams[easyModeTeam].name} Incorrect (+{activeQuestion.points} to {teams[easyModeTeam === 'teamA' ? 'teamB' : 'teamA'].name})
+              </button>
           </div>
-          <button
-            onClick={handleMissedOrNext}
-            className={`px-10 py-4 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate ${questionStage === 'REVEALED_ANSWER' ? 'bg-arena-cobalt hover:bg-blue-500' : 'bg-slate-600 hover:bg-slate-500'}`}
-          >
-            {getSecondaryButtonText()}
-          </button>
+          )}
+
+          {(questionStage === 'HIDDEN' || questionStage === 'STEAL_WINDOW') && !easyModeTeam && (
+            <button
+              onClick={handleEasyTrigger}
+              className="mt-4 px-8 py-3 bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500 text-amber-500 rounded-lg font-display uppercase tracking-wider transition-all focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none"
+            >
+              Someone Said "Easy", Press This
+            </button>
+          )}
         </div>
       </div>
 

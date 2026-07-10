@@ -55,4 +55,5 @@ export interface GameState {
   timerSeconds: number;
   timerActive: boolean;
   activeRedCard: 'CATEGORY_VIOLATIONS' | 'MEDIUM_VIOLATIONS' | 'CANON_VIOLATIONS' | 'GAMEPLAY_VIOLATIONS' | 'REFEREE_TOOLS' | null;
+  easyModeTeam: 'teamA' | 'teamB' | null;
 }
