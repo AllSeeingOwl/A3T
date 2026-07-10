@@ -13,7 +13,7 @@ if (window.self !== window.top && window.top) {
   } catch {
     // If we're blocked from accessing top (e.g. cross-origin),
     // we can fallback to replacing the document body or hiding it.
-    document.body.innerHTML = 'This application cannot be embedded in a frame.';
+    document.body.textContent = 'This application cannot be embedded in a frame.';
   }
 }
 

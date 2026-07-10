@@ -40,3 +40,7 @@
 **Vulnerability:** Missing `X-Content-Type-Options: nosniff` header in Vite's local dev/preview servers could lead to MIME-sniffing vulnerabilities, where browsers incorrectly execute non-script files (like images or stylesheets) as scripts.
 **Learning:** While meta tags handle CSP and referrers in SPAs, `X-Content-Type-Options` cannot be set via meta tags. It must be sent as an HTTP response header, which means configuring it explicitly in `vite.config.ts` for local tooling, even if production servers handle it differently.
 **Prevention:** Always configure `server.headers` and `preview.headers` in Vite to include `X-Content-Type-Options: nosniff` to mirror production security standards and protect local dev environments.
+## 2026-07-09 - [Defense in Depth: Removing innerHTML Sinks]
+**Vulnerability:** Use of `innerHTML` in the client-side frame-busting script (`src/main.tsx`).
+**Learning:** Even when the assigned string is static and seemingly harmless, `innerHTML` acts as a dangerous sink and is frequently flagged by security scanners as a potential DOM-based XSS vector. Replacing it with `textContent` removes the sink entirely, adhering to the principle of defense in depth. This ensures that future modifications (like adding dynamic data or localization) won't inadvertently introduce an XSS vulnerability.
+**Prevention:** Avoid using `innerHTML` whenever possible, especially for static text or text that shouldn't contain HTML tags. Use `textContent` instead.
