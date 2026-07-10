@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { sanitizeHTML } from '../utils/sanitize';
+import { CheckCircle2 } from 'lucide-react';
 
 export const LobbyHub: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the Lobby from re-rendering
@@ -74,13 +75,18 @@ export const LobbyHub: React.FC = () => {
               key={deck.deckId}
               onClick={() => setSelectedDeckId(deck.deckId)}
               aria-pressed={selectedDeckId === deck.deckId}
-              className={`p-4 rounded-lg border-2 text-left transition-all focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none ${
+              className={`p-4 rounded-lg border-2 text-left transition-all focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none flex flex-col h-full ${
                 selectedDeckId === deck.deckId
                   ? 'border-arena-gold bg-arena-slate scale-105'
                   : 'border-slate-600 bg-arena-slate hover:border-slate-400'
               }`}
             >
-              <h3 className="text-xl font-display text-white mb-2">{deck.deckName}</h3>
+              <div className="flex justify-between items-start w-full mb-2">
+                <h3 className="text-xl font-display text-white">{deck.deckName}</h3>
+                {selectedDeckId === deck.deckId && (
+                  <CheckCircle2 className="w-6 h-6 text-arena-gold flex-shrink-0 ml-2" aria-hidden="true" />
+                )}
+              </div>
               <p className="text-sm text-slate-300">{deck.deckDescription}</p>
               <p className="text-xs text-slate-400 mt-2">{deck.cards.length} Chains</p>
             </button>
