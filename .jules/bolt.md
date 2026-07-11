@@ -47,3 +47,6 @@
 ## 2024-07-31 - O(1) Indexed Lookups for Difficulty Filtering
 **Learning:** Even though the dataset can be large (thousands of rows), fields like `difficulty` often have very low cardinality (e.g., 4 or 5 distinct values). Repeatedly calling `array.filter` over the entire dataset of questions based on difficulty incurs an O(N) penalty.
 **Action:** Extend the O(1) indexing strategy used for domains and decks by creating a `difficultyIndex` (Map) during initial data ingestion. When querying by difficulty, iterating over the Map's handful of keys and concatenating matching arrays reduces the query time to effectively O(1).
+## 2024-07-31 - RedCardModal Dictionary Lookup
+**Learning:** O(N) `Array.find` lookups within switch statements that are invoked during a component's render phase cause unnecessary performance overhead, especially in modal components like `RedCardModal` which should mount quickly.
+**Action:** Replace `Array.find` with an O(1) Map or Object dictionary lookup, pre-computing the index during module load. This ensures the component avoids repeatedly searching static lists on every render cycle.

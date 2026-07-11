@@ -221,6 +221,17 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
   }
 ];
 
+// ⚡ Bolt Optimization: Pre-compute a record index for O(1) Red Card Category lookups
+// This avoids O(N) array filtering when opening the modal for a specific violation type.
+export const RED_CARD_CATEGORY_INDEX: Record<string, RedCardCategory> = {
+  "CATEGORY_VIOLATIONS": RED_CARD_CATEGORIES[0],
+  "MEDIUM_VIOLATIONS": RED_CARD_CATEGORIES[1],
+  "CANON_VIOLATIONS": RED_CARD_CATEGORIES[2],
+  "GAMEPLAY_VIOLATIONS": RED_CARD_CATEGORIES[3],
+  "REFEREE_TOOLS": RED_CARD_CATEGORIES[4]
+};
+
+
 
 
 
