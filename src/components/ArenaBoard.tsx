@@ -167,6 +167,16 @@ export const ArenaBoard: React.FC = () => {
 
   const [showEasyModal, setShowEasyModal] = React.useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showEasyModal) {
+        setShowEasyModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showEasyModal]);
+
   const activeCard = selectedDeck?.cards[currentCardIndex];
   const activeQuestion = activeCard?.questions[currentStepIndex];
 
@@ -285,25 +295,31 @@ export const ArenaBoard: React.FC = () => {
         {/* Easy Mode Modal */}
         {showEasyModal && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-            <div className="bg-arena-navy p-8 rounded-2xl border-2 border-arena-magenta shadow-[0_0_30px_rgba(236,72,153,0.5)] max-w-md w-full text-center">
-              <h2 className="text-3xl font-display text-white uppercase mb-6">Who Said Easy?</h2>
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="easy-mode-title"
+              className="bg-arena-navy p-8 rounded-2xl border-2 border-arena-magenta shadow-[0_0_30px_rgba(236,72,153,0.5)] max-w-md w-full text-center"
+            >
+              <h2 id="easy-mode-title" className="text-3xl font-display text-white uppercase mb-6">Who Said Easy?</h2>
               <div className="flex gap-4 justify-center">
                 <button
                   onClick={() => { setEasyModeTeam('teamA'); setShowEasyModal(false); }}
-                  className="px-6 py-4 bg-arena-magenta/20 hover:bg-arena-magenta text-white border border-arena-magenta rounded font-display text-xl uppercase transition-colors"
+                  className="px-6 py-4 bg-arena-magenta/20 hover:bg-arena-magenta text-white border border-arena-magenta rounded font-display text-xl uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-magenta focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
                 >
                   {teams.teamA.name}
                 </button>
                 <button
                   onClick={() => { setEasyModeTeam('teamB'); setShowEasyModal(false); }}
-                  className="px-6 py-4 bg-arena-cobalt/20 hover:bg-arena-cobalt text-white border border-arena-cobalt rounded font-display text-xl uppercase transition-colors"
+                  className="px-6 py-4 bg-arena-cobalt/20 hover:bg-arena-cobalt text-white border border-arena-cobalt rounded font-display text-xl uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-cobalt focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
                 >
                   {teams.teamB.name}
                 </button>
               </div>
               <button
+                autoFocus
                 onClick={() => setShowEasyModal(false)}
-                className="mt-8 text-slate-400 hover:text-white transition-colors"
+                className="mt-8 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none rounded focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
               >
                 Cancel
               </button>
