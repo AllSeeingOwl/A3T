@@ -44,3 +44,8 @@
 **Vulnerability:** Use of `innerHTML` in the client-side frame-busting script (`src/main.tsx`).
 **Learning:** Even when the assigned string is static and seemingly harmless, `innerHTML` acts as a dangerous sink and is frequently flagged by security scanners as a potential DOM-based XSS vector. Replacing it with `textContent` removes the sink entirely, adhering to the principle of defense in depth. This ensures that future modifications (like adding dynamic data or localization) won't inadvertently introduce an XSS vulnerability.
 **Prevention:** Avoid using `innerHTML` whenever possible, especially for static text or text that shouldn't contain HTML tags. Use `textContent` instead.
+
+## 2026-07-11 - [Automated Subresource Integrity (SRI) Generation]
+**Vulnerability:** Built HTML files referenced Javascript and CSS assets without `integrity` attributes. If the hosting CDN were compromised, an attacker could replace these assets with malicious code that the browser would blindly execute, leading to XSS or data exfiltration.
+**Learning:** Subresource Integrity (SRI) hashes ensure browsers only execute files that exactly match the expected cryptographic hash generated at build time. Using a Vite plugin automates this process without developer overhead.
+**Prevention:** Utilize `vite-plugin-sri-gen` in Vite build pipelines to automatically compute and inject `integrity` hashes into production HTML.
