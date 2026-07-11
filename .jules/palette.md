@@ -35,3 +35,6 @@
 ## 2024-11-21 - Accessible Selection States
 **Learning:** Using color (like \`border-arena-gold\`) and minor CSS transformations (like \`scale-105\`) as the *only* visual indicators for a selected state violates WCAG 1.4.1 (Use of Color), leaving users with color vision deficiencies struggling to identify active selections.
 **Action:** Always complement color-based state changes with an explicit, semantic visual indicator (like a checkmark icon or explicit text) to guarantee the state is perceivable to all users.
+## 2026-07-11 - Accessible Custom Modals
+**Learning:** Custom modal dialogs without native `<dialog>` tags fail screen reader and keyboard accessibility standards if they lack explicit ARIA semantics (`role="dialog"`, `aria-modal="true"`) and if they do not automatically grab focus upon opening.
+**Action:** Always add `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` to custom modal containers. Furthermore, always ensure the most appropriate element (like a cancel/close button or a primary input) utilizes `autoFocus` so keyboard focus is trapped or naturally enters the modal.
