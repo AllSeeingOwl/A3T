@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
-import { RED_CARD_CATEGORIES, RedCardCategory } from './RedCardGuide';
+import { RED_CARD_CATEGORY_INDEX } from './RedCardGuide';
 
 export const RedCardModal: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the modal from re-rendering
@@ -25,24 +25,9 @@ export const RedCardModal: React.FC = () => {
 
   if (!activeRedCard) return null;
 
-  const getRedCardCategory = (type: string): RedCardCategory | undefined => {
-    switch (type) {
-      case 'CATEGORY_VIOLATIONS':
-        return RED_CARD_CATEGORIES.find(c => c.title === 'Category Violations');
-      case 'MEDIUM_VIOLATIONS':
-        return RED_CARD_CATEGORIES.find(c => c.title === 'Medium Violations');
-      case 'CANON_VIOLATIONS':
-        return RED_CARD_CATEGORIES.find(c => c.title === 'Canon Violations');
-      case 'GAMEPLAY_VIOLATIONS':
-        return RED_CARD_CATEGORIES.find(c => c.title === 'Gameplay & Mechanics Violations');
-      case 'REFEREE_TOOLS':
-        return RED_CARD_CATEGORIES.find(c => c.title === 'Referee Tools');
-      default:
-        return undefined;
-    }
-  };
-
-  const category = getRedCardCategory(activeRedCard);
+  // ⚡ Bolt Optimization: Replaced O(N) Array.find calls within a switch statement
+  // with a direct O(1) object lookup, reducing unnecessary overhead during modal render.
+  const category = activeRedCard ? RED_CARD_CATEGORY_INDEX[activeRedCard] : undefined;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-900/95 backdrop-blur-md p-4 w-full h-full">
