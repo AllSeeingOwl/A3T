@@ -49,3 +49,11 @@
 **Vulnerability:** Built HTML files referenced Javascript and CSS assets without `integrity` attributes. If the hosting CDN were compromised, an attacker could replace these assets with malicious code that the browser would blindly execute, leading to XSS or data exfiltration.
 **Learning:** Subresource Integrity (SRI) hashes ensure browsers only execute files that exactly match the expected cryptographic hash generated at build time. Using a Vite plugin automates this process without developer overhead.
 **Prevention:** Utilize `vite-plugin-sri-gen` in Vite build pipelines to automatically compute and inject `integrity` hashes into production HTML.
+## 2024-07-13 - [Client-Side DoS via Unbounded Input Sanitization]
+**Vulnerability:** The application accepted team names from text inputs and sanitized them (`sanitizeHTML`) before applying a length limit (`substring(0, 50)`). If a user bypassed the HTML `maxLength` attribute, they could submit a string with millions of characters, locking the browser's main thread during the global regex replacement and causing a client-side Denial of Service (DoS).
+**Learning:** HTML `maxLength` attributes are not a security boundary and can be easily bypassed. Expensive operations like global regex replacements must be bounded by length limits *before* execution.
+**Prevention:** Always apply length limits (`substring()`) to user input *before* passing it to potentially expensive sanitization or validation functions.
+## 2024-07-13 - [Dangerous Anti-Pattern: Truncation Before Sanitization]
+**Vulnerability:** Attempting to prevent ReDoS by truncating input (`substring(0, 50)`) *before* applying an HTML sanitizer (`sanitizeHTML`) introduces a severe Cross-Site Scripting (XSS) bypass.
+**Learning:** If an input like `<img src=x onerror=alert(1)               >` is truncated at 50 characters, the closing `>` is removed. The sanitizer's regex may fail to match and strip the incomplete tag, but the browser will still execute it when injected into the DOM. Additionally, entity encoding expands string lengths, so truncating before encoding breaks length constraints.
+**Prevention:** Never arbitrarily truncate strings *before* sanitization. If an input is excessively long (DoS risk), reject it entirely or fallback to a safe default before processing, rather than slicing it mid-payload.
