@@ -82,7 +82,9 @@ export const LobbyHub: React.FC = () => {
               }`}
             >
               <div className="flex justify-between items-start w-full mb-2">
-                <h3 className="text-xl font-display text-white">{deck.deckName}</h3>
+                <h3 className="text-xl font-display text-white">
+                  <span className="sr-only">Select deck: </span>{deck.deckName}
+                </h3>
                 {selectedDeckId === deck.deckId && (
                   <CheckCircle2 className="w-6 h-6 text-arena-gold flex-shrink-0 ml-2" aria-hidden="true" />
                 )}

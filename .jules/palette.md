@@ -38,3 +38,10 @@
 ## 2026-07-11 - Accessible Custom Modals
 **Learning:** Custom modal dialogs without native `<dialog>` tags fail screen reader and keyboard accessibility standards if they lack explicit ARIA semantics (`role="dialog"`, `aria-modal="true"`) and if they do not automatically grab focus upon opening.
 **Action:** Always add `role="dialog"`, `aria-modal="true"`, and `aria-labelledby` to custom modal containers. Furthermore, always ensure the most appropriate element (like a cancel/close button or a primary input) utilizes `autoFocus` so keyboard focus is trapped or naturally enters the modal.
+
+## 2024-07-12 - Ensure explicit ARIA labels on all structural and modal buttons
+**Learning:** Modals with purely textual buttons or those implying action via visual context might still lack the descriptive text required for screen readers, or use improper default text, although standard best practices exist.
+**Action:** Always provide explicit descriptive `aria-label`s for internal structural buttons and modals where context is missing, for example the "Cancel Easy Mode Selection" button.
+## 2024-07-12 - Prevent overriding complex button content with aria-labels
+**Learning:** Applying an `aria-label` to a complex component acting as a button completely masks its internal content. For instance, putting an `aria-label` on a deck selection card means screen readers will not read the description or any other embedded information within that button.
+**Action:** Instead of applying an `aria-label` to the outer button, inject visually hidden text (`<span className="sr-only"></span>`) next to the primary label within the button to provide context while preserving the rest of the button's internal structure.
