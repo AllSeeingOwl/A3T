@@ -307,18 +307,19 @@ export const ArenaBoard: React.FC = () => {
                   onClick={() => { setEasyModeTeam('teamA'); setShowEasyModal(false); }}
                   className="px-6 py-4 bg-arena-magenta/20 hover:bg-arena-magenta text-white border border-arena-magenta rounded font-display text-xl uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-magenta focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
                 >
-                  {teams.teamA.name}
+                  <span className="sr-only">Select </span>{teams.teamA.name}<span className="sr-only"> for Easy Mode penalty</span>
                 </button>
                 <button
                   onClick={() => { setEasyModeTeam('teamB'); setShowEasyModal(false); }}
                   className="px-6 py-4 bg-arena-cobalt/20 hover:bg-arena-cobalt text-white border border-arena-cobalt rounded font-display text-xl uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-cobalt focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
                 >
-                  {teams.teamB.name}
+                  <span className="sr-only">Select </span>{teams.teamB.name}<span className="sr-only"> for Easy Mode penalty</span>
                 </button>
               </div>
               <button
                 autoFocus
                 onClick={() => setShowEasyModal(false)}
+                aria-label="Cancel Easy Mode Selection"
                 className="mt-8 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none rounded focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
               >
                 Cancel
@@ -415,7 +416,7 @@ export const ArenaBoard: React.FC = () => {
               onClick={handleEasyTrigger}
               className="mt-4 px-8 py-3 bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500 text-amber-500 rounded-lg font-display uppercase tracking-wider transition-all focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none"
             >
-              Someone Said "Easy", Press This
+              <span className="sr-only">Trigger Easy Mode Penalty: </span>Someone Said "Easy", Press This
             </button>
           )}
         </div>
