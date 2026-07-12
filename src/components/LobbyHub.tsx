@@ -27,8 +27,12 @@ export const LobbyHub: React.FC = () => {
     if (deck) {
       const rawTeamA = teamARef.current?.value ?? 'Team A';
       const rawTeamB = teamBRef.current?.value ?? 'Team B';
-      const sanitizedTeamA = sanitizeHTML(rawTeamA).trim().substring(0, 50) || 'Team 1';
-      const sanitizedTeamB = sanitizeHTML(rawTeamB).trim().substring(0, 50) || 'Team 2';
+      // 🛡️ Sentinel: Reject completely massive inputs to prevent Client-Side DoS during sanitization.
+      // If the input is maliciously large, fallback to default names rather than truncating mid-tag (which causes XSS bypass).
+      const safeRawA = rawTeamA.length > 500 ? 'Team 1' : rawTeamA;
+      const safeRawB = rawTeamB.length > 500 ? 'Team 2' : rawTeamB;
+      const sanitizedTeamA = sanitizeHTML(safeRawA).trim().substring(0, 50) || 'Team 1';
+      const sanitizedTeamB = sanitizeHTML(safeRawB).trim().substring(0, 50) || 'Team 2';
       startMatch(deck, sanitizedTeamA, sanitizedTeamB);
     }
   };
