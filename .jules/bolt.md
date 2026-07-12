@@ -50,3 +50,7 @@
 ## 2024-07-31 - RedCardModal Dictionary Lookup
 **Learning:** O(N) `Array.find` lookups within switch statements that are invoked during a component's render phase cause unnecessary performance overhead, especially in modal components like `RedCardModal` which should mount quickly.
 **Action:** Replace `Array.find` with an O(1) Map or Object dictionary lookup, pre-computing the index during module load. This ensures the component avoids repeatedly searching static lists on every render cycle.
+
+## 2024-08-01 - [Optimize Map Population in Loops]
+**Learning:** When populating a Map of arrays (e.g. `Map<string, Item[]>`) in a tight loop over thousands of items, using the pattern `if (!map.has(key)) map.set(key, []); map.get(key).push(item);` results in 2 to 3 map lookups per item.
+**Action:** Use a single lookup initialization pattern instead: `let list = map.get(key); if (!list) { list = []; map.set(key, list); } list.push(item);`. This reduces the number of map lookups to 1 or 2, halving the overhead for map population.

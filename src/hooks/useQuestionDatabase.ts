@@ -31,19 +31,24 @@ export const useQuestionDatabase = create<QuestionDatabaseState>((set, get) => (
 
     // ⚡ Bolt Optimization: Pre-compute Map indices during data ingestion
     // This reduces O(n) filter operations to O(1) lookups.
+    // ⚡ Bolt Optimization: Map population uses single-lookup initialization
+    // to halve the number of map accesses (avoiding .has() then .set() then .get()).
     const domainIndex = new Map<string, DatabaseQuestion[]>();
     const deckIndex = new Map<string, DatabaseQuestion[]>();
     const difficultyIndex = new Map<string, DatabaseQuestion[]>();
 
     for (const q of parsed) {
-      if (!domainIndex.has(q.category)) domainIndex.set(q.category, []);
-      domainIndex.get(q.category)!.push(q);
+      let dList = domainIndex.get(q.category);
+      if (!dList) { dList = []; domainIndex.set(q.category, dList); }
+      dList.push(q);
 
-      if (!deckIndex.has(q.normalizedDeckTheme)) deckIndex.set(q.normalizedDeckTheme, []);
-      deckIndex.get(q.normalizedDeckTheme)!.push(q);
+      let dkList = deckIndex.get(q.normalizedDeckTheme);
+      if (!dkList) { dkList = []; deckIndex.set(q.normalizedDeckTheme, dkList); }
+      dkList.push(q);
 
-      if (!difficultyIndex.has(q.normalizedDifficulty)) difficultyIndex.set(q.normalizedDifficulty, []);
-      difficultyIndex.get(q.normalizedDifficulty)!.push(q);
+      let diffList = difficultyIndex.get(q.normalizedDifficulty);
+      if (!diffList) { diffList = []; difficultyIndex.set(q.normalizedDifficulty, diffList); }
+      diffList.push(q);
     }
 
     set({ questions: parsed, domainIndex, deckIndex, difficultyIndex, isLoaded: true });
