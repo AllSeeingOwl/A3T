@@ -319,10 +319,11 @@ export const ArenaBoard: React.FC = () => {
               <button
                 autoFocus
                 onClick={() => setShowEasyModal(false)}
-                aria-label="Cancel Easy Mode Selection"
-                className="mt-8 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none rounded focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
+                aria-label="Cancel Easy Mode Selection (Escape)"
+                className="mt-8 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none rounded focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate flex items-center justify-center gap-2 mx-auto"
               >
-                Cancel
+                <span>Cancel</span>
+                <kbd className="font-sans text-xs bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 shadow-inner group-hover:text-slate-300">Esc</kbd>
               </button>
             </div>
           </div>
