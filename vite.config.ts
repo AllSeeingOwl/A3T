@@ -16,14 +16,20 @@ export default defineConfig({
   // 🛡️ Sentinel: Enforce strict MIME-type checking during local development and previews
   // to prevent MIME-sniffing vulnerabilities. This mitigates risks where the browser
   // might incorrectly interpret non-executable files as executable scripts.
+  // Additionally, apply COOP and COEP to enforce Cross-Origin Isolation, protecting
+  // against side-channel attacks like Spectre.
   server: {
     headers: {
       'X-Content-Type-Options': 'nosniff',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
     },
   },
   preview: {
     headers: {
       'X-Content-Type-Options': 'nosniff',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
     },
   },
 });
