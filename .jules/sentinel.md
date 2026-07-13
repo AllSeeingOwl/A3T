@@ -57,3 +57,8 @@
 **Vulnerability:** Attempting to prevent ReDoS by truncating input (`substring(0, 50)`) *before* applying an HTML sanitizer (`sanitizeHTML`) introduces a severe Cross-Site Scripting (XSS) bypass.
 **Learning:** If an input like `<img src=x onerror=alert(1)               >` is truncated at 50 characters, the closing `>` is removed. The sanitizer's regex may fail to match and strip the incomplete tag, but the browser will still execute it when injected into the DOM. Additionally, entity encoding expands string lengths, so truncating before encoding breaks length constraints.
 **Prevention:** Never arbitrarily truncate strings *before* sanitization. If an input is excessively long (DoS risk), reject it entirely or fallback to a safe default before processing, rather than slicing it mid-payload.
+
+## 2026-07-13 - [Cross-Origin Isolation for Dev/Preview Servers]
+**Vulnerability:** The local development and preview servers were lacking Cross-Origin Isolation headers (`Cross-Origin-Opener-Policy` and `Cross-Origin-Embedder-Policy`), potentially exposing the environment to side-channel information leaks (e.g., Spectre-like attacks).
+**Learning:** While meta tags handle some security aspects for SPAs, Cross-Origin Isolation must be enforced via HTTP response headers. Explicitly configuring COOP and COEP in Vite mirrors advanced production security standards and hardens the local tooling against sophisticated cross-origin attacks.
+**Prevention:** Always configure `server.headers` and `preview.headers` in `vite.config.ts` to include `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`.
