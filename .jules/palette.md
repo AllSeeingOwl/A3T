@@ -45,3 +45,6 @@
 ## 2024-07-12 - Prevent overriding complex button content with aria-labels
 **Learning:** Applying an `aria-label` to a complex component acting as a button completely masks its internal content. For instance, putting an `aria-label` on a deck selection card means screen readers will not read the description or any other embedded information within that button.
 **Action:** Instead of applying an `aria-label` to the outer button, inject visually hidden text (`<span className="sr-only"></span>`) next to the primary label within the button to provide context while preserving the rest of the button's internal structure.
+## 2024-07-13 - Visual Keyboard Shortcut Discoverability
+**Learning:** Hiding keyboard shortcuts in plain text (e.g., "Cancel (Esc)") reduces their discoverability and cognitive recognition as actionable shortcuts, whereas styling them as semantic `<kbd>` elements provides immediate visual affordance to power users.
+**Action:** Always wrap explicit keyboard shortcut hints in semantically correct and visually distinct `<kbd>` elements when communicating them in UI text or tooltips, and update standard `aria-label` text to be spelled out (e.g., "(Escape)") for proper screen reader pronunciation.

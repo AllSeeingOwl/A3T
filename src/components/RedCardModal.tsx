@@ -96,10 +96,11 @@ export const RedCardModal: React.FC = () => {
           <button
             autoFocus
             onClick={() => setActiveRedCard(null)}
-            title="Resume Play (Esc)"
-            className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
+            aria-label="Release Board & Resume Play (Escape)"
+            className="px-12 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.4)] relative z-10 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate flex items-center justify-center gap-3 mx-auto"
           >
-            Release Board & Resume Play
+            <span>Release Board & Resume Play</span>
+            <kbd className="font-sans text-sm bg-emerald-700/50 border border-emerald-400/30 px-2 py-1 rounded-md text-emerald-100/80 shadow-inner">Esc</kbd>
           </button>
         </div>
       </div>
