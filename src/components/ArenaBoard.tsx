@@ -91,6 +91,59 @@ const Pipeline = memo(({ activeCard, currentStepIndex, activeTeam }: PipelinePro
 // ⚡ Bolt Optimization: Extract and memoize the static Red Card footer controls.
 // This prevents these static 5 buttons from re-rendering every time the active team,
 // question step, or timer ticks, isolating state subscriptions to just what's needed.
+// ⚡ Bolt Optimization: Extract and memoize ScoreboardHeader
+// This prevents the heavy top navigation bar (which contains active transitions,
+// shadows, and team layouts) from unnecessarily re-rendering whenever the game's
+// questionStage changes, currentStepIndex increments, or the easy mode modal is toggled.
+interface ScoreboardHeaderProps {
+  teams: { teamA: { name: string; score: number }; teamB: { name: string; score: number } };
+  activeTeam: 'teamA' | 'teamB';
+  deckName?: string;
+  parentTheme: string;
+}
+
+const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme }: ScoreboardHeaderProps) => {
+  return (
+    <div className="flex justify-between items-center p-6 bg-arena-navy border-b border-slate-700 shadow-lg">
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className={`p-4 rounded-lg flex flex-col items-center min-w-[200px] border-2 transition-all ${activeTeam === 'teamA' ? 'border-arena-magenta bg-arena-magenta/10 shadow-[0_0_15px_rgba(236,72,153,0.3)]' : 'border-transparent'}`}
+      >
+        <h2 className="text-xl font-display text-arena-magenta uppercase">
+          {teams.teamA.name}
+          {activeTeam === 'teamA' && <span className="sr-only"> (Current Turn)</span>}
+        </h2>
+        <span className="text-4xl font-display text-white">
+          <span className="sr-only">Score: </span>
+          {teams.teamA.score}
+        </span>
+      </div>
+
+      <div className="text-center">
+        <h1 className="text-3xl font-display text-white uppercase tracking-widest mb-2">{deckName}</h1>
+        <p className="text-arena-amber font-display text-xl">Theme: {parentTheme}</p>
+      </div>
+
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className={`p-4 rounded-lg flex flex-col items-center min-w-[200px] border-2 transition-all ${activeTeam === 'teamB' ? 'border-arena-cobalt bg-arena-cobalt/10 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'border-transparent'}`}
+      >
+        <h2 className="text-xl font-display text-arena-cobalt uppercase">
+          {teams.teamB.name}
+          {activeTeam === 'teamB' && <span className="sr-only"> (Current Turn)</span>}
+        </h2>
+        <span className="text-4xl font-display text-white">
+          <span className="sr-only">Score: </span>
+          {teams.teamB.score}
+        </span>
+      </div>
+    </div>
+  );
+});
+ScoreboardHeader.displayName = 'ScoreboardHeader';
+
 const RedCardFooter = memo(() => {
   const { setActiveRedCard } = useGameStore(
     useShallow((state) => ({
@@ -250,42 +303,12 @@ export const ArenaBoard: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-arena-slate font-sans relative w-full">
       {/* Header / Scoreboard */}
-      <div className="flex justify-between items-center p-6 bg-arena-navy border-b border-slate-700 shadow-lg">
-        <div
-          aria-live="polite"
-          aria-atomic="true"
-          className={`p-4 rounded-lg flex flex-col items-center min-w-[200px] border-2 transition-all ${activeTeam === 'teamA' ? 'border-arena-magenta bg-arena-magenta/10 shadow-[0_0_15px_rgba(236,72,153,0.3)]' : 'border-transparent'}`}
-        >
-          <h2 className="text-xl font-display text-arena-magenta uppercase">
-            {teams.teamA.name}
-            {activeTeam === 'teamA' && <span className="sr-only"> (Current Turn)</span>}
-          </h2>
-          <span className="text-4xl font-display text-white">
-            <span className="sr-only">Score: </span>
-            {teams.teamA.score}
-          </span>
-        </div>
-
-        <div className="text-center">
-          <h1 className="text-3xl font-display text-white uppercase tracking-widest mb-2">{selectedDeck?.deckName}</h1>
-          <p className="text-arena-amber font-display text-xl">Theme: {activeCard.parentTheme}</p>
-        </div>
-
-        <div
-          aria-live="polite"
-          aria-atomic="true"
-          className={`p-4 rounded-lg flex flex-col items-center min-w-[200px] border-2 transition-all ${activeTeam === 'teamB' ? 'border-arena-cobalt bg-arena-cobalt/10 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'border-transparent'}`}
-        >
-          <h2 className="text-xl font-display text-arena-cobalt uppercase">
-            {teams.teamB.name}
-            {activeTeam === 'teamB' && <span className="sr-only"> (Current Turn)</span>}
-          </h2>
-          <span className="text-4xl font-display text-white">
-            <span className="sr-only">Score: </span>
-            {teams.teamB.score}
-          </span>
-        </div>
-      </div>
+      <ScoreboardHeader
+        teams={teams}
+        activeTeam={activeTeam}
+        deckName={selectedDeck?.deckName}
+        parentTheme={activeCard.parentTheme}
+      />
 
       {/* Main Play Area */}
       <div className="flex-grow flex flex-col items-center justify-center p-8">
