@@ -54,3 +54,7 @@
 ## 2024-08-01 - [Optimize Map Population in Loops]
 **Learning:** When populating a Map of arrays (e.g. `Map<string, Item[]>`) in a tight loop over thousands of items, using the pattern `if (!map.has(key)) map.set(key, []); map.get(key).push(item);` results in 2 to 3 map lookups per item.
 **Action:** Use a single lookup initialization pattern instead: `let list = map.get(key); if (!list) { list = []; map.set(key, list); } list.push(item);`. This reduces the number of map lookups to 1 or 2, halving the overhead for map population.
+
+## 2025-02-23 - Extract and Memoize Structural UI from Heavy Parents
+**Learning:** Separating structural static UI elements (like ScoreboardHeader) from frequently updating game state (like active question step or modal toggles) prevents full layout reconciliations.
+**Action:** Always identify components with parts that re-render frequently due to state changes alongside static parts, and extract the static parts into memoized components.
