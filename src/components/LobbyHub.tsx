@@ -72,22 +72,29 @@ export const LobbyHub: React.FC = () => {
       </div>
 
       <div className="w-full max-w-4xl bg-arena-navy p-8 rounded-xl shadow-lg border border-slate-700">
-        <h2 className="text-3xl font-display text-white mb-6 uppercase text-center">Select Deck</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 id="deck-selection-title" className="text-3xl font-display text-white mb-6 uppercase text-center">Select Deck</h2>
+        <fieldset aria-labelledby="deck-selection-title" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <legend className="sr-only">Choose a deck to play</legend>
           {defaultDecks.map((deck) => (
-            <button
+            <label
               key={deck.deckId}
-              onClick={() => setSelectedDeckId(deck.deckId)}
-              aria-pressed={selectedDeckId === deck.deckId}
-              className={`p-4 rounded-lg border-2 text-left transition-all focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none flex flex-col h-full ${
+              className={`p-4 rounded-lg border-2 text-left transition-all flex flex-col h-full cursor-pointer has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-arena-gold has-[:focus-visible]:outline-none ${
                 selectedDeckId === deck.deckId
                   ? 'border-arena-gold bg-arena-slate scale-105'
                   : 'border-slate-600 bg-arena-slate hover:border-slate-400'
               }`}
             >
+              <input
+                type="radio"
+                name="deck-selection"
+                value={deck.deckId}
+                checked={selectedDeckId === deck.deckId}
+                onChange={() => setSelectedDeckId(deck.deckId)}
+                className="sr-only"
+              />
               <div className="flex justify-between items-start w-full mb-2">
                 <h3 className="text-xl font-display text-white">
-                  <span className="sr-only">Select deck: </span>{deck.deckName}
+                  {deck.deckName}
                 </h3>
                 {selectedDeckId === deck.deckId && (
                   <CheckCircle2 className="w-6 h-6 text-arena-gold flex-shrink-0 ml-2" aria-hidden="true" />
@@ -95,9 +102,9 @@ export const LobbyHub: React.FC = () => {
               </div>
               <p className="text-sm text-slate-300">{deck.deckDescription}</p>
               <p className="text-xs text-slate-400 mt-2">{deck.cards.length} Chains</p>
-            </button>
+            </label>
           ))}
-        </div>
+        </fieldset>
       </div>
 
       <div className="relative group mt-12 flex justify-center">

@@ -48,3 +48,6 @@
 ## 2024-07-13 - Visual Keyboard Shortcut Discoverability
 **Learning:** Hiding keyboard shortcuts in plain text (e.g., "Cancel (Esc)") reduces their discoverability and cognitive recognition as actionable shortcuts, whereas styling them as semantic `<kbd>` elements provides immediate visual affordance to power users.
 **Action:** Always wrap explicit keyboard shortcut hints in semantically correct and visually distinct `<kbd>` elements when communicating them in UI text or tooltips, and update standard `aria-label` text to be spelled out (e.g., "(Escape)") for proper screen reader pronunciation.
+## 2024-07-14 - Semantic Radio Selection Groups
+**Learning:** Using an array of `button` elements with `aria-pressed` to act as mutually exclusive options (like deck selection) is semantically incorrect and breaks native keyboard navigation (arrow keys to switch options). The classic fix required custom Javascript or complex "fake radio" CSS.
+**Action:** Always use a semantically correct `<fieldset>` containing visually hidden (`sr-only`) native `<input type="radio">` buttons wrapped in `<label>`s. Tailwind's `has-[:focus-visible]` selector applied to the `<label>` allows you to maintain the exact same complex visual focus styling seamlessly, without writing custom Javascript for keyboard support.
