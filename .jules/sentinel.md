@@ -62,3 +62,8 @@
 **Vulnerability:** The local development and preview servers were lacking Cross-Origin Isolation headers (`Cross-Origin-Opener-Policy` and `Cross-Origin-Embedder-Policy`), potentially exposing the environment to side-channel information leaks (e.g., Spectre-like attacks).
 **Learning:** While meta tags handle some security aspects for SPAs, Cross-Origin Isolation must be enforced via HTTP response headers. Explicitly configuring COOP and COEP in Vite mirrors advanced production security standards and hardens the local tooling against sophisticated cross-origin attacks.
 **Prevention:** Always configure `server.headers` and `preview.headers` in `vite.config.ts` to include `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`.
+
+## 2026-07-14 - [Content Security Policy Resource Limits]
+**Vulnerability:** The application's Content Security Policy lacked directives to restrict iframes and web workers.
+**Learning:** Adding `frame-src 'none'` and `worker-src 'none'` prevents the application from embedding malicious iframes or spawning unauthorized web workers in the event of an XSS attack.
+**Prevention:** Always include `frame-src 'none'` and `worker-src 'none'` in the base Content Security Policy for Single Page Applications to provide robust defense in depth.
