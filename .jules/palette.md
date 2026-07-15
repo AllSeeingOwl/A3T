@@ -51,3 +51,6 @@
 ## 2024-07-14 - Semantic Radio Selection Groups
 **Learning:** Using an array of `button` elements with `aria-pressed` to act as mutually exclusive options (like deck selection) is semantically incorrect and breaks native keyboard navigation (arrow keys to switch options). The classic fix required custom Javascript or complex "fake radio" CSS.
 **Action:** Always use a semantically correct `<fieldset>` containing visually hidden (`sr-only`) native `<input type="radio">` buttons wrapped in `<label>`s. Tailwind's `has-[:focus-visible]` selector applied to the `<label>` allows you to maintain the exact same complex visual focus styling seamlessly, without writing custom Javascript for keyboard support.
+## 2024-07-15 - Announcing Dynamic Content Changes
+**Learning:** In highly dynamic React applications (like a trivia game), updating text content (like a question) in place does not automatically notify screen readers, leaving users stranded if they don't manually re-read the page.
+**Action:** Always wrap dynamically updating text containers with `aria-live="polite"` and `aria-atomic="true"` to ensure screen readers automatically announce the new content to users when state changes.

@@ -419,12 +419,14 @@ export const ArenaBoard: React.FC = () => {
              <StealTimer />
           </div>
 
-          <h3 className="text-2xl font-display text-slate-400 mb-4 uppercase">
-            Question {currentStepIndex + 1}
-          </h3>
-          <p className="text-3xl text-white font-medium mb-8 leading-relaxed">
-            {activeQuestion.questionText}
-          </p>
+          <div aria-live="polite" aria-atomic="true">
+            <h3 className="text-2xl font-display text-slate-400 mb-4 uppercase">
+              Question {currentStepIndex + 1}
+            </h3>
+            <p className="text-3xl text-white font-medium mb-8 leading-relaxed">
+              {activeQuestion.questionText}
+            </p>
+          </div>
 
           <div
             tabIndex={0}
