@@ -100,11 +100,12 @@ interface ScoreboardHeaderProps {
   activeTeam: 'teamA' | 'teamB';
   deckName?: string;
   parentTheme: string;
+  onEndGame: () => void;
 }
 
-const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme }: ScoreboardHeaderProps) => {
+const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme, onEndGame }: ScoreboardHeaderProps) => {
   return (
-    <div className="flex justify-between items-center p-6 bg-arena-navy border-b border-slate-700 shadow-lg">
+    <div className="relative flex justify-between items-center p-6 bg-arena-navy border-b border-slate-700 shadow-lg">
       <div
         aria-live="polite"
         aria-atomic="true"
@@ -139,6 +140,13 @@ const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme }: Sco
           {teams.teamB.score}
         </span>
       </div>
+      <button
+        onClick={onEndGame}
+        aria-label="End Game and View Summary"
+        className="absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 px-4 py-1 bg-slate-800 border border-slate-600 hover:bg-slate-700 text-slate-300 rounded-full font-display uppercase text-xs tracking-wider transition-colors shadow-md focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none z-10"
+      >
+        Finish Match
+      </button>
     </div>
   );
 });
@@ -193,6 +201,7 @@ export const ArenaBoard: React.FC = () => {
     switchTurn,
     nextStep,
     nextCard,
+    endGame,
     setQuestionStage,
     setTimerSeconds,
     setTimerActive,
@@ -210,6 +219,7 @@ export const ArenaBoard: React.FC = () => {
       switchTurn: state.switchTurn,
       nextStep: state.nextStep,
       nextCard: state.nextCard,
+      endGame: state.endGame,
       setQuestionStage: state.setQuestionStage,
       setTimerSeconds: state.setTimerSeconds,
       setTimerActive: state.setTimerActive,
@@ -240,8 +250,11 @@ export const ArenaBoard: React.FC = () => {
   const handleCorrect = () => {
     addScore(activeTeam, activeQuestion.points);
     if (currentStepIndex === 2) {
-      // Completed the chain
-      nextCard();
+      if (activeCard.listQuestion && activeCard.listQuestion.enabled) {
+        nextStep();
+      } else {
+        nextCard();
+      }
     } else {
       nextStep();
     }
@@ -269,7 +282,11 @@ export const ArenaBoard: React.FC = () => {
   const handleEasyCorrect = () => {
     // Correct in easy mode means they get 0 points, then we move on.
     if (currentStepIndex === 2) {
-      nextCard();
+      if (activeCard.listQuestion && activeCard.listQuestion.enabled) {
+        nextStep();
+      } else {
+        nextCard();
+      }
     } else {
       nextStep();
     }
@@ -280,7 +297,11 @@ export const ArenaBoard: React.FC = () => {
     const otherTeam = easyModeTeam === 'teamA' ? 'teamB' : 'teamA';
     addScore(otherTeam, activeQuestion.points);
     if (currentStepIndex === 2) {
-      nextCard();
+      if (activeCard.listQuestion && activeCard.listQuestion.enabled) {
+        nextStep();
+      } else {
+        nextCard();
+      }
     } else {
       nextStep();
     }
@@ -308,6 +329,7 @@ export const ArenaBoard: React.FC = () => {
         activeTeam={activeTeam}
         deckName={selectedDeck?.deckName}
         parentTheme={activeCard.parentTheme}
+        onEndGame={endGame}
       />
 
       {/* Main Play Area */}
@@ -352,6 +374,44 @@ export const ArenaBoard: React.FC = () => {
           </div>
         )}
 
+        {questionStage === 'LIST_ACTIVE' || questionStage === 'LIST_REVEALED' ? (
+           <div className="w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border border-arena-gold shadow-[0_0_30px_rgba(251,191,36,0.2)] relative mb-8">
+              <h3 className="text-2xl font-display text-arena-gold mb-4 uppercase flex items-center gap-2">
+                 <span className="bg-arena-gold text-arena-slate px-2 py-1 rounded text-sm">Boss Battle</span>
+                 List Question
+              </h3>
+              <p className="text-3xl text-white font-medium mb-4 leading-relaxed">
+                 {activeCard.listQuestion.promptText}
+              </p>
+              <p className="text-lg text-slate-300 mb-8 font-sans">
+                Target: Name <span className="font-bold text-white">{activeCard.listQuestion.requiredToPass}</span> items to win.
+              </p>
+
+              <div
+                tabIndex={0}
+                className="bg-arena-slate p-6 rounded-xl border border-slate-700 mt-8 relative group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-gold"
+              >
+                 <div className={`absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-all duration-300 flex items-center justify-center z-10 cursor-pointer ${
+                     questionStage === 'LIST_REVEALED'
+                       ? 'opacity-0 pointer-events-none'
+                       : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus:opacity-0 group-focus:backdrop-blur-none'
+                   }`}>
+                    <span aria-hidden="true" className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
+                       Hover or Focus to Reveal List
+                    </span>
+                 </div>
+                 <div className="text-left space-y-2">
+                    <span className="text-sm text-slate-500 uppercase tracking-wider block mb-4">Accepted Answers</span>
+                    <ul className="list-disc list-inside text-2xl font-display text-emerald-400 grid grid-cols-2 gap-2">
+                       {activeCard.listQuestion.correctItems.map((item, idx) => (
+                          <li key={idx}>{item}</li>
+                       ))}
+                    </ul>
+                 </div>
+              </div>
+           </div>
+        ) : (
+        <>
         {/* Question Card */}
         <div className="w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border border-slate-600 shadow-2xl relative mb-8">
 
@@ -390,12 +450,25 @@ export const ArenaBoard: React.FC = () => {
              </div>
           </div>
         </div>
+        </>
+        )}
 
         {/* Host Controls */}
         <div className="flex flex-col items-center gap-4 mt-4 mb-20">
           {!easyModeTeam ? (
             <div className="flex gap-6">
-              <div className="relative group flex">
+               {(questionStage === 'LIST_ACTIVE' || questionStage === 'LIST_REVEALED') ? (
+                 <>
+                   <button onClick={() => { addScore(activeTeam, activeCard.listQuestion.points); nextCard(); }} className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg bg-arena-gold hover:bg-yellow-500 text-arena-slate focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+                     List Completed (+{activeCard.listQuestion.points})
+                   </button>
+                   <button onClick={nextCard} className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg bg-slate-600 hover:bg-slate-500 text-white focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+                     List Failed / Next Chain
+                   </button>
+                 </>
+               ) : (
+                 <>
+                 <div className="relative group flex">
                 <button
                 onClick={questionStage === 'REVEALED_ANSWER' ? undefined : handleCorrect}
                 aria-disabled={questionStage === 'REVEALED_ANSWER'}
@@ -417,6 +490,8 @@ export const ArenaBoard: React.FC = () => {
             >
                 {getSecondaryButtonText()}
               </button>
+                </>
+               )}
             </div>
           ) : (
             <div className="flex gap-6">

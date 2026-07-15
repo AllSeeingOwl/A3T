@@ -18,6 +18,7 @@ interface GameActions {
   setEasyModeTeam: (team: GameState['easyModeTeam']) => void;
   nextStep: () => void;
   nextCard: () => void;
+  endGame: () => void;
   resetGame: () => void;
 }
 
@@ -105,13 +106,24 @@ export const useGameStore = create<GameStore>((set) => ({
 
   nextStep: () =>
     set((state) => {
-      const nextStepIndex = (state.currentStepIndex + 1) as QuestionStep;
-      if (nextStepIndex <= 2) {
+      if (state.currentStepIndex < 2) {
+        const nextStepIndex = (state.currentStepIndex + 1) as QuestionStep;
         return {
           currentStepIndex: nextStepIndex,
           questionStage: 'HIDDEN',
           easyModeTeam: null,
         };
+      }
+
+      // If we are at step 2, check for list question
+      if (state.selectedDeck) {
+        const currentCard = state.selectedDeck.cards[state.currentCardIndex];
+        if (currentCard && currentCard.listQuestion && currentCard.listQuestion.enabled) {
+          return {
+            questionStage: 'LIST_ACTIVE',
+            easyModeTeam: null,
+          };
+        }
       }
       return { easyModeTeam: null };
     }),
@@ -126,8 +138,11 @@ export const useGameStore = create<GameStore>((set) => ({
           easyModeTeam: null,
         };
       }
-      return { easyModeTeam: null };
+      // Out of cards -> End game
+      return { currentScreen: 'SUMMARY', easyModeTeam: null };
     }),
+
+  endGame: () => set({ currentScreen: 'SUMMARY' }),
 
   resetGame: () => set(initialState),
 }));
