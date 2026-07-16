@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { sanitizeHTML } from '../utils/sanitize';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Circle } from 'lucide-react';
 
 export const LobbyHub: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the Lobby from re-rendering
@@ -54,6 +54,7 @@ export const LobbyHub: React.FC = () => {
             ref={teamARef}
             placeholder="Enter Team Name"
             maxLength={50}
+            onFocus={(e) => e.target.select()}
           />
         </div>
 
@@ -67,6 +68,7 @@ export const LobbyHub: React.FC = () => {
             ref={teamBRef}
             placeholder="Enter Team Name"
             maxLength={50}
+            onFocus={(e) => e.target.select()}
           />
         </div>
       </div>
@@ -96,8 +98,10 @@ export const LobbyHub: React.FC = () => {
                 <h3 className="text-xl font-display text-white">
                   {deck.deckName}
                 </h3>
-                {selectedDeckId === deck.deckId && (
+                {selectedDeckId === deck.deckId ? (
                   <CheckCircle2 className="w-6 h-6 text-arena-gold flex-shrink-0 ml-2" aria-hidden="true" />
+                ) : (
+                  <Circle className="w-6 h-6 text-slate-500 flex-shrink-0 ml-2" aria-hidden="true" />
                 )}
               </div>
               <p className="text-sm text-slate-300">{deck.deckDescription}</p>

@@ -54,3 +54,9 @@
 ## 2024-07-15 - Announcing Dynamic Content Changes
 **Learning:** In highly dynamic React applications (like a trivia game), updating text content (like a question) in place does not automatically notify screen readers, leaving users stranded if they don't manually re-read the page.
 **Action:** Always wrap dynamically updating text containers with `aria-live="polite"` and `aria-atomic="true"` to ensure screen readers automatically announce the new content to users when state changes.
+## 2024-07-16 - Radio Button Visual Affordance
+**Learning:** Using purely empty space for unselected custom radio cards (like deck selection) forces users to guess the interaction model, whereas explicitly showing an empty circle provides immediate mental mapping to standard radio button behavior.
+**Action:** Always provide an explicit empty state indicator (like an empty circle icon) for unselected items within custom radio button groups or selection cards to improve visual affordance.
+## 2024-07-16 - Input Focus Auto-selection
+**Learning:** Forcing a user to manually highlight or backspace pre-filled default text (like default team names) is tedious. Selecting the text automatically upon focus drastically improves the micro-interaction.
+**Action:** Always add `onFocus={(e) => e.target.select()}` to text inputs that are pre-filled with temporary default values that users are highly likely to overwrite.
