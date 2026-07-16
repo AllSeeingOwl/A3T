@@ -67,3 +67,8 @@
 **Vulnerability:** The application's Content Security Policy lacked directives to restrict iframes and web workers.
 **Learning:** Adding `frame-src 'none'` and `worker-src 'none'` prevents the application from embedding malicious iframes or spawning unauthorized web workers in the event of an XSS attack.
 **Prevention:** Always include `frame-src 'none'` and `worker-src 'none'` in the base Content Security Policy for Single Page Applications to provide robust defense in depth.
+
+## 2026-07-16 - [Fix Truncation Anti-Pattern in Input Handling]
+**Vulnerability:** Truncating user inputs (`substring(0, 50)`) after applying HTML sanitization alters the string length, as entity encoding (e.g., `&lt;` for `<`) expands lengths. Truncating either before or after can split tags, bypass the sanitizer, and cause corrupted inputs.
+**Learning:** Entity encoding alters string lengths. Never truncate strings right before or right after sanitization as a length check.
+**Prevention:** If an input exceeds length limits, completely reject it and fallback to safe defaults before any processing/sanitization, rather than slicing it.
