@@ -58,3 +58,7 @@
 ## 2025-02-23 - Extract and Memoize Structural UI from Heavy Parents
 **Learning:** Separating structural static UI elements (like ScoreboardHeader) from frequently updating game state (like active question step or modal toggles) prevents full layout reconciliations.
 **Action:** Always identify components with parts that re-render frequently due to state changes alongside static parts, and extract the static parts into memoized components.
+
+## 2026-07-09 - [Memoize Array.find over Game Decks]
+**Learning:** Operations like `Array.find()` over nested or large structures (like a game deck containing arrays of questions) that sit directly in a component's render path can cause O(N) penalties during every state update. In `TiebreakerScreen.tsx`, a simple local state toggle (`winnerDeclared`) forced the deck iteration to run again.
+**Action:** Always wrap computationally non-trivial lookups (like `Array.find` over a deck's cards) in a `useMemo` hook, bounding its dependency strictly to the dataset (e.g., `[selectedDeck]`), preventing unrelated local state changes from triggering the calculation.

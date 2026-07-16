@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ShieldAlert } from 'lucide-react';
@@ -26,7 +26,11 @@ export const TiebreakerScreen: React.FC = () => {
 
   // Find a list question to show, or just give a generic prompt.
   // In a real scenario, we might want a specific tiebreaker list.
-  const randomListQuestion = selectedDeck?.cards.find(c => c.listQuestion && c.listQuestion.enabled)?.listQuestion;
+  // ⚡ Bolt Optimization: Memoize the Array.find operation to prevent O(N) array
+  // searches from re-executing when unrelated local state (like winnerDeclared) changes.
+  const randomListQuestion = useMemo(() => {
+    return selectedDeck?.cards.find(c => c.listQuestion && c.listQuestion.enabled)?.listQuestion;
+  }, [selectedDeck]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-arena-slate font-sans p-8 w-full">
