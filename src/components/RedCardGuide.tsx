@@ -8,6 +8,7 @@ export interface RedCardCategory {
 
 export interface RedCard {
   type: string;
+  suggestedPenalties?: string[];
   title: string;
   description: string;
   examples: string[];
@@ -19,6 +20,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
     "cards": [
       {
         "type": "KAYFABE",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 1: The \"Kayfabe\" Violation",
         "description": "Within this game, wrestling storylines are treated as factual history.",
         "examples": [
@@ -29,6 +31,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "MMA",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 2: The \"MMA\" Violation",
         "description": "Boxing and MMA are Combat Sports, not Pro Wrestling. Unless it happened in a wrestling ring (e.g., Floyd Mayweather vs. Big Show), it is disqualified.",
         "examples": [
@@ -39,6 +42,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "REMAKE",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 3: The \"Remake\" Violation",
         "description": "Marketing defines the medium. A live-action remake does not change the answer to a question about the original animated film.",
         "examples": [
@@ -54,6 +58,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
     "cards": [
       {
         "type": "MUPPET",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 4: The \"Muppet\" Violation",
         "description": "Puppetry is a live-action performance (wires/hands). Stop-Motion (Wallace & Gromit) is Animation (frame-by-frame).",
         "examples": [
@@ -64,6 +69,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "VFX",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 5: The \"VFX\" Violation",
         "description": "If the studio markets it as \"Live Action,\" it is Live Action. Visual Effects are a tool, not a genre.",
         "examples": [
@@ -74,6 +80,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "INFLUENCER",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 6: The \"Influencer\" Violation",
         "description": "A person simply playing a game does not count. The Exception: If they appear IN the game as an official skin or NPC (e.g., Ninja in Fortnite), they count.",
         "examples": [
@@ -84,6 +91,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "HOLLYWOOD",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 7: The \"Hollywood\" Violation",
         "description": "An actor is distinct from their wrestler persona. Questions must be about their time in the wrestling industry or movies specifically about pro wrestling (Ready to Rumble).",
         "examples": [
@@ -99,6 +107,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
     "cards": [
       {
         "type": "BOOTLEG",
+        "suggestedPenalties": ["Lose 1 point", "Skip current turn"],
         "title": "Red Card 8: The \"Bootleg\" Violation",
         "description": "OFFICIAL RELEASES ONLY. Fan mods, ROM hacks, and fan-fiction are invalid unless the question specifically asks about \"Fan Culture.\"",
         "examples": [
@@ -109,6 +118,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "TOYBOX",
+        "suggestedPenalties": ["Lose 1 point", "Skip current turn"],
         "title": "Red Card 9: The \"Toybox\" Violation",
         "description": "SCREEN TRUMPS PLASTIC. Toy accessories do not override the source material (Game/Show/Match).",
         "examples": [
@@ -119,6 +129,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "EASTER_EGG",
+        "suggestedPenalties": ["Lose 1 point", "Skip current turn"],
         "title": "Red Card 10: The \"Easter Egg\" Violation",
         "description": "A reference is not a cast member. To count, a character must speak, influence the plot, or be interactable.",
         "examples": [
@@ -134,6 +145,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
     "cards": [
       {
         "type": "MOTION",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 11: The \"Motion\" Violation",
         "description": "If it is drawn, painted, or illustrated, IT COUNTS as Visual Storytelling.",
         "examples": [
@@ -144,6 +156,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "CASUAL",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 12: The \"Casual\" Violation",
         "description": "If it is electronic, interactive, and has a win/loss state or narrative, IT IS A VIDEO GAME. (e.g., Angry Birds is as valid as Elden Ring.)",
         "examples": [
@@ -154,6 +167,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "RETCON",
+        "suggestedPenalties": ["Skip current turn", "Opponent gets 1 point"],
         "title": "Red Card 13: The \"Retcon\" Violation",
         "description": "ICONIC STATUS WINS. Unless the question specifies \"Current Continuity,\" the most famous/original version of the fact is accepted.",
         "examples": [
@@ -164,6 +178,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "IMPORT",
+        "suggestedPenalties": ["Host Discretion: Warn or Skip turn"],
         "title": "Red Card 14: The \"Import\" Violation",
         "description": "ACCEPTED (BUT DON'T BE SMUG). Both the original Japanese title and the localised title are correct. No bonus points for showing off.",
         "examples": [
@@ -174,6 +189,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "SEMANTICS",
+        "suggestedPenalties": ["Host Discretion: Warn or Skip turn"],
         "title": "Red Card 15: The \"Semantics\" Violation",
         "description": "INTENT OVER SYNTAX. Colloquial answers are accepted unless the question is a specific \"Trick Question\" designed to test the misconception.",
         "examples": [
@@ -184,6 +200,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "SPEEDRUN",
+        "suggestedPenalties": ["Lose 1 point", "Skip current turn"],
         "title": "Red Card 16: The \"Speedrun\" Violation",
         "description": "INTENDED PLAY ONLY. Answers must reflect the standard, intended narrative or gameplay experience, not code-breaking, glitches, or sequence breaks.",
         "examples": [
@@ -199,6 +216,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
     "cards": [
       {
         "type": "HOST_DISCRETION",
+        "suggestedPenalties": ["Award custom points (+0.5)", "Veto answer entirely"],
         "title": "Host Discretion",
         "description": "The host has the ultimate final say in resolving a dispute or granting a subjective point based on situational context.",
         "examples": [
@@ -209,6 +227,7 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
       },
       {
         "type": "TIME_PENALTY",
+        "suggestedPenalties": ["Lose 1 point", "Reduce timer by 3s"],
         "title": "Time Penalty",
         "description": "Interference, talking out of turn, or stalling will result in a time reduction or point deduction as deemed fit by the referee.",
         "examples": [
@@ -266,6 +285,18 @@ const RedCardList = memo(() => (
                       </li>
                     ))}
                   </ul>
+                  {card.suggestedPenalties && card.suggestedPenalties.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-slate-600/50">
+                      <span className="text-xs font-bold text-arena-crimson uppercase tracking-wider block mb-1">Suggested Penalties:</span>
+                      <ul className="list-disc list-inside space-y-1">
+                        {card.suggestedPenalties.map((penalty, idx) => (
+                          <li key={`penalty-${idx}`} className="text-sm text-arena-amber">
+                            {penalty}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             );

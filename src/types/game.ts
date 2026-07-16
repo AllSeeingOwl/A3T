@@ -1,5 +1,5 @@
 export type Category = 'Animation' | 'Video Games' | 'Pro Wrestling';
-export type ScreenState = 'LOBBY' | 'ARENA' | 'SUMMARY';
+export type ScreenState = 'LOBBY' | 'ARENA' | 'SUMMARY' | 'TIEBREAKER';
 export type QuestionStep = 0 | 1 | 2; // 0 = Quest 1, 1 = Quest 2, 2 = Quest 3
 
 export interface Question {

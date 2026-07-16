@@ -5,10 +5,11 @@ import { useShallow } from 'zustand/react/shallow';
 export const SummaryPodium: React.FC = () => {
   // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow so this component
   // only re-renders when the `teams` or `resetGame` state changes.
-  const { teams, resetGame } = useGameStore(
+  const { teams, resetGame, setScreen } = useGameStore(
     useShallow((state) => ({
       teams: state.teams,
       resetGame: state.resetGame,
+      setScreen: state.setScreen,
     }))
   );
 
@@ -87,12 +88,22 @@ export const SummaryPodium: React.FC = () => {
 
       </div>
 
-      <button
-        onClick={resetGame}
-        className="px-12 py-4 bg-arena-navy hover:bg-slate-700 border-2 border-slate-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-lg z-10 focus-visible:ring-2 focus-visible:ring-white focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
-      >
-        Play Again
-      </button>
+      <div className="flex gap-6 z-10">
+        <button
+          onClick={resetGame}
+          className="px-12 py-4 bg-arena-navy hover:bg-slate-700 border-2 border-slate-500 text-white rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-lg focus-visible:ring-2 focus-visible:ring-white focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
+        >
+          Play Again
+        </button>
+        {isTie && (
+          <button
+            onClick={() => setScreen('TIEBREAKER')}
+            className="px-12 py-4 bg-arena-amber hover:bg-amber-500 text-arena-navy rounded-full font-display text-2xl uppercase tracking-wider transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.5)] focus-visible:ring-2 focus-visible:ring-arena-amber focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
+          >
+            Initiate Tiebreaker
+          </button>
+        )}
+      </div>
 
     </div>
   );

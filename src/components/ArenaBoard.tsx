@@ -101,9 +101,10 @@ interface ScoreboardHeaderProps {
   deckName?: string;
   parentTheme: string;
   onEndGame: () => void;
+  chainsRemaining: number;
 }
 
-const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme, onEndGame }: ScoreboardHeaderProps) => {
+const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme, onEndGame, chainsRemaining }: ScoreboardHeaderProps) => {
   return (
     <div className="relative flex justify-between items-center p-6 bg-arena-navy border-b border-slate-700 shadow-lg">
       <div
@@ -124,6 +125,7 @@ const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme, onEnd
       <div className="text-center">
         <h1 className="text-3xl font-display text-white uppercase tracking-widest mb-2">{deckName}</h1>
         <p className="text-arena-amber font-display text-xl">Theme: {parentTheme}</p>
+        <p className="text-slate-400 font-display text-sm mt-1">{chainsRemaining} Chain{chainsRemaining !== 1 ? 's' : ''} Remaining</p>
       </div>
 
       <div
@@ -242,6 +244,7 @@ export const ArenaBoard: React.FC = () => {
 
   const activeCard = selectedDeck?.cards[currentCardIndex];
   const activeQuestion = activeCard?.questions[currentStepIndex];
+  const chainsRemaining = selectedDeck ? selectedDeck.cards.length - currentCardIndex - 1 : 0;
 
   if (!activeCard || !activeQuestion) {
     return <div className="text-white p-8">Loading or Error loading card...</div>;
@@ -330,6 +333,7 @@ export const ArenaBoard: React.FC = () => {
         deckName={selectedDeck?.deckName}
         parentTheme={activeCard.parentTheme}
         onEndGame={endGame}
+        chainsRemaining={chainsRemaining}
       />
 
       {/* Main Play Area */}

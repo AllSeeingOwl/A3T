@@ -9,6 +9,7 @@ import { RedCardGuide } from './components/RedCardGuide';
 const LobbyHub = lazy(() => import('./components/LobbyHub').then(m => ({ default: m.LobbyHub })));
 const ArenaBoard = lazy(() => import('./components/ArenaBoard').then(m => ({ default: m.ArenaBoard })));
 const SummaryPodium = lazy(() => import('./components/SummaryPodium').then(m => ({ default: m.SummaryPodium })));
+const TiebreakerScreen = lazy(() => import('./components/TiebreakerScreen').then(m => ({ default: m.TiebreakerScreen })));
 
 export const App: React.FC = () => {
   // ⚡ Bolt Optimization: Subscribe only to currentScreen.
@@ -22,6 +23,7 @@ export const App: React.FC = () => {
         {currentScreen === 'LOBBY' && <LobbyHub />}
         {currentScreen === 'ARENA' && <ArenaBoard />}
         {currentScreen === 'SUMMARY' && <SummaryPodium />}
+        {currentScreen === 'TIEBREAKER' && <TiebreakerScreen />}
       </Suspense>
 
       {/* Kept RedCardModal eager to avoid replacing the entire screen with a loading state when triggered */}
