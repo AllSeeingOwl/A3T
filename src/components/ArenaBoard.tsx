@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from 'react';
+import React, { useEffect, memo, useCallback } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ChainCard, QuestionStep } from '../types/game';
@@ -246,14 +246,13 @@ export const ArenaBoard: React.FC = () => {
   const activeQuestion = activeCard?.questions[currentStepIndex];
   const chainsRemaining = selectedDeck ? selectedDeck.cards.length - currentCardIndex - 1 : 0;
 
-  if (!activeCard || !activeQuestion) {
-    return <div className="text-white p-8">Loading or Error loading card...</div>;
-  }
 
-  const handleCorrect = () => {
+
+  const handleCorrect = useCallback(() => {
+    if (!activeQuestion) return;
     addScore(activeTeam, activeQuestion.points);
     if (currentStepIndex === 2) {
-      if (activeCard.listQuestion && activeCard.listQuestion.enabled) {
+      if (activeCard?.listQuestion && activeCard.listQuestion.enabled) {
         nextStep();
       } else {
         nextCard();
@@ -261,9 +260,9 @@ export const ArenaBoard: React.FC = () => {
     } else {
       nextStep();
     }
-  };
+  }, [addScore, activeTeam, activeQuestion, currentStepIndex, activeCard, nextStep, nextCard]);
 
-  const handleMissedOrNext = () => {
+  const handleMissedOrNext = useCallback(() => {
     if (questionStage === 'REVEALED_ANSWER') {
       if (currentStepIndex === 2) {
         nextCard();
@@ -280,12 +279,12 @@ export const ArenaBoard: React.FC = () => {
       setTimerSeconds(5);
       setTimerActive(true);
     }
-  };
+  }, [questionStage, currentStepIndex, nextCard, nextStep, setTimerSeconds, setTimerActive, setQuestionStage, switchTurn]);
 
-  const handleEasyCorrect = () => {
+  const handleEasyCorrect = useCallback(() => {
     // Correct in easy mode means they get 0 points, then we move on.
     if (currentStepIndex === 2) {
-      if (activeCard.listQuestion && activeCard.listQuestion.enabled) {
+      if (activeCard?.listQuestion && activeCard.listQuestion.enabled) {
         nextStep();
       } else {
         nextCard();
@@ -293,14 +292,15 @@ export const ArenaBoard: React.FC = () => {
     } else {
       nextStep();
     }
-  };
+  }, [currentStepIndex, activeCard, nextStep, nextCard]);
 
-  const handleEasyIncorrect = () => {
+  const handleEasyIncorrect = useCallback(() => {
     // Incorrect in easy mode means the *other* team gets full points, then we move on.
     const otherTeam = easyModeTeam === 'teamA' ? 'teamB' : 'teamA';
+    if (!activeQuestion) return;
     addScore(otherTeam, activeQuestion.points);
     if (currentStepIndex === 2) {
-      if (activeCard.listQuestion && activeCard.listQuestion.enabled) {
+      if (activeCard?.listQuestion && activeCard.listQuestion.enabled) {
         nextStep();
       } else {
         nextCard();
@@ -308,21 +308,25 @@ export const ArenaBoard: React.FC = () => {
     } else {
       nextStep();
     }
-  };
+  }, [easyModeTeam, addScore, activeQuestion, currentStepIndex, activeCard, nextStep, nextCard]);
 
-  const getSecondaryButtonText = () => {
+  const getSecondaryButtonText = useCallback(() => {
     if (questionStage === 'REVEALED_ANSWER') return currentStepIndex === 2 ? 'Next Chain' : 'Next Question';
     if (questionStage === 'STEAL_WINDOW') return 'Steal Failed';
     return 'Missed / Steal';
-  };
+  }, [questionStage, currentStepIndex]);
 
-  const handleEasyTrigger = () => {
+  const handleEasyTrigger = useCallback(() => {
     if ('speechSynthesis' in window) {
       const msg = new SpeechSynthesisUtterance("Who said that?");
       window.speechSynthesis.speak(msg);
     }
     setShowEasyModal(true);
-  };
+  }, []);
+
+  if (!activeCard || !activeQuestion) {
+    return <div className="text-white p-8">Loading or Error loading card...</div>;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-arena-slate font-sans relative w-full">
