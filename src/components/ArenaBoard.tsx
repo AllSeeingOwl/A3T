@@ -1,7 +1,37 @@
 import React, { useEffect, memo, useCallback } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
-import { ChainCard, QuestionStep } from '../types/game';
+import { ChainCard, QuestionStep, Category } from '../types/game';
+
+// Helper to map categories to accessible colors for the question cards
+const getCategoryStyles = (category: Category) => {
+  switch (category) {
+    case 'Animation':
+      return {
+        border: 'border-cyan-500',
+        shadow: 'shadow-[0_0_30px_rgba(6,182,212,0.2)]',
+        badgeBg: 'bg-cyan-900 text-cyan-100 border border-cyan-500',
+      };
+    case 'Video Games':
+      return {
+        border: 'border-fuchsia-500',
+        shadow: 'shadow-[0_0_30px_rgba(217,70,239,0.2)]',
+        badgeBg: 'bg-fuchsia-900 text-fuchsia-100 border border-fuchsia-500',
+      };
+    case 'Pro Wrestling':
+      return {
+        border: 'border-rose-500',
+        shadow: 'shadow-[0_0_30px_rgba(244,63,94,0.2)]',
+        badgeBg: 'bg-rose-900 text-rose-100 border border-rose-500',
+      };
+    default:
+      return {
+        border: 'border-slate-600',
+        shadow: 'shadow-2xl',
+        badgeBg: 'bg-slate-700 text-slate-300 border border-slate-600',
+      };
+  }
+};
 
 // ⚡ Bolt Optimization: Extract fast-changing state into isolated components.
 // This prevents the heavy ArenaBoard parent from re-rendering on every timer tick.
@@ -383,9 +413,12 @@ export const ArenaBoard: React.FC = () => {
         )}
 
         {questionStage === 'LIST_ACTIVE' || questionStage === 'LIST_REVEALED' ? (
-           <div className="w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border border-arena-gold shadow-[0_0_30px_rgba(251,191,36,0.2)] relative mb-8">
+           <div className={`w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border ${getCategoryStyles(activeCard.listQuestion.listCategory).border} ${getCategoryStyles(activeCard.listQuestion.listCategory).shadow} relative mb-8`}>
               <h3 className="text-2xl font-display text-arena-gold mb-4 uppercase flex items-center gap-2">
                  <span className="bg-arena-gold text-arena-slate px-2 py-1 rounded text-sm">Boss Battle</span>
+                 <span className={`px-2 py-1 rounded text-sm ${getCategoryStyles(activeCard.listQuestion.listCategory).badgeBg}`}>
+                    {activeCard.listQuestion.listCategory}
+                 </span>
                  List Question
               </h3>
               <p className="text-3xl text-white font-medium mb-4 leading-relaxed">
@@ -421,15 +454,18 @@ export const ArenaBoard: React.FC = () => {
         ) : (
         <>
         {/* Question Card */}
-        <div className="w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border border-slate-600 shadow-2xl relative mb-8">
+        <div className={`w-full max-w-4xl bg-arena-navy rounded-2xl p-8 border ${getCategoryStyles(activeQuestion.category).border} ${getCategoryStyles(activeQuestion.category).shadow} relative mb-8`}>
 
           <div className="absolute top-0 right-0 p-4">
              <StealTimer />
           </div>
 
           <div aria-live="polite" aria-atomic="true">
-            <h3 className="text-2xl font-display text-slate-400 mb-4 uppercase">
+            <h3 className="text-2xl font-display text-slate-400 mb-4 uppercase flex items-center gap-2">
               Question {currentStepIndex + 1}
+              <span className={`px-2 py-1 rounded text-sm ${getCategoryStyles(activeQuestion.category).badgeBg}`}>
+                {activeQuestion.category}
+              </span>
             </h3>
             <p className="text-3xl text-white font-medium mb-8 leading-relaxed">
               {activeQuestion.questionText}
