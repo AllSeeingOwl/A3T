@@ -61,3 +61,10 @@
 **Learning:** Forcing a user to manually highlight or backspace pre-filled default text (like default team names) is tedious. Selecting the text automatically upon focus drastically improves the micro-interaction.
 **Action:** Always add `onFocus={(e) => e.target.select()}` to text inputs that are pre-filled with temporary default values that users are highly likely to overwrite.
 ## 2024-11-22 - Prevent Accidental Destructive Actions\n**Learning:** Destructive actions hidden behind simple single-click buttons (like 'Finish Match' ending a game instantly) cause user frustration and accidental state loss.\n**Action:** Always add an explicit confirmation step (like a native `window.confirm` dialog or custom modal) to irreversible or destructive UI actions.
+## 2024-07-26 - Accessible Destructive Actions
+**Learning:** Post-game destructive actions like "Play Again" or ending a tiebreaker can easily wipe out game state. Adding a simple confirmation step prevents accidental loss.
+**Action:** Use native window.confirm() or a custom confirmation dialog for all destructive actions to prevent frustrating mistakes, following the pattern from the "Finish Match" button.
+
+## 2024-07-26 - Accessible Screen Reader Announcements for Dynamic Components
+**Learning:** During highly dynamic end states (like a sudden death tiebreaker conclusion), newly displayed visual text ("Winner Declared!") must be explicitly announced to screen readers.
+**Action:** Use `aria-live="polite"` and `aria-atomic="true"` on dynamically appearing winner announcements so they are narratively announced as soon as they mount into the DOM.

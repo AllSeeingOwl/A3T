@@ -16,12 +16,14 @@ export const TiebreakerScreen: React.FC = () => {
   const [winnerDeclared, setWinnerDeclared] = useState(false);
 
   const handleWinner = (team: 'teamA' | 'teamB') => {
-    // Add +1 to the winner to break the tie, then go back to summary
-    addScore(team, 1);
-    setWinnerDeclared(true);
-    setTimeout(() => {
-      endGame();
-    }, 1500);
+    if (window.confirm(`Are you sure you want to declare ${teams[team].name} the ultimate champion?`)) {
+      // Add +1 to the winner to break the tie, then go back to summary
+      addScore(team, 1);
+      setWinnerDeclared(true);
+      setTimeout(() => {
+        endGame();
+      }, 1500);
+    }
   };
 
   // Find a list question to show, or just give a generic prompt.
@@ -86,7 +88,7 @@ export const TiebreakerScreen: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="relative z-10 animate-pulse text-3xl font-display text-arena-gold uppercase">
+          <div aria-live="polite" aria-atomic="true" className="relative z-10 animate-pulse text-3xl font-display text-arena-gold uppercase">
             Winner Declared! Returning to Podium...
           </div>
         )}
