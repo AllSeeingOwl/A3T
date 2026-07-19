@@ -68,3 +68,6 @@
 ## 2024-07-26 - Accessible Screen Reader Announcements for Dynamic Components
 **Learning:** During highly dynamic end states (like a sudden death tiebreaker conclusion), newly displayed visual text ("Winner Declared!") must be explicitly announced to screen readers.
 **Action:** Use `aria-live="polite"` and `aria-atomic="true"` on dynamically appearing winner announcements so they are narratively announced as soon as they mount into the DOM.
+## 2024-07-28 - Isolating Character Count State
+**Learning:** Adding local interactive state (like character counters) to large UI components that have been explicitly optimized with `useRef` to prevent performance issues (e.g. `LobbyHub.tsx`) can cause massive unnecessary re-renders across the page on every keystroke.
+**Action:** When adding high-frequency state like character counters to heavily optimized parents, isolate the input and its localized state into a separate child component (`TeamInput`) rather than reverting the parent back to `useState`.
