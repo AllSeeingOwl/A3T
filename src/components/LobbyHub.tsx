@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { sanitizeHTML } from '../utils/sanitize';
@@ -21,6 +21,13 @@ export const LobbyHub: React.FC = () => {
   const teamBRef = useRef<HTMLInputElement>(null);
 
   const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // ⚡ Bolt Optimization: Preload the heavy ArenaBoard component in the background
+    // while the user configures the match. This eliminates the Suspense fallback
+    // delay when clicking "Start Match", ensuring an instantaneous transition.
+    import('./ArenaBoard').catch(() => {}); // Suppress unhandled rejections if fetch fails
+  }, []);
 
   const handleStart = () => {
     const deck = defaultDecks.find((d) => d.deckId === selectedDeckId);

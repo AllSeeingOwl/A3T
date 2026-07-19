@@ -67,3 +67,7 @@
 ## 2024-07-31 - Static Dictionaries for Object-Returning Helpers
 **Learning:** Helper functions that use `switch` statements to return new configuration objects (like style configurations) cause unnecessary allocations and garbage collection pressure when called frequently within a React render loop.
 **Action:** Extract the configurations into a static, constant dictionary (e.g., `Record<string, Config>`) outside the component/helper scope, and use O(1) property lookup to return the cached object reference.
+
+## 2024-11-20 - [Preload Code-Split Components to Avoid Suspense Fallbacks]
+**Learning:** When using `React.lazy()` for route-level code splitting, transitioning to a new route can cause a noticeable delay and a flash of the `Suspense` fallback UI, especially for heavy components like `ArenaBoard`.
+**Action:** Use an empty `useEffect` hook in the source component (like `LobbyHub`) to dynamically `import()` the heavy destination component (`./ArenaBoard`) in the background. This ensures the chunk is already downloaded by the time the user interacts, allowing for an instantaneous, seamless transition without the loading flash.
