@@ -4,6 +4,42 @@ import { useShallow } from 'zustand/react/shallow';
 import { sanitizeHTML } from '../utils/sanitize';
 import { CheckCircle2, Circle } from 'lucide-react';
 
+interface TeamInputProps {
+  id: string;
+  label: string;
+  defaultValue: string;
+  colorClass: string;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+}
+
+const TeamInput: React.FC<TeamInputProps> = ({ id, label, defaultValue, colorClass, inputRef }) => {
+  const [count, setCount] = useState(defaultValue.length);
+
+  return (
+    <div className={`flex-1 bg-arena-navy p-6 rounded-xl border-t-4 ${colorClass} shadow-lg flex flex-col relative`}>
+      <div className="flex justify-between items-center mb-4">
+        <label htmlFor={id} className={`text-2xl font-display ${id === 'team1' ? 'text-arena-magenta' : 'text-arena-cobalt'} uppercase block`}>
+          {label}
+        </label>
+        <span className="text-sm text-slate-400 font-sans" aria-live="polite">
+          {count}/50
+        </span>
+      </div>
+      <input
+        id={id}
+        type="text"
+        className={`w-full bg-arena-slate text-white p-3 rounded border border-arena-navy ${id === 'team1' ? 'focus:border-arena-magenta' : 'focus:border-arena-cobalt'} focus:outline-none text-xl`}
+        defaultValue={defaultValue}
+        ref={inputRef}
+        placeholder="Enter Team Name"
+        maxLength={50}
+        onFocus={(e) => e.target.select()}
+        onChange={(e) => setCount(e.target.value.length)}
+      />
+    </div>
+  );
+};
+
 export const LobbyHub: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the Lobby from re-rendering
   // on unrelated game store changes.
@@ -53,33 +89,20 @@ export const LobbyHub: React.FC = () => {
       </h1>
 
       <div className="flex w-full max-w-4xl gap-8 mb-12">
-        <div className="flex-1 bg-arena-navy p-6 rounded-xl border-t-4 border-arena-magenta shadow-lg flex flex-col">
-          <label htmlFor="team1" className="text-2xl font-display text-arena-magenta mb-4 uppercase block">Team 1</label>
-          <input
-            id="team1"
-            type="text"
-            className="w-full bg-arena-slate text-white p-3 rounded border border-arena-navy focus:border-arena-magenta focus:outline-none text-xl"
-            defaultValue="Team A"
-            ref={teamARef}
-            placeholder="Enter Team Name"
-            maxLength={50}
-            onFocus={(e) => e.target.select()}
-          />
-        </div>
-
-        <div className="flex-1 bg-arena-navy p-6 rounded-xl border-t-4 border-arena-cobalt shadow-lg flex flex-col">
-          <label htmlFor="team2" className="text-2xl font-display text-arena-cobalt mb-4 uppercase block">Team 2</label>
-          <input
-            id="team2"
-            type="text"
-            className="w-full bg-arena-slate text-white p-3 rounded border border-arena-navy focus:border-arena-cobalt focus:outline-none text-xl"
-            defaultValue="Team B"
-            ref={teamBRef}
-            placeholder="Enter Team Name"
-            maxLength={50}
-            onFocus={(e) => e.target.select()}
-          />
-        </div>
+        <TeamInput
+          id="team1"
+          label="Team 1"
+          defaultValue="Team A"
+          colorClass="border-arena-magenta"
+          inputRef={teamARef}
+        />
+        <TeamInput
+          id="team2"
+          label="Team 2"
+          defaultValue="Team B"
+          colorClass="border-arena-cobalt"
+          inputRef={teamBRef}
+        />
       </div>
 
       <div className="w-full max-w-4xl bg-arena-navy p-8 rounded-xl shadow-lg border border-slate-700">
