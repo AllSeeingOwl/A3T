@@ -1,7 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, Check, X, Undo2, Plus } from 'lucide-react';
+
+type ItemStatus = 'unmarked' | 'tick' | 'cross';
+interface ChecklistItem {
+  id: string;
+  text: string;
+  status: ItemStatus;
+}
 
 export const TiebreakerScreen: React.FC = () => {
   const { teams, addScore, endGame, selectedDeck } = useGameStore(
@@ -34,6 +41,58 @@ export const TiebreakerScreen: React.FC = () => {
     return selectedDeck?.cards.find(c => c.listQuestion && c.listQuestion.enabled)?.listQuestion;
   }, [selectedDeck]);
 
+  const [checklist, setChecklist] = useState<ChecklistItem[]>(() => {
+    if (randomListQuestion) {
+      return randomListQuestion.correctItems.map((item, idx) => ({
+        id: `pre-${idx}`,
+        text: item,
+        status: 'unmarked' as ItemStatus
+      }));
+    }
+    return [];
+  });
+  const [customInput, setCustomInput] = useState('');
+
+  // Re-initialize checklist if randomListQuestion changes,
+  // but we can do this via an effect if needed. The linter complains about setState in useEffect.
+  // Actually, this hook is only for TiebreakerScreen which doesn't change cards midway.
+  // But if we want to be fully compliant and reactive:
+  const prevQuestionRef = React.useRef(randomListQuestion);
+  if (randomListQuestion !== prevQuestionRef.current) {
+    prevQuestionRef.current = randomListQuestion;
+    if (randomListQuestion) {
+      setChecklist(
+        randomListQuestion.correctItems.map((item, idx) => ({
+          id: `pre-${idx}`,
+          text: item,
+          status: 'unmarked' as ItemStatus
+        }))
+      );
+    } else {
+      setChecklist([]);
+    }
+  }
+
+  const updateItemStatus = (id: string, status: ItemStatus) => {
+    setChecklist(prev => prev.map(item => item.id === id ? { ...item, status } : item));
+  };
+
+  const addCustomItems = () => {
+    if (!customInput.trim()) return;
+    const newItems = customInput
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .map((text, idx) => ({
+        id: `custom-${Date.now()}-${idx}`,
+        text,
+        status: 'unmarked' as ItemStatus,
+      }));
+
+    setChecklist(prev => [...prev, ...newItems]);
+    setCustomInput('');
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-arena-slate font-sans p-8 w-full">
       <div className="max-w-4xl w-full bg-arena-navy rounded-2xl p-12 border-4 border-arena-amber shadow-[0_0_50px_rgba(245,158,11,0.3)] relative overflow-hidden text-center">
@@ -61,10 +120,79 @@ export const TiebreakerScreen: React.FC = () => {
             <p className="text-2xl text-white font-medium">
               {randomListQuestion ? randomListQuestion.promptText : "Host Discretion: Ask teams to list as many items as possible from a chosen category until one team fails."}
             </p>
-            {randomListQuestion && (
-              <p className="mt-4 text-emerald-400 font-display text-lg">
-                Accepted answers include: {randomListQuestion.correctItems.slice(0, 5).join(', ')} ...and more.
-              </p>
+          </div>
+
+          {/* Host Checklist Tool */}
+          <div className="mt-8 bg-slate-900 p-6 rounded-lg border border-slate-700">
+            <h4 className="text-xl font-display text-arena-gold mb-4 uppercase">Host Checklist Tool</h4>
+
+            <div className="flex gap-2 mb-6">
+              <textarea
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                placeholder="Paste or type custom answers here (one per line)..."
+                className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
+                rows={2}
+              />
+              <button
+                onClick={addCustomItems}
+                className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center"
+              >
+                <Plus className="w-5 h-5 mr-1" /> Add
+              </button>
+            </div>
+
+            {checklist.length > 0 ? (
+              <div tabIndex={0} className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[40vh] overflow-y-auto pr-2 focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none rounded">
+                {checklist.map(item => (
+                  <div
+                    key={item.id}
+                    className={`flex items-center justify-between p-3 rounded border transition-colors ${
+                      item.status === 'tick' ? 'bg-emerald-900/40 border-emerald-500/50' :
+                      item.status === 'cross' ? 'bg-red-900/40 border-red-500/50' :
+                      'bg-slate-800 border-slate-600'
+                    }`}
+                  >
+                    <span className={`text-lg flex-1 ${
+                      item.status === 'tick' ? 'text-emerald-400 line-through' :
+                      item.status === 'cross' ? 'text-red-400 line-through' :
+                      'text-white'
+                    }`}>
+                      {item.text}
+                    </span>
+                    <div className="flex gap-1 ml-3">
+                      <button
+                        onClick={() => updateItemStatus(item.id, 'tick')}
+                        className={`p-1.5 rounded hover:bg-emerald-500/20 text-emerald-500 ${item.status === 'tick' ? 'bg-emerald-500/20 ring-1 ring-emerald-500/50' : ''}`}
+                        title="Mark Correct"
+                        aria-label={`Mark ${item.text} correct`}
+                      >
+                        <Check className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => updateItemStatus(item.id, 'cross')}
+                        className={`p-1.5 rounded hover:bg-red-500/20 text-red-500 ${item.status === 'cross' ? 'bg-red-500/20 ring-1 ring-red-500/50' : ''}`}
+                        title="Mark Incorrect"
+                        aria-label={`Mark ${item.text} incorrect`}
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                      {item.status !== 'unmarked' && (
+                        <button
+                          onClick={() => updateItemStatus(item.id, 'unmarked')}
+                          className="p-1.5 rounded hover:bg-slate-600 text-slate-400"
+                          title="Reset"
+                          aria-label={`Reset ${item.text}`}
+                        >
+                          <Undo2 className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-slate-400 italic text-center py-4">No checklist items yet. Add custom items above.</p>
             )}
           </div>
         </div>
