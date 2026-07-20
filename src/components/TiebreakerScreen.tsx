@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ShieldAlert, Check, X, Undo2, Plus } from 'lucide-react';
@@ -9,6 +9,62 @@ interface ChecklistItem {
   text: string;
   status: ItemStatus;
 }
+
+// ⚡ Bolt Optimization: Extract checklist item rendering into a memoized component.
+// Combined with useCallback on the update handler, this ensures that checking/unchecking
+// one item only re-renders that specific item, instead of the entire checklist.
+const ChecklistItemView = memo(({
+  item,
+  onUpdate
+}: {
+  item: ChecklistItem;
+  onUpdate: (id: string, status: ItemStatus) => void
+}) => (
+  <div
+    className={`flex items-center justify-between p-3 rounded border transition-colors ${
+      item.status === 'tick' ? 'bg-emerald-900/40 border-emerald-500/50' :
+      item.status === 'cross' ? 'bg-red-900/40 border-red-500/50' :
+      'bg-slate-800 border-slate-600'
+    }`}
+  >
+    <span className={`text-lg flex-1 ${
+      item.status === 'tick' ? 'text-emerald-400 line-through' :
+      item.status === 'cross' ? 'text-red-400 line-through' :
+      'text-white'
+    }`}>
+      {item.text}
+    </span>
+    <div className="flex gap-1 ml-3">
+      <button
+        onClick={() => onUpdate(item.id, 'tick')}
+        className={`p-1.5 rounded hover:bg-emerald-500/20 text-emerald-500 ${item.status === 'tick' ? 'bg-emerald-500/20 ring-1 ring-emerald-500/50' : ''}`}
+        title="Mark Correct"
+        aria-label={`Mark ${item.text} correct`}
+      >
+        <Check className="w-5 h-5" />
+      </button>
+      <button
+        onClick={() => onUpdate(item.id, 'cross')}
+        className={`p-1.5 rounded hover:bg-red-500/20 text-red-500 ${item.status === 'cross' ? 'bg-red-500/20 ring-1 ring-red-500/50' : ''}`}
+        title="Mark Incorrect"
+        aria-label={`Mark ${item.text} incorrect`}
+      >
+        <X className="w-5 h-5" />
+      </button>
+      {item.status !== 'unmarked' && (
+        <button
+          onClick={() => onUpdate(item.id, 'unmarked')}
+          className="p-1.5 rounded hover:bg-slate-600 text-slate-400"
+          title="Reset"
+          aria-label={`Reset ${item.text}`}
+        >
+          <Undo2 className="w-5 h-5" />
+        </button>
+      )}
+    </div>
+  </div>
+));
+ChecklistItemView.displayName = 'ChecklistItemView';
 
 export const TiebreakerScreen: React.FC = () => {
   const { teams, addScore, endGame, selectedDeck } = useGameStore(
@@ -51,7 +107,11 @@ export const TiebreakerScreen: React.FC = () => {
     }
     return [];
   });
-  const [customInput, setCustomInput] = useState('');
+
+  // ⚡ Bolt Optimization: Use an uncontrolled input with useRef instead of controlled state.
+  // This prevents the entire TiebreakerScreen (and the large checklist array) from
+  // re-rendering on every single keystroke in the custom input textarea.
+  const customInputRef = React.useRef<HTMLTextAreaElement>(null);
 
   // Re-initialize checklist if randomListQuestion changes,
   // but we can do this via an effect if needed. The linter complains about setState in useEffect.
@@ -73,13 +133,17 @@ export const TiebreakerScreen: React.FC = () => {
     }
   }
 
-  const updateItemStatus = (id: string, status: ItemStatus) => {
+  // ⚡ Bolt Optimization: Memoize the update handler to preserve reference equality
+  // so that ChecklistItemView doesn't receive a new function reference every render.
+  const updateItemStatus = useCallback((id: string, status: ItemStatus) => {
     setChecklist(prev => prev.map(item => item.id === id ? { ...item, status } : item));
-  };
+  }, []);
 
   const addCustomItems = () => {
-    if (!customInput.trim()) return;
-    const newItems = customInput
+    const inputValue = customInputRef.current?.value;
+    if (!inputValue || !inputValue.trim()) return;
+
+    const newItems = inputValue
       .split('\n')
       .map(line => line.trim())
       .filter(line => line.length > 0)
@@ -90,7 +154,9 @@ export const TiebreakerScreen: React.FC = () => {
       }));
 
     setChecklist(prev => [...prev, ...newItems]);
-    setCustomInput('');
+    if (customInputRef.current) {
+      customInputRef.current.value = '';
+    }
   };
 
   return (
@@ -128,8 +194,7 @@ export const TiebreakerScreen: React.FC = () => {
 
             <div className="flex gap-2 mb-6">
               <textarea
-                value={customInput}
-                onChange={(e) => setCustomInput(e.target.value)}
+                ref={customInputRef}
                 placeholder="Paste or type custom answers here (one per line)..."
                 className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
                 rows={2}
@@ -189,6 +254,7 @@ export const TiebreakerScreen: React.FC = () => {
                       )}
                     </div>
                   </div>
+                  <ChecklistItemView key={item.id} item={item} onUpdate={updateItemStatus} />
                 ))}
               </div>
             ) : (
