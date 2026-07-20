@@ -71,3 +71,7 @@
 ## 2024-07-28 - Isolating Character Count State
 **Learning:** Adding local interactive state (like character counters) to large UI components that have been explicitly optimized with `useRef` to prevent performance issues (e.g. `LobbyHub.tsx`) can cause massive unnecessary re-renders across the page on every keystroke.
 **Action:** When adding high-frequency state like character counters to heavily optimized parents, isolate the input and its localized state into a separate child component (`TeamInput`) rather than reverting the parent back to `useState`.
+
+## 2026-07-20 - Accessible Icon-Only Buttons in Lists
+**Learning:** Using native HTML `title` attributes on icon-only action buttons (like checklist controls) in dense lists creates poor UX due to delayed native tooltips, and fails screen reader standards by causing redundant narration when an `aria-label` is also present.
+**Action:** Always replace native `title` attributes on icon-only buttons with custom CSS-based tooltips (e.g. Tailwind `group-hover`). Add `aria-hidden="true"` to the tooltip content to hide it from screen readers, relying entirely on the parent button's `aria-label` for accessible context.
