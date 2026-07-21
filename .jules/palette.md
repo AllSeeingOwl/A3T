@@ -75,3 +75,6 @@
 ## 2026-07-20 - Accessible Icon-Only Buttons in Lists
 **Learning:** Using native HTML `title` attributes on icon-only action buttons (like checklist controls) in dense lists creates poor UX due to delayed native tooltips, and fails screen reader standards by causing redundant narration when an `aria-label` is also present.
 **Action:** Always replace native `title` attributes on icon-only buttons with custom CSS-based tooltips (e.g. Tailwind `group-hover`). Add `aria-hidden="true"` to the tooltip content to hide it from screen readers, relying entirely on the parent button's `aria-label` for accessible context.
+## 2024-11-23 - Accessible Inputs via aria-label
+**Learning:** Relying solely on `placeholder` attributes for text inputs and textareas (like the custom answers input in TiebreakerScreen) is a known accessibility anti-pattern because the placeholder is often not announced correctly by screen readers as an accessible name, and it disappears when text is entered.
+**Action:** Always provide an explicit `aria-label` for text inputs and textareas that do not have an associated visible `<label>`, ensuring the element maintains a valid accessible name for screen readers regardless of its content.

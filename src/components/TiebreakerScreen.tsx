@@ -131,6 +131,7 @@ export const TiebreakerScreen: React.FC = () => {
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
                 placeholder="Paste or type custom answers here (one per line)..."
+                aria-label="Custom answers"
                 className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
                 rows={2}
               />
