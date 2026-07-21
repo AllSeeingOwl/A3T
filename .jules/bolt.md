@@ -71,3 +71,7 @@
 ## 2024-11-20 - [Preload Code-Split Components to Avoid Suspense Fallbacks]
 **Learning:** When using `React.lazy()` for route-level code splitting, transitioning to a new route can cause a noticeable delay and a flash of the `Suspense` fallback UI, especially for heavy components like `ArenaBoard`.
 **Action:** Use an empty `useEffect` hook in the source component (like `LobbyHub`) to dynamically `import()` the heavy destination component (`./ArenaBoard`) in the background. This ensures the chunk is already downloaded by the time the user interacts, allowing for an instantaneous, seamless transition without the loading flash.
+
+## 2026-07-11 - [Memoize List Items to Prevent Cascading Renders]
+**Learning:** In dynamic lists where individual items hold specific statuses (like a checklist in `TiebreakerScreen.tsx`), updating the status of one item modifies the parent's array state, causing every single inline item in the list to re-render unnecessarily.
+**Action:** Always extract complex list items into their own components wrapped in `React.memo()`, and pass `useCallback`-memoized handlers for state updates. This isolates re-renders to only the exact item that changed, significantly improving performance on large lists.

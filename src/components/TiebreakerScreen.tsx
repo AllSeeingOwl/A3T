@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, memo, useCallback } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ShieldAlert, Check, X, Undo2, Plus } from 'lucide-react';
@@ -9,6 +9,56 @@ interface ChecklistItem {
   text: string;
   status: ItemStatus;
 }
+
+// ⚡ Bolt Optimization: Extract checklist items into a React.memo() component.
+// This prevents every item in the list from re-rendering when only one item's status
+// changes (which updates the parent's `checklist` array state).
+const ChecklistItemRow = memo(({ item, onUpdateStatus }: { item: ChecklistItem; onUpdateStatus: (id: string, status: ItemStatus) => void }) => (
+  <div
+    className={`flex items-center justify-between p-3 rounded border transition-colors ${
+      item.status === 'tick' ? 'bg-emerald-900/40 border-emerald-500/50' :
+      item.status === 'cross' ? 'bg-red-900/40 border-red-500/50' :
+      'bg-slate-800 border-slate-600'
+    }`}
+  >
+    <span className={`text-lg flex-1 ${
+      item.status === 'tick' ? 'text-emerald-400 line-through' :
+      item.status === 'cross' ? 'text-red-400 line-through' :
+      'text-white'
+    }`}>
+      {item.text}
+    </span>
+    <div className="flex gap-1 ml-3">
+      <button
+        onClick={() => onUpdateStatus(item.id, 'tick')}
+        className={`group relative p-1.5 rounded hover:bg-emerald-500/20 text-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none ${item.status === 'tick' ? 'bg-emerald-500/20 ring-1 ring-emerald-500/50' : ''}`}
+        aria-label={`Mark ${item.text} correct`}
+      >
+        <Check aria-hidden="true" className="w-5 h-5" />
+        <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Correct</span>
+      </button>
+      <button
+        onClick={() => onUpdateStatus(item.id, 'cross')}
+        className={`group relative p-1.5 rounded hover:bg-red-500/20 text-red-500 focus-visible:ring-2 focus-visible:ring-red-400 focus:outline-none ${item.status === 'cross' ? 'bg-red-500/20 ring-1 ring-red-500/50' : ''}`}
+        aria-label={`Mark ${item.text} incorrect`}
+      >
+        <X aria-hidden="true" className="w-5 h-5" />
+        <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Incorrect</span>
+      </button>
+      {item.status !== 'unmarked' && (
+        <button
+          onClick={() => onUpdateStatus(item.id, 'unmarked')}
+          className="group relative p-1.5 rounded hover:bg-slate-600 text-slate-400 focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none"
+          aria-label={`Reset ${item.text}`}
+        >
+          <Undo2 aria-hidden="true" className="w-5 h-5" />
+          <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Reset</span>
+        </button>
+      )}
+    </div>
+  </div>
+));
+ChecklistItemRow.displayName = 'ChecklistItemRow';
 
 export const TiebreakerScreen: React.FC = () => {
   const { teams, addScore, endGame, selectedDeck } = useGameStore(
@@ -73,9 +123,9 @@ export const TiebreakerScreen: React.FC = () => {
     }
   }
 
-  const updateItemStatus = (id: string, status: ItemStatus) => {
+  const updateItemStatus = useCallback((id: string, status: ItemStatus) => {
     setChecklist(prev => prev.map(item => item.id === id ? { ...item, status } : item));
-  };
+  }, []);
 
   const addCustomItems = () => {
     if (!customInput.trim()) return;
@@ -145,50 +195,7 @@ export const TiebreakerScreen: React.FC = () => {
             {checklist.length > 0 ? (
               <div tabIndex={0} className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[40vh] overflow-y-auto pr-2 focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none rounded">
                 {checklist.map(item => (
-                  <div
-                    key={item.id}
-                    className={`flex items-center justify-between p-3 rounded border transition-colors ${
-                      item.status === 'tick' ? 'bg-emerald-900/40 border-emerald-500/50' :
-                      item.status === 'cross' ? 'bg-red-900/40 border-red-500/50' :
-                      'bg-slate-800 border-slate-600'
-                    }`}
-                  >
-                    <span className={`text-lg flex-1 ${
-                      item.status === 'tick' ? 'text-emerald-400 line-through' :
-                      item.status === 'cross' ? 'text-red-400 line-through' :
-                      'text-white'
-                    }`}>
-                      {item.text}
-                    </span>
-                    <div className="flex gap-1 ml-3">
-                      <button
-                        onClick={() => updateItemStatus(item.id, 'tick')}
-                        className={`group relative p-1.5 rounded hover:bg-emerald-500/20 text-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none ${item.status === 'tick' ? 'bg-emerald-500/20 ring-1 ring-emerald-500/50' : ''}`}
-                        aria-label={`Mark ${item.text} correct`}
-                      >
-                        <Check aria-hidden="true" className="w-5 h-5" />
-                        <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Correct</span>
-                      </button>
-                      <button
-                        onClick={() => updateItemStatus(item.id, 'cross')}
-                        className={`group relative p-1.5 rounded hover:bg-red-500/20 text-red-500 focus-visible:ring-2 focus-visible:ring-red-400 focus:outline-none ${item.status === 'cross' ? 'bg-red-500/20 ring-1 ring-red-500/50' : ''}`}
-                        aria-label={`Mark ${item.text} incorrect`}
-                      >
-                        <X aria-hidden="true" className="w-5 h-5" />
-                        <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Incorrect</span>
-                      </button>
-                      {item.status !== 'unmarked' && (
-                        <button
-                          onClick={() => updateItemStatus(item.id, 'unmarked')}
-                          className="group relative p-1.5 rounded hover:bg-slate-600 text-slate-400 focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none"
-                          aria-label={`Reset ${item.text}`}
-                        >
-                          <Undo2 aria-hidden="true" className="w-5 h-5" />
-                          <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Reset</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <ChecklistItemRow key={item.id} item={item} onUpdateStatus={updateItemStatus} />
                 ))}
               </div>
             ) : (
