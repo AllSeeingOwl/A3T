@@ -10,7 +10,7 @@ interface ChecklistItem {
   status: ItemStatus;
 }
 
-export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
+
 
 // ⚡ Bolt Optimization: Extract checklist items into a React.memo() component.
 // This prevents every item in the list from re-rendering when only one item's status
@@ -63,6 +63,8 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
 ));
 ChecklistItemRow.displayName = 'ChecklistItemRow';
 
+export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
+
 export const TiebreakerScreen: React.FC = () => {
   const { teams, addScore, endGame, selectedDeck } = useGameStore(
     useShallow((state) => ({
@@ -88,7 +90,7 @@ export const TiebreakerScreen: React.FC = () => {
 
   // Find a list question to show, or just give a generic prompt.
   // In a real scenario, we might want a specific tiebreaker list.
-  export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
+
 
 // ⚡ Bolt Optimization: Memoize the Array.find operation to prevent O(N) array
   // searches from re-executing when unrelated local state (like winnerDeclared) changes.
