@@ -59,7 +59,7 @@ export const RedCardModal: React.FC = () => {
           </h3>
         </div>
 
-        <div className="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8 relative z-10 flex-grow overflow-y-auto custom-scrollbar text-left">
+        <div tabIndex={0} className="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8 relative z-10 flex-grow overflow-y-auto custom-scrollbar text-left focus-visible:ring-2 focus-visible:ring-arena-amber focus:outline-none">
           {category ? (
             <>
               <h4 className="text-3xl font-display text-arena-amber mb-6 text-center border-b border-slate-700 pb-4">{category.title}</h4>

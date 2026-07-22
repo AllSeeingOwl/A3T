@@ -261,7 +261,7 @@ export const RED_CARD_CATEGORY_INDEX: Record<string, RedCardCategory> = {
 // This prevents over 100 DOM nodes from re-rendering every time the user
 // toggles the RedCardGuide from the left side of the screen to the right side.
 const RedCardList = memo(() => (
-  <div className="flex-1 overflow-y-auto p-4 space-y-8 custom-scrollbar">
+  <div tabIndex={0} className="flex-1 overflow-y-auto p-4 space-y-8 custom-scrollbar focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-inset">
     {RED_CARD_CATEGORIES.map((category) => (
       <div key={category.title} className="space-y-4">
         <h3 className="text-xl font-display text-white border-b border-slate-700 pb-2">{category.title}</h3>
