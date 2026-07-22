@@ -1,4 +1,4 @@
-import React, { useState, useMemo, memo, useCallback } from 'react';
+import React, { useState, useMemo, memo, useCallback, useEffect } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ShieldAlert, Check, X, Undo2, Plus } from 'lucide-react';
@@ -10,10 +10,12 @@ interface ChecklistItem {
   status: ItemStatus;
 }
 
+export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
+
 // ⚡ Bolt Optimization: Extract checklist items into a React.memo() component.
 // This prevents every item in the list from re-rendering when only one item's status
 // changes (which updates the parent's `checklist` array state).
-const ChecklistItemRow = memo(({ item, onUpdateStatus }: { item: ChecklistItem; onUpdateStatus: (id: string, status: ItemStatus) => void }) => (
+const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { item: ChecklistItem; onUpdateStatus: (id: string, status: ItemStatus) => void; isBlurred?: boolean }) => (
   <div
     className={`flex items-center justify-between p-3 rounded border transition-colors ${
       item.status === 'tick' ? 'bg-emerald-900/40 border-emerald-500/50' :
@@ -24,6 +26,7 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus }: { item: ChecklistItem; 
     <span className={`text-lg flex-1 ${
       item.status === 'tick' ? 'text-emerald-400 line-through' :
       item.status === 'cross' ? 'text-red-400 line-through' :
+      isBlurred && item.status === 'unmarked' ? 'text-transparent bg-black rounded' :
       'text-white'
     }`}>
       {item.text}
@@ -85,7 +88,9 @@ export const TiebreakerScreen: React.FC = () => {
 
   // Find a list question to show, or just give a generic prompt.
   // In a real scenario, we might want a specific tiebreaker list.
-  // ⚡ Bolt Optimization: Memoize the Array.find operation to prevent O(N) array
+  export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
+
+// ⚡ Bolt Optimization: Memoize the Array.find operation to prevent O(N) array
   // searches from re-executing when unrelated local state (like winnerDeclared) changes.
   const randomListQuestion = useMemo(() => {
     return selectedDeck?.cards.find(c => c.listQuestion && c.listQuestion.enabled)?.listQuestion;
@@ -102,6 +107,9 @@ export const TiebreakerScreen: React.FC = () => {
     return [];
   });
   const [customInput, setCustomInput] = useState('');
+
+  const [revealMode, setRevealMode] = useState<RevealMode>('idle');
+  const [revealTimer, setRevealTimer] = useState(0);
 
   // Re-initialize checklist if randomListQuestion changes,
   // but we can do this via an effect if needed. The linter complains about setState in useEffect.
@@ -126,6 +134,46 @@ export const TiebreakerScreen: React.FC = () => {
   const updateItemStatus = useCallback((id: string, status: ItemStatus) => {
     setChecklist(prev => prev.map(item => item.id === id ? { ...item, status } : item));
   }, []);
+
+
+  // Remove eslint-disable comments from earlier
+  const startRevealMode = () => {
+    const itemCount = checklist.length;
+    let initialTimer = 30; // Default: 10-19 items
+
+    if (itemCount >= 25) {
+      initialTimer = 90;
+    } else if (itemCount >= 20) {
+      initialTimer = 60;
+    }
+
+    setRevealTimer(initialTimer);
+    setRevealMode('revealing');
+  };
+
+  // Timer Effect
+  useEffect(() => {
+    if (revealMode === 'idle' || revealMode === 'guessing') return;
+
+    const interval = setInterval(() => {
+      setRevealTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+
+          if (revealMode === 'revealing') {
+            setRevealMode('transition');
+            return 5; // 5-second transition screen
+          } else if (revealMode === 'transition') {
+            setRevealMode('guessing');
+            return 0;
+          }
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [revealMode]);
 
   const addCustomItems = () => {
     if (!customInput.trim()) return;
@@ -172,37 +220,137 @@ export const TiebreakerScreen: React.FC = () => {
             </p>
           </div>
 
-          {/* Host Checklist Tool */}
-          <div className="mt-8 bg-slate-900 p-6 rounded-lg border border-slate-700">
-            <h4 className="text-xl font-display text-arena-gold mb-4 uppercase">Host Checklist Tool</h4>
-
-            <div className="flex gap-2 mb-6">
-              <textarea
-                value={customInput}
-                onChange={(e) => setCustomInput(e.target.value)}
-                placeholder="Paste or type custom answers here (one per line)..."
-                aria-label="Custom answers"
-                className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
-                rows={2}
-              />
+          {/* Reveal Mode Conditonal UI */}
+          {revealMode === 'idle' && checklist.length >= 10 && (
+            <div className="mt-8 flex justify-center">
               <button
-                onClick={addCustomItems}
-                className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center"
+                onClick={startRevealMode}
+                className="px-8 py-4 bg-arena-magenta hover:bg-pink-600 text-white rounded-xl font-display text-2xl uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(236,72,153,0.5)] focus-visible:ring-4 focus-visible:ring-pink-400 focus:outline-none"
               >
-                <Plus className="w-5 h-5 mr-1" /> Add
+                Start Timed Reveal Mode
               </button>
             </div>
+          )}
+
+          {/* Revealing Phase */}
+          {revealMode === 'revealing' && (
+            <div className="mt-8 border-4 border-arena-magenta rounded-xl overflow-hidden relative shadow-[0_0_30px_rgba(236,72,153,0.4)]">
+              <div className="bg-slate-900/80 p-4 border-b border-arena-magenta flex justify-between items-center backdrop-blur-sm">
+                <span className="text-2xl font-display text-arena-magenta uppercase">Memorize the Answers!</span>
+                <div className="text-right">
+                   <span className="block text-xs uppercase tracking-widest text-arena-magenta font-bold">Time Remaining</span>
+                   <span className="text-5xl font-display text-white">{revealTimer}s</span>
+                </div>
+              </div>
+              <div className="p-6 bg-slate-800 grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
+                {checklist.map((item) => (
+                  <div key={item.id} className="bg-slate-900 p-4 rounded border border-slate-600 text-center flex items-center justify-center min-h-[80px]">
+                    <span className="text-xl text-white font-medium">{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Transition Phase */}
+          {revealMode === 'transition' && (
+            <div className="mt-8 bg-black rounded-xl p-12 border border-slate-800 flex flex-col items-center justify-center min-h-[40vh] relative z-50">
+              <ShieldAlert className="w-24 h-24 text-red-500 mb-6 animate-pulse" />
+              <h3 className="text-4xl font-display text-white uppercase tracking-widest mb-4">Look Away!</h3>
+              <p className="text-xl text-slate-400 text-center max-w-lg mb-8">
+                Teams must turn away from the screen before the guessing phase begins.
+              </p>
+              <div className="text-7xl font-display text-red-500">{revealTimer}</div>
+            </div>
+          )}
+
+          {/* Host Checklist Tool */}
+          {(revealMode === 'idle' || revealMode === 'guessing') && (
+            <div className="mt-8 bg-slate-900 p-6 rounded-lg border border-slate-700">
+            <h4 className="text-xl font-display text-arena-gold mb-4 uppercase">Host Checklist Tool</h4>
+
+            {revealMode === 'guessing' ? (
+              <div className="mb-6 relative">
+                <label htmlFor="guess-input" className="block text-sm text-slate-400 mb-2 uppercase tracking-wider">Type team guess (Autocomplete)</label>
+                <input
+                  id="guess-input"
+                  type="text"
+                  value={customInput}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCustomInput(val);
+                    // Check for exact match immediately
+                    const exactMatch = checklist.find(i => i.status === 'unmarked' && i.text.toLowerCase() === val.toLowerCase());
+                    if (exactMatch) {
+                      updateItemStatus(exactMatch.id, 'tick');
+                      setCustomInput('');
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                       const visibleSuggestions = checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(customInput.toLowerCase()));
+                       if (visibleSuggestions.length === 1) {
+                         updateItemStatus(visibleSuggestions[0].id, 'tick');
+                         setCustomInput('');
+                       }
+                    }
+                  }}
+                  placeholder="Start typing an answer..."
+                  className="w-full bg-slate-800 text-white rounded-lg p-4 border-2 border-emerald-500/50 focus:outline-none focus:border-emerald-500 text-xl font-medium placeholder-slate-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+                  autoComplete="off"
+                />
+
+                {/* Autocomplete Dropdown */}
+                {customInput.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+                    {checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(customInput.toLowerCase())).map(suggestion => (
+                      <button
+                        key={suggestion.id}
+                        onClick={() => {
+                          updateItemStatus(suggestion.id, 'tick');
+                          setCustomInput('');
+                        }}
+                        className="w-full text-left px-4 py-3 text-white hover:bg-slate-700 border-b border-slate-700/50 last:border-0 focus:outline-none focus:bg-slate-700 transition-colors"
+                      >
+                        {suggestion.text}
+                      </button>
+                    ))}
+                    {checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(customInput.toLowerCase())).length === 0 && (
+                      <div className="px-4 py-3 text-slate-500 italic">No matching answers found.</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex gap-2 mb-6">
+                <textarea
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  placeholder="Paste or type custom answers here (one per line)..."
+                  aria-label="Custom answers"
+                  className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
+                  rows={2}
+                />
+                <button
+                  onClick={addCustomItems}
+                  className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center"
+                >
+                  <Plus className="w-5 h-5 mr-1" /> Add
+                </button>
+              </div>
+            )}
 
             {checklist.length > 0 ? (
               <div tabIndex={0} className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[40vh] overflow-y-auto pr-2 focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none rounded">
                 {checklist.map(item => (
-                  <ChecklistItemRow key={item.id} item={item} onUpdateStatus={updateItemStatus} />
+                  <ChecklistItemRow key={item.id} item={item} onUpdateStatus={updateItemStatus} isBlurred={revealMode === 'guessing'} />
                 ))}
               </div>
             ) : (
               <p className="text-slate-400 italic text-center py-4">No checklist items yet. Add custom items above.</p>
             )}
           </div>
+          )}
         </div>
 
         {!winnerDeclared ? (
