@@ -75,3 +75,7 @@
 ## 2026-07-11 - [Memoize List Items to Prevent Cascading Renders]
 **Learning:** In dynamic lists where individual items hold specific statuses (like a checklist in `TiebreakerScreen.tsx`), updating the status of one item modifies the parent's array state, causing every single inline item in the list to re-render unnecessarily.
 **Action:** Always extract complex list items into their own components wrapped in `React.memo()`, and pass `useCallback`-memoized handlers for state updates. This isolates re-renders to only the exact item that changed, significantly improving performance on large lists.
+
+## 2024-07-22 - TiebreakerScreen List Re-render Optimization
+**Learning:** In the `TiebreakerScreen`, the custom input fields (autocomplete search and textarea) were implemented as controlled components at the top level of a large, complex component containing a dynamically sized checklist. This caused every single keystroke to trigger a full re-render of the entire screen, including potentially large O(N) array filtering operations, which blocked the main thread and caused input lag during high-stress game moments.
+**Action:** Extract fast-updating interactive elements (like the autocomplete input) into their own `React.memo()` isolated child components. For inputs that don't require immediate per-character validation (like pasting bulk items into a textarea), switch from controlled `useState` inputs to uncontrolled `useRef` inputs to completely bypass the React render cycle during typing.
