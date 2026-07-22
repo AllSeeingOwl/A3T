@@ -1,4 +1,4 @@
-import React, { useState, useMemo, memo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, memo, useCallback, useEffect, useRef } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ShieldAlert, Check, X, Undo2, Plus } from 'lucide-react';
@@ -65,6 +65,66 @@ ChecklistItemRow.displayName = 'ChecklistItemRow';
 
 export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
 
+// ⚡ Bolt Optimization: Isolate Autocomplete logic to prevent the parent from
+// re-rendering on every keystroke.
+const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: ChecklistItem[], onMarkCorrect: (id: string) => void }) => {
+  const [input, setInput] = useState('');
+
+  const suggestions = input.length > 0
+    ? checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(input.toLowerCase()))
+    : [];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInput(val);
+    const exactMatch = checklist.find(i => i.status === 'unmarked' && i.text.toLowerCase() === val.toLowerCase());
+    if (exactMatch) {
+      onMarkCorrect(exactMatch.id);
+      setInput('');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && suggestions.length === 1) {
+      onMarkCorrect(suggestions[0].id);
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="mb-6 relative">
+      <label htmlFor="guess-input" className="block text-sm text-slate-400 mb-2 uppercase tracking-wider">Type team guess (Autocomplete)</label>
+      <input
+        id="guess-input"
+        type="text"
+        value={input}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Start typing an answer..."
+        className="w-full bg-slate-800 text-white rounded-lg p-4 border-2 border-emerald-500/50 focus:outline-none focus:border-emerald-500 text-xl font-medium placeholder-slate-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+        autoComplete="off"
+      />
+      {input.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+          {suggestions.map(suggestion => (
+            <button
+              key={suggestion.id}
+              onClick={() => { onMarkCorrect(suggestion.id); setInput(''); }}
+              className="w-full text-left px-4 py-3 text-white hover:bg-slate-700 border-b border-slate-700/50 last:border-0 focus:outline-none focus:bg-slate-700 transition-colors"
+            >
+              {suggestion.text}
+            </button>
+          ))}
+          {suggestions.length === 0 && (
+            <div className="px-4 py-3 text-slate-500 italic">No matching answers found.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+});
+AutocompleteInput.displayName = 'AutocompleteInput';
+
 export const TiebreakerScreen: React.FC = () => {
   const { teams, addScore, endGame, selectedDeck } = useGameStore(
     useShallow((state) => ({
@@ -108,7 +168,7 @@ export const TiebreakerScreen: React.FC = () => {
     }
     return [];
   });
-  const [customInput, setCustomInput] = useState('');
+  const customInputRef = useRef<HTMLTextAreaElement>(null);
 
   const [revealMode, setRevealMode] = useState<RevealMode>('idle');
   const [revealTimer, setRevealTimer] = useState(0);
@@ -178,8 +238,10 @@ export const TiebreakerScreen: React.FC = () => {
   }, [revealMode]);
 
   const addCustomItems = () => {
-    if (!customInput.trim()) return;
-    const newItems = customInput
+    if (!customInputRef.current) return;
+    const val = customInputRef.current.value;
+    if (!val.trim()) return;
+    const newItems = val
       .split('\n')
       .map(line => line.trim())
       .filter(line => line.length > 0)
@@ -190,7 +252,7 @@ export const TiebreakerScreen: React.FC = () => {
       }));
 
     setChecklist(prev => [...prev, ...newItems]);
-    setCustomInput('');
+    customInputRef.current.value = '';
   };
 
   return (
@@ -272,62 +334,11 @@ export const TiebreakerScreen: React.FC = () => {
             <h4 className="text-xl font-display text-arena-gold mb-4 uppercase">Host Checklist Tool</h4>
 
             {revealMode === 'guessing' ? (
-              <div className="mb-6 relative">
-                <label htmlFor="guess-input" className="block text-sm text-slate-400 mb-2 uppercase tracking-wider">Type team guess (Autocomplete)</label>
-                <input
-                  id="guess-input"
-                  type="text"
-                  value={customInput}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setCustomInput(val);
-                    // Check for exact match immediately
-                    const exactMatch = checklist.find(i => i.status === 'unmarked' && i.text.toLowerCase() === val.toLowerCase());
-                    if (exactMatch) {
-                      updateItemStatus(exactMatch.id, 'tick');
-                      setCustomInput('');
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                       const visibleSuggestions = checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(customInput.toLowerCase()));
-                       if (visibleSuggestions.length === 1) {
-                         updateItemStatus(visibleSuggestions[0].id, 'tick');
-                         setCustomInput('');
-                       }
-                    }
-                  }}
-                  placeholder="Start typing an answer..."
-                  className="w-full bg-slate-800 text-white rounded-lg p-4 border-2 border-emerald-500/50 focus:outline-none focus:border-emerald-500 text-xl font-medium placeholder-slate-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
-                  autoComplete="off"
-                />
-
-                {/* Autocomplete Dropdown */}
-                {customInput.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
-                    {checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(customInput.toLowerCase())).map(suggestion => (
-                      <button
-                        key={suggestion.id}
-                        onClick={() => {
-                          updateItemStatus(suggestion.id, 'tick');
-                          setCustomInput('');
-                        }}
-                        className="w-full text-left px-4 py-3 text-white hover:bg-slate-700 border-b border-slate-700/50 last:border-0 focus:outline-none focus:bg-slate-700 transition-colors"
-                      >
-                        {suggestion.text}
-                      </button>
-                    ))}
-                    {checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(customInput.toLowerCase())).length === 0 && (
-                      <div className="px-4 py-3 text-slate-500 italic">No matching answers found.</div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <AutocompleteInput checklist={checklist} onMarkCorrect={(id) => updateItemStatus(id, 'tick')} />
             ) : (
               <div className="flex gap-2 mb-6">
                 <textarea
-                  value={customInput}
-                  onChange={(e) => setCustomInput(e.target.value)}
+                  ref={customInputRef}
                   placeholder="Paste or type custom answers here (one per line)..."
                   aria-label="Custom answers"
                   className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
