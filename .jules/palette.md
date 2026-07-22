@@ -78,3 +78,6 @@
 ## 2024-11-23 - Accessible Inputs via aria-label
 **Learning:** Relying solely on `placeholder` attributes for text inputs and textareas (like the custom answers input in TiebreakerScreen) is a known accessibility anti-pattern because the placeholder is often not announced correctly by screen readers as an accessible name, and it disappears when text is entered.
 **Action:** Always provide an explicit `aria-label` for text inputs and textareas that do not have an associated visible `<label>`, ensuring the element maintains a valid accessible name for screen readers regardless of its content.
+## 2024-07-28 - Keyboard Accessible Scrollable Regions
+**Learning:** Custom scrollable regions (like overflow lists in modals or side drawers) that lack interactive child elements can become inaccessible traps for keyboard-only users, as they cannot naturally focus and scroll the container using arrow keys or Page Up/Down.
+**Action:** Always ensure custom scrollable regions (e.g., containers with `overflow-y-auto`) remain keyboard accessible by explicitly adding `tabIndex={0}` along with standard focus indicators (like `focus-visible:ring-2`) so users can navigate to and scroll through the content.
