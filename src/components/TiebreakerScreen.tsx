@@ -70,14 +70,21 @@ export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
 const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: ChecklistItem[], onMarkCorrect: (id: string) => void }) => {
   const [input, setInput] = useState('');
 
+  // ⚡ Bolt Optimization: Hoist the static input lowercase string outside the filter loop
+  // to avoid recalculating it O(N) times on every rapid keystroke.
+  const lowerInput = input.toLowerCase();
   const suggestions = input.length > 0
-    ? checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(input.toLowerCase()))
+    ? checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(lowerInput))
     : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInput(val);
-    const exactMatch = checklist.find(i => i.status === 'unmarked' && i.text.toLowerCase() === val.toLowerCase());
+
+    // ⚡ Bolt Optimization: Hoist the static lowercase search string outside the loop
+    // to avoid recalculating it O(N) times on every rapid keystroke.
+    const valLower = val.toLowerCase();
+    const exactMatch = checklist.find(i => i.status === 'unmarked' && i.text.toLowerCase() === valLower);
     if (exactMatch) {
       onMarkCorrect(exactMatch.id);
       setInput('');
