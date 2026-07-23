@@ -21,12 +21,13 @@ const TeamInput: React.FC<TeamInputProps> = ({ id, label, defaultValue, colorCla
         <label htmlFor={id} className={`text-2xl font-display ${id === 'team1' ? 'text-arena-magenta' : 'text-arena-cobalt'} uppercase block`}>
           {label}
         </label>
-        <span className="text-sm text-slate-400 font-sans" aria-live="polite">
+        <span id={`char-count-${id}`} className="text-sm text-slate-400 font-sans">
           {count}/50
         </span>
       </div>
       <input
         id={id}
+        aria-describedby={`char-count-${id}`}
         type="text"
         className={`w-full bg-arena-slate text-white p-3 rounded border border-arena-navy ${id === 'team1' ? 'focus:border-arena-magenta' : 'focus:border-arena-cobalt'} focus:outline-none text-xl`}
         defaultValue={defaultValue}
