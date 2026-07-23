@@ -81,3 +81,6 @@
 ## 2024-07-28 - Keyboard Accessible Scrollable Regions
 **Learning:** Custom scrollable regions (like overflow lists in modals or side drawers) that lack interactive child elements can become inaccessible traps for keyboard-only users, as they cannot naturally focus and scroll the container using arrow keys or Page Up/Down.
 **Action:** Always ensure custom scrollable regions (e.g., containers with `overflow-y-auto`) remain keyboard accessible by explicitly adding `tabIndex={0}` along with standard focus indicators (like `focus-visible:ring-2`) so users can navigate to and scroll through the content.
+## 2024-07-28 - Avoid aria-live on high-frequency UI updates
+**Learning:** Using `aria-live` on high-frequency UI state changes, such as a per-keystroke character counter, causes excessive and disruptive screen reader announcements that interrupt the user's flow and other important narrations.
+**Action:** Never use `aria-live` for rapid updates like character counters or per-second timers. Instead, use `aria-describedby` on the input to announce the context once upon focus, or rely on native form validation and screen reader heuristics.
