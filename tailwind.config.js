@@ -20,6 +20,9 @@ export default {
       fontFamily: {
         display: ['Impact', 'Trebuchet MS', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        videogame: ['"Press Start 2P"', 'system-ui', 'monospace'],
+        animation: ['Bangers', 'system-ui', 'cursive'],
+        wrestling: ['Anton', 'system-ui', 'sans-serif'],
       },
     },
   },
