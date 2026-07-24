@@ -82,3 +82,6 @@
 ## 2026-07-23 - Autocomplete String Conversion Optimization
 **Learning:** Inside rapid keystroke event loops (like autocomplete `onChange`), invoking `.toLowerCase()` on the search string *inside* the array `.filter()` predicate forces the JS engine to reallocate and recalculate the same lowercase string N times.
 **Action:** Hoist the static string conversion outside the loop (`const lowerInput = input.toLowerCase()`) so it's calculated in O(1) time before iterating the list in O(N).
+## 2026-07-25 - [Pre-compute normalized strings for Autocomplete]
+**Learning:** During rapid keystroke events in autocomplete inputs (like in `TiebreakerScreen`), running `.toLowerCase()` on the `.text` property of every single item inside the `.filter()` callback results in O(N) redundant string allocations per keystroke. This can block the main thread.
+**Action:** Extend the data model (e.g., `ChecklistItem`) to include a `normalizedText` property. Pre-compute and assign the lowercased string once during item initialization, and use that cached O(1) property in the `.filter()` condition.
