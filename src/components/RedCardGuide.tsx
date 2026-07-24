@@ -416,7 +416,7 @@ export const RedCardGuide: React.FC = () => {
               <button
                 onClick={handleCloseSidebar}
                 className="group relative p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
-                aria-label="Close Red Card Guide"
+                aria-label="Close Red Card Guide (Escape)"
               >
                 <X aria-hidden="true" className="w-5 h-5" />
                 <span

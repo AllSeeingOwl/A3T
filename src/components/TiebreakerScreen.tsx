@@ -117,9 +117,15 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
             <button
               key={suggestion.id}
               onClick={() => { onMarkCorrect(suggestion.id); setInput(''); }}
-              className="w-full text-left px-4 py-3 text-white hover:bg-slate-700 border-b border-slate-700/50 last:border-0 focus:outline-none focus:bg-slate-700 transition-colors"
+              className="w-full text-left px-4 py-3 text-white hover:bg-slate-700 border-b border-slate-700/50 last:border-0 focus:outline-none focus:bg-slate-700 transition-colors flex justify-between items-center group"
             >
-              {suggestion.text}
+              <span>{suggestion.text}</span>
+              {suggestions.length === 1 && (
+                <span className="text-xs text-slate-400 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity flex items-center gap-2">
+                  <span>Select</span>
+                  <kbd className="font-sans bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-slate-300 shadow-inner">Enter</kbd>
+                </span>
+              )}
             </button>
           ))}
           {suggestions.length === 0 && (
