@@ -88,3 +88,7 @@
 ## 2026-07-24 - Discoverability of Implicit Keyboard Shortcuts
 **Learning:** Hiding implicit keyboard shortcuts (like pressing Enter to select an autocomplete option) in JavaScript logic reduces their discoverability and cognitive recognition as actionable shortcuts, whereas styling them as semantic `<kbd>` elements provides immediate visual affordance to power users.
 **Action:** Always wrap explicit keyboard shortcut hints in semantically correct and visually distinct `<kbd>` elements when communicating them in UI text or tooltips, and ensure standard `aria-label` text spells out the key name (e.g., "(Escape)") for proper screen reader pronunciation.
+
+## 2026-07-24 - Add Google Fonts to Title
+**Learning:** When integrating external web fonts (such as Google Fonts) into the Vite/Tailwind stack, update the strict Content Security Policy (CSP) in `index.html` to explicitly allow `style-src` for `https://fonts.googleapis.com` and `font-src` for `https://fonts.gstatic.com`. Extend the `tailwind.config.js` `fontFamily` setting to map the imported fonts to Tailwind utility classes.
+**Action:** Updated CSP and Tailwind config to support randomizing the title text font for different thematic styles (video games, animation, pro wrestling).

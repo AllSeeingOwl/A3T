@@ -41,7 +41,20 @@ const TeamInput: React.FC<TeamInputProps> = ({ id, label, defaultValue, colorCla
   );
 };
 
+type ThemeStyle = { font: string; color: string; size: string };
+
+const THEME_STYLES: ThemeStyle[] = [
+  { font: 'font-videogame', color: 'text-emerald-400', size: 'text-3xl md:text-4xl leading-tight py-4' },
+  { font: 'font-animation', color: 'text-arena-gold', size: 'text-5xl md:text-6xl tracking-wider' },
+  { font: 'font-wrestling', color: 'text-red-500', size: 'text-6xl md:text-7xl uppercase tracking-tighter' },
+];
+
 export const LobbyHub: React.FC = () => {
+  // Select a random theme style on initial mount
+  const [titleTheme] = useState<ThemeStyle>(() => {
+    return THEME_STYLES[Math.floor(Math.random() * THEME_STYLES.length)];
+  });
+
   // ⚡ Bolt Optimization: Use useShallow to prevent the Lobby from re-rendering
   // on unrelated game store changes.
   const { startMatch, defaultDecks } = useGameStore(
@@ -85,7 +98,7 @@ export const LobbyHub: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-arena-slate font-sans p-8 w-full">
-      <h1 className="text-5xl font-display text-white mb-12 uppercase tracking-wider text-center drop-shadow-lg">
+      <h1 className={`${titleTheme.font} ${titleTheme.color} ${titleTheme.size} mb-12 text-center drop-shadow-lg transition-colors`}>
         Always A (Trivial) Triple Threat
       </h1>
 
