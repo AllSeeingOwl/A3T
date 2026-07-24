@@ -1,0 +1,7 @@
+
+> always-a-trivial-triple-threat@0.1.0 preview /app
+> vite preview
+
+  ➜  Local:   http://localhost:4173/A3T/
+  ➜  Network: use --host to expose
+ ELIFECYCLE  Command failed with exit code 143.
