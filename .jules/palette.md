@@ -92,3 +92,6 @@
 ## 2026-07-24 - Add Google Fonts to Title
 **Learning:** When integrating external web fonts (such as Google Fonts) into the Vite/Tailwind stack, update the strict Content Security Policy (CSP) in `index.html` to explicitly allow `style-src` for `https://fonts.googleapis.com` and `font-src` for `https://fonts.gstatic.com`. Extend the `tailwind.config.js` `fontFamily` setting to map the imported fonts to Tailwind utility classes.
 **Action:** Updated CSP and Tailwind config to support randomizing the title text font for different thematic styles (video games, animation, pro wrestling).
+## 2023-10-25 - Title Font Size Unification
+**Learning:** When using different custom fonts for random theming, applying the exact same CSS sizing attributes (e.g. text-5xl) leads to highly divergent perceived sizes because the internal metrics (cap height, baseline, etc.) of each font differ wildly.
+**Action:** Tuned Tailwind text size classes per font (`text-3xl/4xl` vs `text-5xl/6xl` vs `text-4xl/5xl`) to normalize the visual height/impact of the title rather than relying on uniform class names.

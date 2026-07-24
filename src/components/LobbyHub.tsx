@@ -45,8 +45,8 @@ type ThemeStyle = { font: string; color: string; size: string };
 
 const THEME_STYLES: ThemeStyle[] = [
   { font: 'font-videogame', color: 'text-emerald-400', size: 'text-3xl md:text-4xl leading-tight py-4' },
-  { font: 'font-animation', color: 'text-arena-gold', size: 'text-5xl md:text-6xl tracking-wider' },
-  { font: 'font-wrestling', color: 'text-red-500', size: 'text-6xl md:text-7xl uppercase tracking-tighter' },
+  { font: 'font-animation', color: 'text-arena-gold', size: 'text-5xl md:text-6xl tracking-wider py-4' },
+  { font: 'font-wrestling', color: 'text-red-500', size: 'text-4xl md:text-5xl uppercase tracking-tighter py-4' },
 ];
 
 export const LobbyHub: React.FC = () => {
