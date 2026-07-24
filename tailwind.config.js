@@ -20,9 +20,9 @@ export default {
       fontFamily: {
         display: ['Impact', 'Trebuchet MS', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        videogame: ['"Press Start 2P"', 'system-ui', 'monospace'],
-        animation: ['Bangers', 'system-ui', 'cursive'],
-        wrestling: ['Anton', 'system-ui', 'sans-serif'],
+        videogame: ['"Press Start 2P"', '"Press Start 2P Local"', 'system-ui', 'monospace'],
+        animation: ['Bangers', '"Bangers Local"', 'system-ui', 'cursive'],
+        wrestling: ['Shojumaru', '"Shojumaru Local"', 'system-ui', 'sans-serif'],
       },
     },
   },
