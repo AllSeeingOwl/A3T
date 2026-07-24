@@ -7,6 +7,7 @@ type ItemStatus = 'unmarked' | 'tick' | 'cross';
 interface ChecklistItem {
   id: string;
   text: string;
+  normalizedText: string;
   status: ItemStatus;
 }
 
@@ -74,7 +75,8 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
   // to avoid recalculating it O(N) times on every rapid keystroke.
   const lowerInput = input.toLowerCase();
   const suggestions = input.length > 0
-    ? checklist.filter(i => i.status === 'unmarked' && i.text.toLowerCase().includes(lowerInput))
+    // ⚡ Bolt Optimization: Use pre-computed normalized string to avoid O(N) allocations
+    ? checklist.filter(i => i.status === 'unmarked' && i.normalizedText.includes(lowerInput))
     : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +86,8 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
     // ⚡ Bolt Optimization: Hoist the static lowercase search string outside the loop
     // to avoid recalculating it O(N) times on every rapid keystroke.
     const valLower = val.toLowerCase();
-    const exactMatch = checklist.find(i => i.status === 'unmarked' && i.text.toLowerCase() === valLower);
+    // ⚡ Bolt Optimization: Use pre-computed normalized string to avoid O(N) allocations
+    const exactMatch = checklist.find(i => i.status === 'unmarked' && i.normalizedText === valLower);
     if (exactMatch) {
       onMarkCorrect(exactMatch.id);
       setInput('');
@@ -170,6 +173,7 @@ export const TiebreakerScreen: React.FC = () => {
       return randomListQuestion.correctItems.map((item, idx) => ({
         id: `pre-${idx}`,
         text: item,
+        normalizedText: item.toLowerCase(),
         status: 'unmarked' as ItemStatus
       }));
     }
@@ -192,6 +196,7 @@ export const TiebreakerScreen: React.FC = () => {
         randomListQuestion.correctItems.map((item, idx) => ({
           id: `pre-${idx}`,
           text: item,
+          normalizedText: item.toLowerCase(),
           status: 'unmarked' as ItemStatus
         }))
       );
@@ -255,6 +260,7 @@ export const TiebreakerScreen: React.FC = () => {
       .map((text, idx) => ({
         id: `custom-${Date.now()}-${idx}`,
         text,
+        normalizedText: text.toLowerCase(),
         status: 'unmarked' as ItemStatus,
       }));
 
