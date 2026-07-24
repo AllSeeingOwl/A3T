@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Bangers Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Bangers-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Press Start 2P Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/PressStart2P-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Shojumaru Local';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Shojumaru-Regular.woff2') format('woff2');
+}
+
 body {
   margin: 0;
   min-width: 320px;
