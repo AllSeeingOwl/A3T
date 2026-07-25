@@ -12,6 +12,9 @@ export interface RedCard {
   title: string;
   description: string;
   examples: string[];
+  _normalizedTitle?: string;
+  _normalizedDescription?: string;
+  _normalizedExamples?: string[];
 }
 
 export const RED_CARD_CATEGORIES: RedCardCategory[] = [
@@ -240,6 +243,16 @@ export const RED_CARD_CATEGORIES: RedCardCategory[] = [
   }
 ];
 
+// ⚡ Bolt Optimization: Pre-compute lowercased text for all red cards
+// to avoid O(N) string allocations during rapid typing in the search bar.
+RED_CARD_CATEGORIES.forEach(category => {
+  category.cards.forEach(card => {
+    card._normalizedTitle = card.title.toLowerCase();
+    card._normalizedDescription = card.description.toLowerCase();
+    card._normalizedExamples = card.examples.map(ex => ex.toLowerCase());
+  });
+});
+
 // ⚡ Bolt Optimization: Pre-compute a record index for O(1) Red Card Category lookups
 // This avoids O(N) array filtering when opening the modal for a specific violation type.
 export const RED_CARD_CATEGORY_INDEX: Record<string, RedCardCategory> = {
@@ -267,10 +280,13 @@ const RedCardList = memo(({ categories, searchTerm }: RedCardListProps) => {
   const filteredCategories = categories.map(category => {
     if (!normalizedSearch) return category;
 
+    // ⚡ Bolt Optimization: Use pre-computed normalized properties instead of calling
+    // .toLowerCase() on every card's title, description, and examples on every keystroke.
+    // This avoids O(N) redundant string allocations and reduces GC pressure during rapid typing.
     const filteredCards = category.cards.filter(card => {
-      const matchTitle = card.title.toLowerCase().includes(normalizedSearch);
-      const matchDesc = card.description.toLowerCase().includes(normalizedSearch);
-      const matchExample = card.examples.some(ex => ex.toLowerCase().includes(normalizedSearch));
+      const matchTitle = card._normalizedTitle?.includes(normalizedSearch) ?? false;
+      const matchDesc = card._normalizedDescription?.includes(normalizedSearch) ?? false;
+      const matchExample = card._normalizedExamples?.some(ex => ex.includes(normalizedSearch)) ?? false;
       return matchTitle || matchDesc || matchExample;
     });
 

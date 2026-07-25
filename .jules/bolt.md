@@ -85,3 +85,6 @@
 ## 2026-07-25 - [Pre-compute normalized strings for Autocomplete]
 **Learning:** During rapid keystroke events in autocomplete inputs (like in `TiebreakerScreen`), running `.toLowerCase()` on the `.text` property of every single item inside the `.filter()` callback results in O(N) redundant string allocations per keystroke. This can block the main thread.
 **Action:** Extend the data model (e.g., `ChecklistItem`) to include a `normalizedText` property. Pre-compute and assign the lowercased string once during item initialization, and use that cached O(1) property in the `.filter()` condition.
+## 2024-08-01 - [Pre-compute normalized strings for Red Card search]
+**Learning:** During rapid keystrokes in the global Red Card guide, repeatedly calling `.toLowerCase()` on the `title`, `description`, and `examples` arrays inside the `.filter()` loop forces O(N) redundant string allocations, adding GC pressure.
+**Action:** Since `RED_CARD_CATEGORIES` is a static constant imported globally, loop through the dataset once at the module level to pre-compute and store `_normalizedTitle`, `_normalizedDescription`, and `_normalizedExamples`. Use these pre-computed O(1) strings in the `.filter()` operation.
