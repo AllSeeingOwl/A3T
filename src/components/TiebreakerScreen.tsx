@@ -94,26 +94,50 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
     }
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && suggestions.length === 1) {
       onMarkCorrect(suggestions[0].id);
       setInput('');
+    } else if (e.key === 'Escape') {
+      setInput('');
+      e.preventDefault();
     }
   };
 
   return (
     <div className="mb-6 relative">
       <label htmlFor="guess-input" className="block text-sm text-slate-400 mb-2 uppercase tracking-wider">Type team guess (Autocomplete)</label>
-      <input
-        id="guess-input"
-        type="text"
-        value={input}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder="Start typing an answer..."
-        className="w-full bg-slate-800 text-white rounded-lg p-4 border-2 border-emerald-500/50 focus:outline-none focus:border-emerald-500 text-xl font-medium placeholder-slate-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
-        autoComplete="off"
-      />
+      <div className="relative">
+        <input
+          id="guess-input"
+          ref={inputRef}
+          type="text"
+          value={input}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          placeholder="Start typing an answer..."
+          className="w-full bg-slate-800 text-white rounded-lg p-4 pr-12 border-2 border-emerald-500/50 focus:outline-none focus:border-emerald-500 text-xl font-medium placeholder-slate-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+          autoComplete="off"
+        />
+        {input.length > 0 && (
+          <button
+            onClick={() => { setInput(''); inputRef.current?.focus(); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 group"
+            aria-label="Clear search input (Escape)"
+          >
+            <X aria-hidden="true" className="w-5 h-5" />
+            <span
+              aria-hidden="true"
+              className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50 flex items-center gap-1.5"
+            >
+              <span>Clear</span>
+              <kbd className="font-sans text-[10px] bg-slate-700 border border-slate-500 px-1 py-0.5 rounded text-slate-300 shadow-inner">Esc</kbd>
+            </span>
+          </button>
+        )}
+      </div>
       {input.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
           {suggestions.map(suggestion => (

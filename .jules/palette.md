@@ -9,7 +9,10 @@
 ## 2026-06-29 - Accessible Progress Pipelines
 **Learning:** Custom visual progress pipelines using `div`s fail to communicate structural order to screen readers. They must utilize `<ol>` semantics and `aria-current` attributes to be fully accessible.
 **Action:** Always use ordered lists (`<ol>`/`<li>`) combined with visually hidden (`sr-only`) text and `aria-current` for step/progress pipelines rather than flat decorative components.
-\n## 2024-10-24 - Communicating Visual-Only Game State\n**Learning:** When game state such as "active turn" is communicated entirely via visual cues (like borders, shadows, or background colors on a scoreboard), screen reader users are completely left in the dark about whose turn it is or when it changes.\n**Action:** Always complement visual-only state indicators with `sr-only` text (e.g., "(Current Turn)") and use `aria-live="polite"` on scoreboards so changes are announced as they occur.
+
+## 2024-10-24 - Communicating Visual-Only Game State
+**Learning:** When game state such as "active turn" is communicated entirely via visual cues (like borders, shadows, or background colors on a scoreboard), screen reader users are completely left in the dark about whose turn it is or when it changes.
+**Action:** Always complement visual-only state indicators with `sr-only` text (e.g., "(Current Turn)") and use `aria-live="polite"` on scoreboards so changes are announced as they occur.
 ## 2024-07-02 - Added Dialog Role and AutoFocus to RedCard UI
 **Learning:** React conditionally rendered component triggers (e.g. RedCardGuide trigger button unmounting) can drop keyboard focus to the document body when removed, preventing screen readers and keyboard users from easily entering the freshly opened modal/drawer unless a primary action is immediately given `autoFocus`.
 **Action:** Always add `autoFocus` on the primary close/action button when a conditionally-rendered modal or overlay unmounts the trigger element that opened it.
@@ -60,7 +63,9 @@
 ## 2024-07-16 - Input Focus Auto-selection
 **Learning:** Forcing a user to manually highlight or backspace pre-filled default text (like default team names) is tedious. Selecting the text automatically upon focus drastically improves the micro-interaction.
 **Action:** Always add `onFocus={(e) => e.target.select()}` to text inputs that are pre-filled with temporary default values that users are highly likely to overwrite.
-## 2024-11-22 - Prevent Accidental Destructive Actions\n**Learning:** Destructive actions hidden behind simple single-click buttons (like 'Finish Match' ending a game instantly) cause user frustration and accidental state loss.\n**Action:** Always add an explicit confirmation step (like a native `window.confirm` dialog or custom modal) to irreversible or destructive UI actions.
+## 2024-11-22 - Prevent Accidental Destructive Actions
+**Learning:** Destructive actions hidden behind simple single-click buttons (like 'Finish Match' ending a game instantly) cause user frustration and accidental state loss.
+**Action:** Always add an explicit confirmation step (like a native `window.confirm` dialog or custom modal) to irreversible or destructive UI actions.
 ## 2024-07-26 - Accessible Destructive Actions
 **Learning:** Post-game destructive actions like "Play Again" or ending a tiebreaker can easily wipe out game state. Adding a simple confirmation step prevents accidental loss.
 **Action:** Use native window.confirm() or a custom confirmation dialog for all destructive actions to prevent frustrating mistakes, following the pattern from the "Finish Match" button.
@@ -84,7 +89,9 @@
 ## 2024-07-28 - Avoid aria-live on high-frequency UI updates
 **Learning:** Using `aria-live` on high-frequency UI state changes, such as a per-keystroke character counter, causes excessive and disruptive screen reader announcements that interrupt the user's flow and other important narrations.
 **Action:** Never use `aria-live` for rapid updates like character counters or per-second timers. Instead, use `aria-describedby` on the input to announce the context once upon focus, or rely on native form validation and screen reader heuristics.
-## 2026-07-23 - Red Card Guide Enhancements\n**Learning:** When implementing complex overlay components with multiple configurations (like a left vs right sidebar) and interactive filtering, consolidating state (e.g., using a single union `'left' | 'right' | null` instead of multiple booleans) drastically simplifies rendering logic. Additionally, to avoid Vite Fast Refresh warnings (`react-refresh/only-export-components`), it's better to avoid exporting non-component constants from the same file as React components, though for this specific minor enhancement within an existing file, the existing pattern was maintained to minimize disruption.\n**Action:** Refactored `RedCardGuide.tsx` to use `activeSidebar` union state, implemented dual quick-access buttons, added a client-side search filter, and documented the Vite Fast Refresh pattern limitation.
+## 2026-07-23 - Red Card Guide Enhancements
+**Learning:** When implementing complex overlay components with multiple configurations (like a left vs right sidebar) and interactive filtering, consolidating state (e.g., using a single union `'left' | 'right' | null` instead of multiple booleans) drastically simplifies rendering logic. Additionally, to avoid Vite Fast Refresh warnings (`react-refresh/only-export-components`), it's better to avoid exporting non-component constants from the same file as React components, though for this specific minor enhancement within an existing file, the existing pattern was maintained to minimize disruption.
+**Action:** Refactored `RedCardGuide.tsx` to use `activeSidebar` union state, implemented dual quick-access buttons, added a client-side search filter, and documented the Vite Fast Refresh pattern limitation.
 ## 2026-07-24 - Discoverability of Implicit Keyboard Shortcuts
 **Learning:** Hiding implicit keyboard shortcuts (like pressing Enter to select an autocomplete option) in JavaScript logic reduces their discoverability and cognitive recognition as actionable shortcuts, whereas styling them as semantic `<kbd>` elements provides immediate visual affordance to power users.
 **Action:** Always wrap explicit keyboard shortcut hints in semantically correct and visually distinct `<kbd>` elements when communicating them in UI text or tooltips, and ensure standard `aria-label` text spells out the key name (e.g., "(Escape)") for proper screen reader pronunciation.
@@ -95,3 +102,7 @@
 ## 2023-10-25 - Title Font Size Unification
 **Learning:** When using different custom fonts for random theming, applying the exact same CSS sizing attributes (e.g. text-5xl) leads to highly divergent perceived sizes because the internal metrics (cap height, baseline, etc.) of each font differ wildly.
 **Action:** Tuned Tailwind text size classes per font (`text-3xl/4xl` vs `text-5xl/6xl` vs `text-4xl/5xl`) to normalize the visual height/impact of the title rather than relying on uniform class names.
+
+## 2026-07-25 - Accessible Clear Button for Autocomplete
+**Learning:** Fast-paced custom autocomplete inputs (like the Tiebreaker checklist) benefit immensely from an accessible clear button with an explicit keyboard shortcut, reducing friction when users need to rapidly reset their query after a typo or incorrect guess.
+**Action:** Add an absolutely positioned 'Clear' (X) button inside the input container for rapid query resets, equipped with an `aria-label`, visually hidden `<kbd>Esc</kbd>` tooltip for discoverability, and matching keyboard handler to clear the input immediately on 'Escape'.
