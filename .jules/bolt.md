@@ -88,3 +88,7 @@
 ## 2024-08-01 - [Pre-compute normalized strings for Red Card search]
 **Learning:** During rapid keystrokes in the global Red Card guide, repeatedly calling `.toLowerCase()` on the `title`, `description`, and `examples` arrays inside the `.filter()` loop forces O(N) redundant string allocations, adding GC pressure.
 **Action:** Since `RED_CARD_CATEGORIES` is a static constant imported globally, loop through the dataset once at the module level to pre-compute and store `_normalizedTitle`, `_normalizedDescription`, and `_normalizedExamples`. Use these pre-computed O(1) strings in the `.filter()` operation.
+
+## 2024-05-18 - Isolate high-frequency timers in React
+**Learning:** `TiebreakerScreen` was maintaining a `revealTimer` state in the parent component and updating it via `setInterval` every second. This caused the entire massive screen (including checklists, grids, and host tools) to fully re-render every single second.
+**Action:** Move high-frequency updating state (like timers or counters) into small, isolated child components (like `RevealTimerDisplay`). Pass a callback (`onTimerComplete`) to notify the parent only when a phase change occurs, eliminating full-tree reconciliation on every tick.

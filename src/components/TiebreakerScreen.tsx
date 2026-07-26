@@ -66,6 +66,51 @@ ChecklistItemRow.displayName = 'ChecklistItemRow';
 
 export type RevealMode = 'idle' | 'revealing' | 'transition' | 'guessing';
 
+// ⚡ Bolt Optimization: Extract Timer into an isolated component
+// This prevents the parent TiebreakerScreen component from re-rendering every second
+// during the revealing and transition phases, eliminating full-tree reconciliation.
+const RevealTimerDisplay = memo(({
+  initialSeconds,
+  mode,
+  onTimerComplete,
+  className = ""
+}: {
+  initialSeconds: number;
+  mode: RevealMode;
+  onTimerComplete: (currentMode: RevealMode) => void;
+  className?: string;
+}) => {
+  const [seconds, setSeconds] = useState(initialSeconds);
+  const [prevMode, setPrevMode] = useState(mode);
+
+  // Derive state during render instead of using useEffect
+  // This satisfies ESLint's 'react-hooks/set-state-in-effect' rule
+  if (mode !== prevMode) {
+    setPrevMode(mode);
+    setSeconds(initialSeconds);
+  }
+
+  useEffect(() => {
+    if (mode === 'idle' || mode === 'guessing') return;
+
+    const interval = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          onTimerComplete(mode);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [mode, onTimerComplete]);
+
+  return <span className={className}>{seconds}</span>;
+});
+RevealTimerDisplay.displayName = 'RevealTimerDisplay';
+
 // ⚡ Bolt Optimization: Isolate Autocomplete logic to prevent the parent from
 // re-rendering on every keystroke.
 const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: ChecklistItem[], onMarkCorrect: (id: string) => void }) => {
@@ -212,7 +257,7 @@ export const TiebreakerScreen: React.FC = () => {
   const customInputRef = useRef<HTMLTextAreaElement>(null);
 
   const [revealMode, setRevealMode] = useState<RevealMode>('idle');
-  const [revealTimer, setRevealTimer] = useState(0);
+  const [initialTimer, setInitialTimer] = useState(0);
 
   // Re-initialize checklist if randomListQuestion changes,
   // but we can do this via an effect if needed. The linter complains about setState in useEffect.
@@ -251,33 +296,18 @@ export const TiebreakerScreen: React.FC = () => {
       initialTimer = 60;
     }
 
-    setRevealTimer(initialTimer);
+    setInitialTimer(initialTimer);
     setRevealMode('revealing');
   };
 
-  // Timer Effect
-  useEffect(() => {
-    if (revealMode === 'idle' || revealMode === 'guessing') return;
-
-    const interval = setInterval(() => {
-      setRevealTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-
-          if (revealMode === 'revealing') {
-            setRevealMode('transition');
-            return 5; // 5-second transition screen
-          } else if (revealMode === 'transition') {
-            setRevealMode('guessing');
-            return 0;
-          }
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [revealMode]);
+  const handleTimerComplete = useCallback((completedMode: RevealMode) => {
+    if (completedMode === 'revealing') {
+      setInitialTimer(5);
+      setRevealMode('transition');
+    } else if (completedMode === 'transition') {
+      setRevealMode('guessing');
+    }
+  }, []);
 
   const addCustomItems = () => {
     if (!customInputRef.current) return;
@@ -346,7 +376,13 @@ export const TiebreakerScreen: React.FC = () => {
                 <span className="text-2xl font-display text-arena-magenta uppercase">Memorize the Answers!</span>
                 <div className="text-right">
                    <span className="block text-xs uppercase tracking-widest text-arena-magenta font-bold">Time Remaining</span>
-                   <span className="text-5xl font-display text-white">{revealTimer}s</span>
+                   <RevealTimerDisplay
+                     mode={revealMode}
+                     initialSeconds={initialTimer}
+                     onTimerComplete={handleTimerComplete}
+                     className="text-5xl font-display text-white"
+                   />
+                   <span className="text-5xl font-display text-white ml-1">s</span>
                 </div>
               </div>
               <div className="p-6 bg-slate-800 grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
@@ -367,7 +403,12 @@ export const TiebreakerScreen: React.FC = () => {
               <p className="text-xl text-slate-400 text-center max-w-lg mb-8">
                 Teams must turn away from the screen before the guessing phase begins.
               </p>
-              <div className="text-7xl font-display text-red-500">{revealTimer}</div>
+              <RevealTimerDisplay
+                 mode={revealMode}
+                 initialSeconds={initialTimer}
+                 onTimerComplete={handleTimerComplete}
+                 className="text-7xl font-display text-red-500"
+              />
             </div>
           )}
 
