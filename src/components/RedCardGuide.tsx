@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useRef } from 'react';
 import { BookOpen, X, Search } from 'lucide-react';
 
 export interface RedCardCategory {
@@ -363,10 +363,23 @@ export const RedCardGuide: React.FC = () => {
   const [activeSidebar, setActiveSidebar] = useState<'left' | 'right' | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Ref to track current search term for the escape handler without needing to add it to deps
+  const searchTermRef = useRef(searchTerm);
+  useEffect(() => {
+    searchTermRef.current = searchTerm;
+  }, [searchTerm]);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && activeSidebar) {
-        setActiveSidebar(null);
+        if (searchTermRef.current) {
+          setSearchTerm('');
+          searchInputRef.current?.focus();
+        } else {
+          setActiveSidebar(null);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -453,14 +466,31 @@ export const RedCardGuide: React.FC = () => {
                 <Search className="h-4 w-4 text-slate-400" />
               </div>
               <input
-                type="search"
+                ref={searchInputRef}
+                type="text"
                 autoFocus
-                className="block w-full pl-10 pr-3 py-2 border border-slate-600 rounded-md leading-5 bg-slate-900 text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-arena-crimson focus:border-arena-crimson sm:text-sm transition-colors"
+                className="block w-full pl-10 pr-10 py-2 border border-slate-600 rounded-md leading-5 bg-slate-900 text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-arena-crimson focus:border-arena-crimson sm:text-sm transition-colors"
                 placeholder="Search violations or quotes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 aria-label="Search red cards by title, description, or example quotes"
               />
+              {searchTerm.length > 0 && (
+                <button
+                  onClick={() => { setSearchTerm(''); searchInputRef.current?.focus(); }}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center p-1.5 text-slate-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson rounded-r-md group"
+                  aria-label="Clear search input (Escape)"
+                >
+                  <X aria-hidden="true" className="w-4 h-4" />
+                  <span
+                    aria-hidden="true"
+                    className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50 flex items-center gap-1.5"
+                  >
+                    <span>Clear</span>
+                    <kbd className="font-sans text-[10px] bg-slate-700 border border-slate-500 px-1 py-0.5 rounded text-slate-300 shadow-inner">Esc</kbd>
+                  </span>
+                </button>
+              )}
             </div>
           </div>
 

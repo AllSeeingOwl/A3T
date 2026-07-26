@@ -106,3 +106,7 @@
 ## 2026-07-25 - Accessible Clear Button for Autocomplete
 **Learning:** Fast-paced custom autocomplete inputs (like the Tiebreaker checklist) benefit immensely from an accessible clear button with an explicit keyboard shortcut, reducing friction when users need to rapidly reset their query after a typo or incorrect guess.
 **Action:** Add an absolutely positioned 'Clear' (X) button inside the input container for rapid query resets, equipped with an `aria-label`, visually hidden `<kbd>Esc</kbd>` tooltip for discoverability, and matching keyboard handler to clear the input immediately on 'Escape'.
+
+## 2026-07-26 - Escape Key Context in Search Modals
+**Learning:** When a search input is embedded within an overlay or modal (like the Red Card Guide sidebar) that can be closed via the 'Escape' key, users frequently press 'Escape' expecting it to clear the current search query. If 'Escape' forcefully closes the modal instead, it breaks user expectations and causes frustration.
+**Action:** Always intercept 'Escape' key events in modals with search fields to first check if the search input contains text. If it does, clear the search input and keep the modal open; if it is already empty, allow the modal to close natively. Add an explicit, visually apparent Clear (X) button within the input showing the <kbd>Esc</kbd> shortcut to reinforce this behavior.
