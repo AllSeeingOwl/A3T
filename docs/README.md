@@ -9,7 +9,9 @@ Here you can find all the necessary rules, reference materials, and technical sp
 - **[Game Design Document](./Game-Design-Document.md)** — The complete ruleset, difficulty tiers, and host guidelines. This is the single source of truth for the game concept.
 - **[Rules Reference](./Rules-Reference.md)** — A quick lookup guide for gameplay structure, point systems, and the Referee's Red Card system.
 - **[Question Writer Guidelines](./Question-Writer-Guidelines.md)** — The comprehensive guide for creating, validating, and balancing trivia questions. Includes Safety Checks, Templates, and the Theme Encyclopedia.
+- **[Google Sheets Sync Setup](./Google-Sheets-Sync-Setup.md)** — The guide for connecting a private Google Sheet to automatically sync your questions.
 - **[Technical Specification](../Digital%20PoC%20Technical%20Specification.md)** — The architectural and implementation details for the digital game board and host controller.
+- **[Contributing](../CONTRIBUTING.md)** — Guidelines for contributing code and questions to the project.
 
 ## 🎯 Question Database
 
