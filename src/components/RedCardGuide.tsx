@@ -298,8 +298,10 @@ const RedCardList = memo(({ categories, searchTerm }: RedCardListProps) => {
 
   if (filteredCategories.length === 0) {
     return (
-      <div className="flex-1 p-8 text-center text-slate-400">
-        <p>No matching red cards found.</p>
+      <div role="status" className="flex-1 p-8 text-center text-slate-400 flex flex-col items-center justify-center">
+        <Search className="w-12 h-12 mb-4 opacity-50" />
+        <p className="text-lg">No matching red cards found for "<span className="text-white font-medium">{searchTerm}</span>".</p>
+        <p className="text-sm mt-2 opacity-75">Try adjusting your search terms.</p>
       </div>
     );
   }
