@@ -110,3 +110,7 @@
 ## 2026-07-26 - Escape Key Context in Search Modals
 **Learning:** When a search input is embedded within an overlay or modal (like the Red Card Guide sidebar) that can be closed via the 'Escape' key, users frequently press 'Escape' expecting it to clear the current search query. If 'Escape' forcefully closes the modal instead, it breaks user expectations and causes frustration.
 **Action:** Always intercept 'Escape' key events in modals with search fields to first check if the search input contains text. If it does, clear the search input and keep the modal open; if it is already empty, allow the modal to close natively. Add an explicit, visually apparent Clear (X) button within the input showing the <kbd>Esc</kbd> shortcut to reinforce this behavior.
+
+## 2024-11-23 - Contextual Empty States for Search
+**Learning:** Generic "No results found" messages in search modals provide poor feedback and can confuse users, especially screen reader users who may not realize the search has completed without matching results.
+**Action:** Always provide a contextual empty state for search inputs that includes the actual search term (e.g., "No results for '...'"), a clear visual indicator (like a faded Search icon), and wrap the container in `role="status"` to ensure screen readers announce the lack of results automatically.
