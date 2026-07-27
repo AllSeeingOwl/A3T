@@ -92,3 +92,6 @@
 ## 2024-05-18 - Isolate high-frequency timers in React
 **Learning:** `TiebreakerScreen` was maintaining a `revealTimer` state in the parent component and updating it via `setInterval` every second. This caused the entire massive screen (including checklists, grids, and host tools) to fully re-render every single second.
 **Action:** Move high-frequency updating state (like timers or counters) into small, isolated child components (like `RevealTimerDisplay`). Pass a callback (`onTimerComplete`) to notify the parent only when a phase change occurs, eliminating full-tree reconciliation on every tick.
+## 2026-07-28 - [Memoize Isolated Setup Inputs]
+**Learning:** In top-level setup screens like `LobbyHub`, sibling components like custom inputs (`TeamInput`) often re-render needlessly whenever unrelated global selections change (e.g., toggling a selected deck).
+**Action:** Wrap isolated static or localized-state components in `React.memo()` to decouple them from their parent's render cycles when the parent manages unrelated fast-changing or frequent interactive state.
