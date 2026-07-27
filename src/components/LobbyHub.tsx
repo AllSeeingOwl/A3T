@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { sanitizeHTML } from '../utils/sanitize';
@@ -12,7 +12,10 @@ interface TeamInputProps {
   inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
-const TeamInput: React.FC<TeamInputProps> = ({ id, label, defaultValue, colorClass, inputRef }) => {
+// ⚡ Bolt Optimization: Added memo() to TeamInput.
+// This prevents the inputs (and their localized character count state) from unnecessarily
+// re-rendering every time the user clicks a different deck (which updates selectedDeckId in LobbyHub).
+const TeamInput = memo(({ id, label, defaultValue, colorClass, inputRef }: TeamInputProps) => {
   const [count, setCount] = useState(defaultValue.length);
 
   return (
@@ -39,7 +42,8 @@ const TeamInput: React.FC<TeamInputProps> = ({ id, label, defaultValue, colorCla
       />
     </div>
   );
-};
+});
+TeamInput.displayName = 'TeamInput';
 
 type ThemeStyle = { font: string; color: string; size: string };
 
