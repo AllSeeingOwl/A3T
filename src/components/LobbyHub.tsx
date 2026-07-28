@@ -3,6 +3,7 @@ import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { sanitizeHTML } from '../utils/sanitize';
 import { CheckCircle2, Circle } from 'lucide-react';
+import { Deck } from '../types/game';
 
 interface TeamInputProps {
   id: string;
@@ -52,6 +53,48 @@ const THEME_STYLES: ThemeStyle[] = [
   { font: 'font-animation', color: 'text-arena-gold', size: 'text-5xl md:text-6xl tracking-wider py-4' },
   { font: 'font-wrestling', color: 'text-red-500', size: 'text-4xl md:text-5xl uppercase tracking-tighter py-4' },
 ];
+
+// ⚡ Bolt Optimization: Extract deck selection label into a React.memo() component.
+// This prevents unaffected deck cards from re-rendering whenever selectedDeckId changes.
+const DeckSelectionCard = memo(({
+  deck,
+  isSelected,
+  onSelect
+}: {
+  deck: Deck;
+  isSelected: boolean;
+  onSelect: (deckId: string) => void;
+}) => (
+  <label
+    className={`p-4 rounded-lg border-2 text-left transition-all flex flex-col h-full cursor-pointer has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-arena-gold has-[:focus-visible]:outline-none ${
+      isSelected
+        ? 'border-arena-gold bg-arena-slate scale-105'
+        : 'border-slate-600 bg-arena-slate hover:border-slate-400'
+    }`}
+  >
+    <input
+      type="radio"
+      name="deck-selection"
+      value={deck.deckId}
+      checked={isSelected}
+      onChange={() => onSelect(deck.deckId)}
+      className="sr-only"
+    />
+    <div className="flex justify-between items-start w-full mb-2">
+      <h3 className="text-xl font-display text-white">
+        {deck.deckName}
+      </h3>
+      {isSelected ? (
+        <CheckCircle2 className="w-6 h-6 text-arena-gold flex-shrink-0 ml-2" aria-hidden="true" />
+      ) : (
+        <Circle className="w-6 h-6 text-slate-500 flex-shrink-0 ml-2" aria-hidden="true" />
+      )}
+    </div>
+    <p className="text-sm text-slate-300">{deck.deckDescription}</p>
+    <p className="text-xs text-slate-400 mt-2">{deck.cards.length} Chains</p>
+  </label>
+));
+DeckSelectionCard.displayName = 'DeckSelectionCard';
 
 export const LobbyHub: React.FC = () => {
   // Select a random theme style on initial mount
@@ -128,35 +171,12 @@ export const LobbyHub: React.FC = () => {
         <fieldset aria-labelledby="deck-selection-title" className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <legend className="sr-only">Choose a deck to play</legend>
           {defaultDecks.map((deck) => (
-            <label
+            <DeckSelectionCard
               key={deck.deckId}
-              className={`p-4 rounded-lg border-2 text-left transition-all flex flex-col h-full cursor-pointer has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-arena-gold has-[:focus-visible]:outline-none ${
-                selectedDeckId === deck.deckId
-                  ? 'border-arena-gold bg-arena-slate scale-105'
-                  : 'border-slate-600 bg-arena-slate hover:border-slate-400'
-              }`}
-            >
-              <input
-                type="radio"
-                name="deck-selection"
-                value={deck.deckId}
-                checked={selectedDeckId === deck.deckId}
-                onChange={() => setSelectedDeckId(deck.deckId)}
-                className="sr-only"
-              />
-              <div className="flex justify-between items-start w-full mb-2">
-                <h3 className="text-xl font-display text-white">
-                  {deck.deckName}
-                </h3>
-                {selectedDeckId === deck.deckId ? (
-                  <CheckCircle2 className="w-6 h-6 text-arena-gold flex-shrink-0 ml-2" aria-hidden="true" />
-                ) : (
-                  <Circle className="w-6 h-6 text-slate-500 flex-shrink-0 ml-2" aria-hidden="true" />
-                )}
-              </div>
-              <p className="text-sm text-slate-300">{deck.deckDescription}</p>
-              <p className="text-xs text-slate-400 mt-2">{deck.cards.length} Chains</p>
-            </label>
+              deck={deck}
+              isSelected={selectedDeckId === deck.deckId}
+              onSelect={setSelectedDeckId}
+            />
           ))}
         </fieldset>
       </div>

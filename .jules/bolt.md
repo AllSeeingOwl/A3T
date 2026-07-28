@@ -95,3 +95,7 @@
 ## 2026-07-28 - [Memoize Isolated Setup Inputs]
 **Learning:** In top-level setup screens like `LobbyHub`, sibling components like custom inputs (`TeamInput`) often re-render needlessly whenever unrelated global selections change (e.g., toggling a selected deck).
 **Action:** Wrap isolated static or localized-state components in `React.memo()` to decouple them from their parent's render cycles when the parent manages unrelated fast-changing or frequent interactive state.
+
+## 2026-07-28 - [Memoize List Items to Prevent Unnecessary Re-renders]
+**Learning:** In top-level setup screens like `LobbyHub`, iterating over lists of options (like deck selection cards) without memoizing the individual list items causes every item in the list to re-render whenever the selected option state changes.
+**Action:** Extract dynamic list items into their own `React.memo()` components and pass direct `onChange` handlers or memoized callbacks. This ensures only the items that actually change state (e.g., from unselected to selected, or vice-versa) will re-render, reducing unnecessary DOM diffing overhead.
