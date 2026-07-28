@@ -1,7 +1,7 @@
 import React, { useState, useMemo, memo, useCallback, useEffect, useRef } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
-import { ShieldAlert, Check, X, Undo2, Plus } from 'lucide-react';
+import { ShieldAlert, Check, X, Undo2, Plus, Search } from 'lucide-react';
 
 type ItemStatus = 'unmarked' | 'tick' | 'cross';
 interface ChecklistItem {
@@ -201,7 +201,10 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
             </button>
           ))}
           {suggestions.length === 0 && (
-            <div className="px-4 py-3 text-slate-500 italic">No matching answers found.</div>
+            <div role="status" className="px-4 py-3 text-slate-500 italic flex items-center gap-2">
+              <Search aria-hidden="true" className="w-4 h-4 opacity-50" />
+              <span>No results for "<span className="text-white font-medium">{input}</span>"</span>
+            </div>
           )}
         </div>
       )}
