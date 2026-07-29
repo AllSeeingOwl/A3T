@@ -25,7 +25,7 @@ const TeamInput = memo(({ id, label, defaultValue, colorClass, inputRef }: TeamI
         <label htmlFor={id} className={`text-2xl font-display ${id === 'team1' ? 'text-arena-magenta' : 'text-arena-cobalt'} uppercase block`}>
           {label}
         </label>
-        <span id={`char-count-${id}`} className="text-sm text-slate-400 font-sans">
+        <span id={`char-count-${id}`} className={`text-sm font-sans ${count >= 50 ? 'text-red-400 font-bold' : 'text-slate-400'}`}>
           {count}/50
         </span>
       </div>
