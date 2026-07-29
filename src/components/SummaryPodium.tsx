@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 
 export const SummaryPodium: React.FC = () => {
+  useEffect(() => {
+    // ⚡ Bolt Optimization: Preload the TiebreakerScreen component in the background
+    // while viewing the summary. This prevents the Suspense fallback flash
+    // if the match is a tie and they transition to sudden death.
+    import('./TiebreakerScreen').catch(() => {});
+  }, []);
+
   // ⚡ Bolt Optimization: Wrap Zustand selector in useShallow so this component
   // only re-renders when the `teams` or `resetGame` state changes.
   const { teams, resetGame, setScreen } = useGameStore(

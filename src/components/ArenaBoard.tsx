@@ -265,6 +265,13 @@ export const ArenaBoard: React.FC = () => {
   const [showEasyModal, setShowEasyModal] = React.useState(false);
 
   useEffect(() => {
+    // ⚡ Bolt Optimization: Preload the SummaryPodium component in the background
+    // while the match is being played. This prevents the Suspense fallback
+    // flash when transitioning to the results screen.
+    import('./SummaryPodium').catch(() => {});
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && showEasyModal) {
         setShowEasyModal(false);
