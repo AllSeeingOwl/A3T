@@ -2,15 +2,9 @@
 > always-a-trivial-triple-threat@0.1.0 dev /app
 > vite
 
-4:52:58 AM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
-`optimizeDeps.rollupOptions` / `ssr.optimizeDeps.rollupOptions` is deprecated. Use `optimizeDeps.rolldownOptions` instead. Note that this option may be set by a plugin. Set VITE_DEPRECATION_TRACE=1 to see where it is called.
-[vite:react-babel] We recommend switching to `@vitejs/plugin-react-oxc` for improved performance. More information at https://vite.dev/rolldown
 
-  VITE v8.1.3  ready in 504 ms
+  VITE v6.4.3  ready in 321 ms
 
   ➜  Local:   http://localhost:5173/A3T/
   ➜  Network: use --host to expose
-[33mWarning: Invalid input options (1 issue found)
-- For the "jsx". Invalid key: Expected never but received "jsx". [0m
-[33mWarning: Invalid input options (1 issue found)
-- For the "jsx". Invalid key: Expected never but received "jsx". [0m
+ ELIFECYCLE  Command failed with exit code 143.

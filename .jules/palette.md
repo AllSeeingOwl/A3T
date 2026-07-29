@@ -114,3 +114,11 @@
 ## 2024-11-23 - Contextual Empty States for Search
 **Learning:** Generic "No results found" messages in search modals provide poor feedback and can confuse users, especially screen reader users who may not realize the search has completed without matching results.
 **Action:** Always provide a contextual empty state for search inputs that includes the actual search term (e.g., "No results for '...'"), a clear visual indicator (like a faded Search icon), and wrap the container in `role="status"` to ensure screen readers announce the lack of results automatically.
+
+## 2024-11-23 - Accessible Custom Toggle Buttons
+**Learning:** Custom UI toggle buttons (like the correct/incorrect tick and cross in a checklist) require `aria-pressed` to correctly communicate their active state to screen readers. Relying only on visual changes (like background color or border) leaves screen reader users unaware of the current selection.
+**Action:** Always add `aria-pressed={true/false}` to custom toggle buttons to ensure their state is programmatically determinable.
+
+## 2024-11-23 - Visual Feedback for Character Limits
+**Learning:** While character counters provide numerical feedback, users often don't notice them until they are blocked from typing. Providing a distinct visual change (like turning the counter text red and bold) when approaching or hitting the limit significantly improves the user's awareness.
+**Action:** Always apply distinct visual styling (e.g., color and font weight changes) to character count indicators when the user reaches the maximum allowed input length.

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, memo, useCallback, useEffect, useRef } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
-import { ShieldAlert, Check, X, Undo2, Plus, Search } from 'lucide-react';
+import { ShieldAlert, Check, X, Undo2, Plus, Search, ClipboardList } from 'lucide-react';
 
 type ItemStatus = 'unmarked' | 'tick' | 'cross';
 interface ChecklistItem {
@@ -37,6 +37,7 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
         onClick={() => onUpdateStatus(item.id, 'tick')}
         className={`group relative p-1.5 rounded hover:bg-emerald-500/20 text-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none ${item.status === 'tick' ? 'bg-emerald-500/20 ring-1 ring-emerald-500/50' : ''}`}
         aria-label={`Mark ${item.text} correct`}
+        aria-pressed={item.status === 'tick'}
       >
         <Check aria-hidden="true" className="w-5 h-5" />
         <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Correct</span>
@@ -45,6 +46,7 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
         onClick={() => onUpdateStatus(item.id, 'cross')}
         className={`group relative p-1.5 rounded hover:bg-red-500/20 text-red-500 focus-visible:ring-2 focus-visible:ring-red-400 focus:outline-none ${item.status === 'cross' ? 'bg-red-500/20 ring-1 ring-red-500/50' : ''}`}
         aria-label={`Mark ${item.text} incorrect`}
+        aria-pressed={item.status === 'cross'}
       >
         <X aria-hidden="true" className="w-5 h-5" />
         <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Incorrect</span>
@@ -447,7 +449,11 @@ export const TiebreakerScreen: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-slate-400 italic text-center py-4">No checklist items yet. Add custom items above.</p>
+              <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-600 rounded-lg bg-slate-800/50 text-slate-400">
+                <ClipboardList className="w-12 h-12 mb-4 text-slate-500" />
+                <p className="text-lg">No checklist items yet.</p>
+                <p className="text-sm mt-1">Add custom items above to begin tracking answers.</p>
+              </div>
             )}
           </div>
           )}
