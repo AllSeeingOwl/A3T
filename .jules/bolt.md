@@ -99,3 +99,6 @@
 ## 2026-07-28 - [Memoize List Items to Prevent Unnecessary Re-renders]
 **Learning:** In top-level setup screens like `LobbyHub`, iterating over lists of options (like deck selection cards) without memoizing the individual list items causes every item in the list to re-render whenever the selected option state changes.
 **Action:** Extract dynamic list items into their own `React.memo()` components and pass direct `onChange` handlers or memoized callbacks. This ensures only the items that actually change state (e.g., from unselected to selected, or vice-versa) will re-render, reducing unnecessary DOM diffing overhead.
+## 2024-07-30 - Optimize RedCardList Derived State with useMemo
+**Learning:** In components rendering lists that are filtered by search inputs (like `RedCardGuide`), running the filtering and mapping logic on every render cycle causes unnecessary object allocation and garbage collection pressure, especially when the search input is empty. An identity mapping (returning the same logical data structure in new object references) without `useMemo` breaks reference equality for downstream components.
+**Action:** Always wrap derived state list filters in a `useMemo` hook. Furthermore, short-circuit the logic if the filter condition is empty (e.g., `!search`) and return the original array directly to bypass unnecessary allocations entirely.

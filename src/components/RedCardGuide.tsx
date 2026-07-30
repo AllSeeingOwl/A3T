@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useRef } from 'react';
+import React, { useState, useEffect, memo, useRef, useMemo } from 'react';
 import { BookOpen, X, Search } from 'lucide-react';
 
 export interface RedCardCategory {
@@ -277,24 +277,28 @@ interface RedCardListProps {
 const RedCardList = memo(({ categories, searchTerm }: RedCardListProps) => {
   const normalizedSearch = searchTerm.toLowerCase().trim();
 
-  const filteredCategories = categories.map(category => {
-    if (!normalizedSearch) return category;
+  // ⚡ Bolt Optimization: Wrap the mapping logic in a useMemo hook to avoid recalculating
+  // and re-allocating new objects when the search bar is empty or the input hasn't changed.
+  const filteredCategories = useMemo(() => {
+    if (!normalizedSearch) return categories.filter(category => category.cards.length > 0);
 
-    // ⚡ Bolt Optimization: Use pre-computed normalized properties instead of calling
-    // .toLowerCase() on every card's title, description, and examples on every keystroke.
-    // This avoids O(N) redundant string allocations and reduces GC pressure during rapid typing.
-    const filteredCards = category.cards.filter(card => {
-      const matchTitle = card._normalizedTitle?.includes(normalizedSearch) ?? false;
-      const matchDesc = card._normalizedDescription?.includes(normalizedSearch) ?? false;
-      const matchExample = card._normalizedExamples?.some(ex => ex.includes(normalizedSearch)) ?? false;
-      return matchTitle || matchDesc || matchExample;
-    });
+    return categories.map(category => {
+      // ⚡ Bolt Optimization: Use pre-computed normalized properties instead of calling
+      // .toLowerCase() on every card's title, description, and examples on every keystroke.
+      // This avoids O(N) redundant string allocations and reduces GC pressure during rapid typing.
+      const filteredCards = category.cards.filter(card => {
+        const matchTitle = card._normalizedTitle?.includes(normalizedSearch) ?? false;
+        const matchDesc = card._normalizedDescription?.includes(normalizedSearch) ?? false;
+        const matchExample = card._normalizedExamples?.some(ex => ex.includes(normalizedSearch)) ?? false;
+        return matchTitle || matchDesc || matchExample;
+      });
 
-    return {
-      ...category,
-      cards: filteredCards
-    };
-  }).filter(category => category.cards.length > 0);
+      return {
+        ...category,
+        cards: filteredCards
+      };
+    }).filter(category => category.cards.length > 0);
+  }, [categories, normalizedSearch]);
 
   if (filteredCategories.length === 0) {
     return (
