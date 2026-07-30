@@ -122,3 +122,7 @@
 ## 2024-11-23 - Visual Feedback for Character Limits
 **Learning:** While character counters provide numerical feedback, users often don't notice them until they are blocked from typing. Providing a distinct visual change (like turning the counter text red and bold) when approaching or hitting the limit significantly improves the user's awareness.
 **Action:** Always apply distinct visual styling (e.g., color and font weight changes) to character count indicators when the user reaches the maximum allowed input length.
+
+## 2024-11-23 - Feature Discoverability via Disabled States
+**Learning:** Completely hiding conditional UI elements (like a "Start" button requiring a certain state) prevents users from discovering the feature exists or learning how to unlock it, leading to a poor, confusing experience.
+**Action:** Always render conditional primary actions, but use a disabled state alongside an explicit, accessible tooltip explaining exactly what the user needs to do to enable the button.

@@ -363,14 +363,31 @@ export const TiebreakerScreen: React.FC = () => {
           </div>
 
           {/* Reveal Mode Conditonal UI */}
-          {revealMode === 'idle' && checklist.length >= 10 && (
-            <div className="mt-8 flex justify-center">
+          {revealMode === 'idle' && (
+            <div className="mt-8 flex justify-center relative group">
               <button
-                onClick={startRevealMode}
-                className="px-8 py-4 bg-arena-magenta hover:bg-pink-600 text-white rounded-xl font-display text-2xl uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(236,72,153,0.5)] focus-visible:ring-4 focus-visible:ring-pink-400 focus:outline-none"
+                onClick={checklist.length >= 10 ? startRevealMode : undefined}
+                aria-disabled={checklist.length < 10}
+                aria-describedby={checklist.length < 10 ? "start-reveal-tooltip" : undefined}
+                className={`px-8 py-4 rounded-xl font-display text-2xl uppercase tracking-wider transition-all focus-visible:ring-4 focus-visible:ring-pink-400 focus:outline-none ${
+                  checklist.length >= 10
+                    ? 'bg-arena-magenta hover:bg-pink-600 text-white shadow-[0_0_20px_rgba(236,72,153,0.5)]'
+                    : 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                }`}
               >
                 Start Timed Reveal Mode
               </button>
+              {checklist.length < 10 && (
+                <div
+                  id="start-reveal-tooltip"
+                  role="tooltip"
+                  aria-hidden="true"
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-10"
+                >
+                  Add at least 10 items to unlock ({checklist.length}/10)
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                </div>
+              )}
             </div>
           )}
 
