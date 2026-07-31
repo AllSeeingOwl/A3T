@@ -14,7 +14,7 @@ export interface RedCard {
   examples: string[];
   _normalizedTitle?: string;
   _normalizedDescription?: string;
-  _normalizedExamples?: string[];
+  _normalizedExamplesStr?: string;
 }
 
 export const RED_CARD_CATEGORIES: RedCardCategory[] = [
@@ -249,7 +249,9 @@ RED_CARD_CATEGORIES.forEach(category => {
   category.cards.forEach(card => {
     card._normalizedTitle = card.title.toLowerCase();
     card._normalizedDescription = card.description.toLowerCase();
-    card._normalizedExamples = card.examples.map(ex => ex.toLowerCase());
+    // ⚡ Bolt Optimization: Pre-compute a single concatenated string for examples
+    // to avoid O(N) array iterations (.some) inside the rapid filter loop.
+    card._normalizedExamplesStr = card.examples.join(' ').toLowerCase();
   });
 });
 
@@ -289,7 +291,9 @@ const RedCardList = memo(({ categories, searchTerm }: RedCardListProps) => {
       const filteredCards = category.cards.filter(card => {
         const matchTitle = card._normalizedTitle?.includes(normalizedSearch) ?? false;
         const matchDesc = card._normalizedDescription?.includes(normalizedSearch) ?? false;
-        const matchExample = card._normalizedExamples?.some(ex => ex.includes(normalizedSearch)) ?? false;
+        // ⚡ Bolt Optimization: Use the pre-computed concatenated string to avoid an inner O(N)
+        // array iteration (`.some()`) and closure allocation on every card during rapid typing.
+        const matchExample = card._normalizedExamplesStr?.includes(normalizedSearch) ?? false;
         return matchTitle || matchDesc || matchExample;
       });
 
