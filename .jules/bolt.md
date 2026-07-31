@@ -102,3 +102,7 @@
 ## 2024-07-30 - Optimize RedCardList Derived State with useMemo
 **Learning:** In components rendering lists that are filtered by search inputs (like `RedCardGuide`), running the filtering and mapping logic on every render cycle causes unnecessary object allocation and garbage collection pressure, especially when the search input is empty. An identity mapping (returning the same logical data structure in new object references) without `useMemo` breaks reference equality for downstream components.
 **Action:** Always wrap derived state list filters in a `useMemo` hook. Furthermore, short-circuit the logic if the filter condition is empty (e.g., `!search`) and return the original array directly to bypass unnecessary allocations entirely.
+
+## 2024-05-18 - Optimize Filtering of Array Properties
+**Learning:** Filtering items based on nested array properties by using methods like `some` inside the hot-path filter loop forces the JS engine to allocate a closure and iterate over the sub-array on every check.
+**Action:** Pre-compute a single concatenated search string for the array properties during initialization (`const searchStr = array.join(' ').toLowerCase()`), and use a simple O(1) `.includes()` check against this single string during filtering to significantly improve performance.
