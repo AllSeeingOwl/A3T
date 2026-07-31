@@ -186,7 +186,7 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
         )}
       </div>
       {input.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+        <div tabIndex={0} className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto focus-visible:ring-2 focus-visible:ring-emerald-500 focus:outline-none">
           {suggestions.map(suggestion => (
             <button
               key={suggestion.id}
@@ -407,7 +407,7 @@ export const TiebreakerScreen: React.FC = () => {
                    <span className="text-5xl font-display text-white ml-1">s</span>
                 </div>
               </div>
-              <div className="p-6 bg-slate-800 grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto">
+              <div tabIndex={0} className="p-6 bg-slate-800 grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto focus-visible:ring-2 focus-visible:ring-pink-400 focus:outline-none rounded">
                 {checklist.map((item) => (
                   <div key={item.id} className="bg-slate-900 p-4 rounded border border-slate-600 text-center flex items-center justify-center min-h-[80px]">
                     <span className="text-xl text-white font-medium">{item.text}</span>
