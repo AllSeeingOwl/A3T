@@ -106,3 +106,7 @@
 ## 2024-05-18 - Optimize Filtering of Array Properties
 **Learning:** Filtering items based on nested array properties by using methods like `some` inside the hot-path filter loop forces the JS engine to allocate a closure and iterate over the sub-array on every check.
 **Action:** Pre-compute a single concatenated search string for the array properties during initialization (`const searchStr = array.join(' ').toLowerCase()`), and use a simple O(1) `.includes()` check against this single string during filtering to significantly improve performance.
+
+## 2024-05-18 - [Do not sacrifice correctness for avoiding empty array filters]
+**Learning:** In RedCardGuide.tsx, attempting to optimize the empty search state by removing `categories.filter(category => category.cards.length > 0)` and returning `categories` directly was rejected because it introduces a functional regression (potentially rendering empty categories).
+**Action:** Do not remove array filters that serve as safety/correctness checks just to avoid a small O(N) allocation on initial load. Code correctness cannot be sacrificed for micro-optimizations.

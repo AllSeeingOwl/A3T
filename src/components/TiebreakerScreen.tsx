@@ -289,6 +289,10 @@ export const TiebreakerScreen: React.FC = () => {
     setChecklist(prev => prev.map(item => item.id === id ? { ...item, status } : item));
   }, []);
 
+  const handleMarkCorrect = useCallback((id: string) => {
+    updateItemStatus(id, 'tick');
+  }, [updateItemStatus]);
+
 
   // Remove eslint-disable comments from earlier
   const startRevealMode = () => {
@@ -440,7 +444,7 @@ export const TiebreakerScreen: React.FC = () => {
             <h4 className="text-xl font-display text-arena-gold mb-4 uppercase">Host Checklist Tool</h4>
 
             {revealMode === 'guessing' ? (
-              <AutocompleteInput checklist={checklist} onMarkCorrect={(id) => updateItemStatus(id, 'tick')} />
+              <AutocompleteInput checklist={checklist} onMarkCorrect={handleMarkCorrect} />
             ) : (
               <div className="flex gap-2 mb-6">
                 <textarea
