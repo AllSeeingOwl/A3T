@@ -126,3 +126,7 @@
 ## 2024-11-23 - Feature Discoverability via Disabled States
 **Learning:** Completely hiding conditional UI elements (like a "Start" button requiring a certain state) prevents users from discovering the feature exists or learning how to unlock it, leading to a poor, confusing experience.
 **Action:** Always render conditional primary actions, but use a disabled state alongside an explicit, accessible tooltip explaining exactly what the user needs to do to enable the button.
+
+## 2026-08-01 - Keyboard Accessible Form Submission
+**Learning:** Wrapping interactive inputs and submission buttons in generic `<div>` containers breaks native keyboard behavior, preventing users from quickly submitting the form by pressing 'Enter'.
+**Action:** Always wrap logical input groups and their primary submission button in a semantic `<form>` element, attach an `onSubmit` handler (with `e.preventDefault()`), and set the primary button to `type="submit"` to enable native keyboard submission UX.
