@@ -130,3 +130,7 @@
 ## 2026-08-01 - Keyboard Accessible Form Submission
 **Learning:** Wrapping interactive inputs and submission buttons in generic `<div>` containers breaks native keyboard behavior, preventing users from quickly submitting the form by pressing 'Enter'.
 **Action:** Always wrap logical input groups and their primary submission button in a semantic `<form>` element, attach an `onSubmit` handler (with `e.preventDefault()`), and set the primary button to `type="submit"` to enable native keyboard submission UX.
+
+## 2024-11-23 - Accessible Tooltips on Disabled Buttons
+**Learning:** Using `group` and `group-focus-within` on a wrapper around an `aria-disabled` button and its tooltip causes the tooltip to incorrectly stay visible after a mouse click, because the click triggers `focus-within` on the wrapper even though the button shouldn't receive true focus interactions.
+**Action:** To ensure tooltips on disabled buttons are accessible to keyboard users while avoiding errant mouse-click triggers, apply Tailwind's `peer` class to the button itself and `peer-focus-visible:opacity-100 peer-focus-visible:visible` to the immediately adjacent tooltip element.

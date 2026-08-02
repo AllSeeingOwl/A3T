@@ -188,7 +188,7 @@ export const LobbyHub: React.FC = () => {
             type="submit"
             aria-disabled={!selectedDeckId}
             aria-describedby={!selectedDeckId ? "start-match-tooltip" : undefined}
-            className={`px-12 py-4 rounded-full text-2xl font-display uppercase tracking-widest transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-emerald-500 focus:outline-none ${
+            className={`peer px-12 py-4 rounded-full text-2xl font-display uppercase tracking-widest transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-emerald-500 focus:outline-none ${
               selectedDeckId
                 ? 'bg-emerald-600 text-white hover:bg-emerald-500 hover:scale-105 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
                 : 'bg-slate-700 text-slate-400 cursor-not-allowed'
@@ -201,7 +201,7 @@ export const LobbyHub: React.FC = () => {
               id="start-match-tooltip"
               role="tooltip"
               aria-hidden="true"
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 whitespace-nowrap pointer-events-none"
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible peer-focus-visible:opacity-100 peer-focus-visible:visible transition-all duration-200 whitespace-nowrap pointer-events-none"
             >
               Select a deck to start the match
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
