@@ -215,6 +215,48 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
 });
 AutocompleteInput.displayName = 'AutocompleteInput';
 
+const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => void }) => {
+  const [text, setText] = useState('');
+
+  const handleAdd = () => {
+    if (!text.trim()) return;
+    onAddItems(text);
+    setText('');
+  };
+
+  return (
+    <div className="flex gap-2 mb-6">
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Paste or type custom answers here (one per line)..."
+        aria-label="Custom answers"
+        className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
+        rows={2}
+      />
+      <div className="relative flex group">
+        <button
+          onClick={handleAdd}
+          aria-disabled={!text.trim()}
+          aria-describedby={!text.trim() ? 'add-custom-disabled' : undefined}
+          className={`peer px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center ${
+            text.trim() ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+          }`}
+        >
+          <Plus className="w-5 h-5 mr-1" /> Add
+        </button>
+        {!text.trim() && (
+          <div id="add-custom-disabled" role="tooltip" aria-hidden="true" className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-slate-800 text-white text-xs rounded border border-slate-600 shadow-lg opacity-0 invisible peer-focus-visible:opacity-100 peer-focus-visible:visible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-10">
+            Enter custom answers to add them
+            <div className="absolute top-full right-6 border-4 border-transparent border-t-slate-800"></div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+CustomAnswersInput.displayName = 'CustomAnswersInput';
+
 export const TiebreakerScreen: React.FC = () => {
   const { teams, addScore, endGame, selectedDeck } = useGameStore(
     useShallow((state) => ({
@@ -259,7 +301,7 @@ export const TiebreakerScreen: React.FC = () => {
     }
     return [];
   });
-  const customInputRef = useRef<HTMLTextAreaElement>(null);
+
 
   const [revealMode, setRevealMode] = useState<RevealMode>('idle');
   const [initialTimer, setInitialTimer] = useState(0);
@@ -318,9 +360,7 @@ export const TiebreakerScreen: React.FC = () => {
     }
   }, []);
 
-  const addCustomItems = () => {
-    if (!customInputRef.current) return;
-    const val = customInputRef.current.value;
+  const addCustomItems = useCallback((val: string) => {
     if (!val.trim()) return;
     const newItems = val
       .split('\n')
@@ -334,8 +374,7 @@ export const TiebreakerScreen: React.FC = () => {
       }));
 
     setChecklist(prev => [...prev, ...newItems]);
-    customInputRef.current.value = '';
-  };
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-arena-slate font-sans p-8 w-full">
@@ -446,21 +485,7 @@ export const TiebreakerScreen: React.FC = () => {
             {revealMode === 'guessing' ? (
               <AutocompleteInput checklist={checklist} onMarkCorrect={handleMarkCorrect} />
             ) : (
-              <div className="flex gap-2 mb-6">
-                <textarea
-                  ref={customInputRef}
-                  placeholder="Paste or type custom answers here (one per line)..."
-                  aria-label="Custom answers"
-                  className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
-                  rows={2}
-                />
-                <button
-                  onClick={addCustomItems}
-                  className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center"
-                >
-                  <Plus className="w-5 h-5 mr-1" /> Add
-                </button>
-              </div>
+              <CustomAnswersInput onAddItems={addCustomItems} />
             )}
 
             {checklist.length > 0 ? (
@@ -470,8 +495,8 @@ export const TiebreakerScreen: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-600 rounded-lg bg-slate-800/50 text-slate-400">
-                <ClipboardList className="w-12 h-12 mb-4 text-slate-500" />
+              <div role="status" className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-600 rounded-lg bg-slate-800/50 text-slate-400">
+                <ClipboardList aria-hidden="true" className="w-12 h-12 mb-4 text-slate-500" />
                 <p className="text-lg">No checklist items yet.</p>
                 <p className="text-sm mt-1">Add custom items above to begin tracking answers.</p>
               </div>
