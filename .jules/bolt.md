@@ -110,3 +110,7 @@
 ## 2024-05-18 - [Do not sacrifice correctness for avoiding empty array filters]
 **Learning:** In RedCardGuide.tsx, attempting to optimize the empty search state by removing `categories.filter(category => category.cards.length > 0)` and returning `categories` directly was rejected because it introduces a functional regression (potentially rendering empty categories).
 **Action:** Do not remove array filters that serve as safety/correctness checks just to avoid a small O(N) allocation on initial load. Code correctness cannot be sacrificed for micro-optimizations.
+
+## 2024-05-18 - [Extract non-component exports to avoid Fast Refresh de-optimizations]
+**Learning:** Exporting non-component constants (like data arrays or static configuration objects) from files that also export React components triggers Vite's `react-refresh/only-export-components` rule. This de-optimizes Fast Refresh during local development and creates warnings in the build process.
+**Action:** Extract large static data objects (like `RED_CARD_CATEGORIES` and `CATEGORY_STYLES`) and their associated typescript interfaces into standalone utility files (e.g. `src/utils/redCardData.ts`). Import them into the React components, ensuring component files *only* export components.

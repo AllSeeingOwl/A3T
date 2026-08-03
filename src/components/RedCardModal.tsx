@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
-import { RED_CARD_CATEGORY_INDEX } from './RedCardGuide';
+import { RED_CARD_CATEGORY_INDEX } from '../utils/redCardData';
 
 export const RedCardModal: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the modal from re-rendering

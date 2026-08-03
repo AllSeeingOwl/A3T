@@ -57,3 +57,19 @@ export interface GameState {
   activeRedCard: 'CATEGORY_VIOLATIONS' | 'MEDIUM_VIOLATIONS' | 'CANON_VIOLATIONS' | 'GAMEPLAY_VIOLATIONS' | 'REFEREE_TOOLS' | null;
   easyModeTeam: 'teamA' | 'teamB' | null;
 }
+
+export interface RedCardCategory {
+  title: string;
+  cards: RedCard[];
+}
+
+export interface RedCard {
+  type: string;
+  suggestedPenalties?: string[];
+  title: string;
+  description: string;
+  examples: string[];
+  _normalizedTitle?: string;
+  _normalizedDescription?: string;
+  _normalizedExamplesStr?: string;
+}
