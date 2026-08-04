@@ -134,3 +134,7 @@
 ## 2024-11-23 - Accessible Tooltips on Disabled Buttons
 **Learning:** Using `group` and `group-focus-within` on a wrapper around an `aria-disabled` button and its tooltip causes the tooltip to incorrectly stay visible after a mouse click, because the click triggers `focus-within` on the wrapper even though the button shouldn't receive true focus interactions.
 **Action:** To ensure tooltips on disabled buttons are accessible to keyboard users while avoiding errant mouse-click triggers, apply Tailwind's `peer` class to the button itself and `peer-focus-visible:opacity-100 peer-focus-visible:visible` to the immediately adjacent tooltip element.
+
+## 2024-08-04 - Keyboard Shortcuts for Custom Inputs
+**Learning:** For custom multi-line textareas (like custom answers inputs) that lack a natural "submit" key, adding keyboard shortcut hints (e.g. Cmd/Ctrl + Enter) dramatically improves the form submission UX for keyboard users by preventing them from needing to tab away to find the submit button.
+**Action:** When adding specific keyboard shortcuts to input forms or textareas, also add a visual `<kbd>` hint that appears on hover/focus to educate the user.

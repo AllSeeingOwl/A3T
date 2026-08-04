@@ -224,14 +224,22 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
     setText('');
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      handleAdd();
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="flex gap-2 mb-6">
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder="Paste or type custom answers here (one per line)..."
         aria-label="Custom answers"
-        className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus:border-arena-gold resize-y min-h-[60px]"
+        className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-gold focus:border-arena-gold resize-y min-h-[60px]"
         rows={2}
       />
       <div className="relative flex group">
@@ -239,11 +247,20 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
           onClick={handleAdd}
           aria-disabled={!text.trim()}
           aria-describedby={!text.trim() ? 'add-custom-disabled' : undefined}
-          className={`peer px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center ${
+          className={`peer px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none ${
             text.trim() ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'
           }`}
         >
           <Plus className="w-5 h-5 mr-1" /> Add
+          {text.trim() && (
+            <span
+              aria-hidden="true"
+              className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible peer-focus-visible:opacity-100 peer-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50 flex items-center gap-1.5"
+            >
+              <span>Add Items</span>
+              <kbd className="font-sans text-[10px] bg-slate-700 border border-slate-500 px-1 py-0.5 rounded text-slate-300 shadow-inner">Cmd/Ctrl + Enter</kbd>
+            </span>
+          )}
         </button>
         {!text.trim() && (
           <div id="add-custom-disabled" role="tooltip" aria-hidden="true" className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-slate-800 text-white text-xs rounded border border-slate-600 shadow-lg opacity-0 invisible peer-focus-visible:opacity-100 peer-focus-visible:visible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-10">
