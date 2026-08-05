@@ -138,3 +138,6 @@
 ## 2024-08-04 - Keyboard Shortcuts for Custom Inputs
 **Learning:** For custom multi-line textareas (like custom answers inputs) that lack a natural "submit" key, adding keyboard shortcut hints (e.g. Cmd/Ctrl + Enter) dramatically improves the form submission UX for keyboard users by preventing them from needing to tab away to find the submit button.
 **Action:** When adding specific keyboard shortcuts to input forms or textareas, also add a visual `<kbd>` hint that appears on hover/focus to educate the user.
+## 2026-08-05 - Host Peek UX for Blurred Content
+**Learning:** During the sudden death Tiebreaker phase, checklist items are intentionally obfuscated using CSS `blur` to hide answers from the audience. This visual design also prevents the host from verifying unselected answers without interacting with the autocomplete search, adding friction to the verification process.
+**Action:** Implemented a targeted "peek" interaction via CSS states. Added `tabIndex={0}` explicitly when the item is blurred and used Tailwind's `hover:blur-none` and `focus:blur-none` along with `focus-visible` styling. This maintains the audience-facing obfuscation while providing the host with a rapid, accessible way to temporarily unblur individual answers.
