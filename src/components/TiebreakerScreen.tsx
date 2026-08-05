@@ -24,11 +24,13 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
       'bg-slate-800 border-slate-600'
     }`}
   >
-    <span className={`text-lg flex-1 ${
-      item.status === 'tick' ? 'text-emerald-400 line-through' :
-      item.status === 'cross' ? 'text-red-400 line-through' :
-      isBlurred && item.status === 'unmarked' ? 'text-transparent bg-black rounded' :
-      'text-white'
+    <span
+      tabIndex={isBlurred && item.status === 'unmarked' ? 0 : undefined}
+      className={`text-lg flex-1 transition-all duration-300 ${
+        item.status === 'tick' ? 'text-emerald-400 line-through' :
+        item.status === 'cross' ? 'text-red-400 line-through' :
+        isBlurred && item.status === 'unmarked' ? 'text-transparent bg-slate-900 rounded select-none blur-[4px] hover:blur-none hover:text-slate-300 hover:bg-transparent focus:blur-none focus:text-slate-300 focus:bg-transparent cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 px-1' :
+        'text-white'
     }`}>
       {item.text}
     </span>
