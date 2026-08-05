@@ -2,6 +2,28 @@ import React, { useEffect } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { RED_CARD_CATEGORY_INDEX } from '../utils/redCardData';
+import { RedCard } from '../types/game';
+
+// ⚡ Bolt Optimization: Extract static list items into a memoized component to prevent unnecessary re-renders when the modal mounts or updates.
+const RedCardItem = React.memo(({ card }: { card: RedCard }) => (
+  <div className="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+    <h5 className="text-xl font-display text-white mb-2 uppercase">{card.title}</h5>
+    <p className="text-slate-300 mb-3">{card.description}</p>
+    {card.examples && card.examples.length > 0 && (
+      <div className="space-y-1">
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Examples:</span>
+        <ul className="list-disc list-inside space-y-1">
+          {card.examples.map((example, idx) => (
+            <li key={idx} className="text-sm text-slate-200 italic">
+              {example}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+));
+RedCardItem.displayName = 'RedCardItem';
 
 export const RedCardModal: React.FC = () => {
   // ⚡ Bolt Optimization: Use useShallow to prevent the modal from re-rendering
@@ -65,22 +87,7 @@ export const RedCardModal: React.FC = () => {
               <h4 className="text-3xl font-display text-arena-amber mb-6 text-center border-b border-slate-700 pb-4">{category.title}</h4>
               <div className="space-y-6">
                 {category.cards.map((card) => (
-                  <div key={card.type} className="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
-                    <h5 className="text-xl font-display text-white mb-2 uppercase">{card.title}</h5>
-                    <p className="text-slate-300 mb-3">{card.description}</p>
-                    {card.examples && card.examples.length > 0 && (
-                      <div className="space-y-1">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Examples:</span>
-                        <ul className="list-disc list-inside space-y-1">
-                          {card.examples.map((example, idx) => (
-                            <li key={idx} className="text-sm text-slate-200 italic">
-                              {example}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
+                  <RedCardItem key={card.type} card={card} />
                 ))}
               </div>
             </>
