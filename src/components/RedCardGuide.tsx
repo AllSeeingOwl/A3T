@@ -178,6 +178,7 @@ export const RedCardGuide: React.FC = () => {
       {activeSidebar && (
         <div
           role="dialog"
+          aria-modal="true"
           aria-label={`${activeSidebar === 'left' ? 'Left' : 'Right'} Red Card Guide`}
           className={`fixed top-0 bottom-0 ${
             activeSidebar === 'right' ? 'right-0 border-l-4' : 'left-0 border-r-4'

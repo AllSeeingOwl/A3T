@@ -141,3 +141,7 @@
 ## 2026-08-05 - Host Peek UX for Blurred Content
 **Learning:** During the sudden death Tiebreaker phase, checklist items are intentionally obfuscated using CSS `blur` to hide answers from the audience. This visual design also prevents the host from verifying unselected answers without interacting with the autocomplete search, adding friction to the verification process.
 **Action:** Implemented a targeted "peek" interaction via CSS states. Added `tabIndex={0}` explicitly when the item is blurred and used Tailwind's `hover:blur-none` and `focus:blur-none` along with `focus-visible` styling. This maintains the audience-facing obfuscation while providing the host with a rapid, accessible way to temporarily unblur individual answers.
+
+## 2026-08-06 - Adding aria-modal="true" to custom sidebars
+**Learning:** Custom sidebars that act as modals or dialogs (having `role="dialog"`) need `aria-modal="true"` to properly indicate to screen readers that focus should be trapped within the element and outside content is inaccessible.
+**Action:** Always include `aria-modal="true"` when applying `role="dialog"` to a custom overlay or sidebar.
