@@ -2,12 +2,50 @@ import React, { useState, useEffect, memo, useRef, useMemo } from 'react';
 import { BookOpen, X, Search } from 'lucide-react';
 
 import { RED_CARD_CATEGORIES } from "../utils/redCardData";
-import { RedCardCategory } from "../types/game";
+import { RedCardCategory, RedCard } from "../types/game";
 const LEFT_SIDEBAR_CATEGORIES = [
   RED_CARD_CATEGORIES[0], // Category Violations
   RED_CARD_CATEGORIES[1], // Medium Violations
   RED_CARD_CATEGORIES[2], // Canon Violations
 ];
+
+// ⚡ Bolt Optimization: Extract static list items into a memoized component to prevent unnecessary re-renders when the modal mounts or updates.
+const GuideRedCardItem = memo(({ card, isRefereeTool }: { card: RedCard, isRefereeTool: boolean }) => {
+  const borderColor = isRefereeTool ? 'border-amber-500' : 'border-slate-700';
+  const headerColor = isRefereeTool ? 'text-amber-500' : 'text-arena-amber';
+  const bgColor = isRefereeTool ? 'bg-amber-950/30' : 'bg-slate-800/50';
+
+  return (
+    <div className={`p-4 rounded-lg border ${borderColor} ${bgColor}`}>
+      <h4 className={`text-lg font-display ${headerColor} mb-2 uppercase`}>{card.title}</h4>
+      <p className="text-sm text-slate-300 mb-3">{card.description}</p>
+      <div className="space-y-2">
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Examples:</span>
+        <ul className="list-disc list-inside space-y-1">
+          {card.examples.map((example, idx) => (
+            <li key={idx} className="text-sm text-slate-200 italic">
+              {example}
+            </li>
+          ))}
+        </ul>
+        {card.suggestedPenalties && card.suggestedPenalties.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-slate-600/50">
+            <span className="text-xs font-bold text-arena-crimson uppercase tracking-wider block mb-1">Suggested Penalties:</span>
+            <ul className="list-disc list-inside space-y-1">
+              {card.suggestedPenalties.map((penalty, idx) => (
+                <li key={`penalty-${idx}`} className="text-sm text-arena-amber">
+                  {penalty}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+GuideRedCardItem.displayName = 'GuideRedCardItem';
+
 
 interface RedCardListProps {
   categories: RedCardCategory[];
@@ -60,37 +98,9 @@ const RedCardList = memo(({ categories, searchTerm }: RedCardListProps) => {
           <div className="space-y-6">
             {category.cards.map((card) => {
               const isRefereeTool = category.title === 'Referee Tools';
-              const borderColor = isRefereeTool ? 'border-amber-500' : 'border-slate-700';
-              const headerColor = isRefereeTool ? 'text-amber-500' : 'text-arena-amber';
-              const bgColor = isRefereeTool ? 'bg-amber-950/30' : 'bg-slate-800/50';
 
               return (
-                <div key={card.type} className={`p-4 rounded-lg border ${borderColor} ${bgColor}`}>
-                  <h4 className={`text-lg font-display ${headerColor} mb-2 uppercase`}>{card.title}</h4>
-                  <p className="text-sm text-slate-300 mb-3">{card.description}</p>
-                  <div className="space-y-2">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Examples:</span>
-                    <ul className="list-disc list-inside space-y-1">
-                      {card.examples.map((example, idx) => (
-                        <li key={idx} className="text-sm text-slate-200 italic">
-                          {example}
-                        </li>
-                      ))}
-                    </ul>
-                    {card.suggestedPenalties && card.suggestedPenalties.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-slate-600/50">
-                        <span className="text-xs font-bold text-arena-crimson uppercase tracking-wider block mb-1">Suggested Penalties:</span>
-                        <ul className="list-disc list-inside space-y-1">
-                          {card.suggestedPenalties.map((penalty, idx) => (
-                            <li key={`penalty-${idx}`} className="text-sm text-arena-amber">
-                              {penalty}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <GuideRedCardItem key={card.type} card={card} isRefereeTool={isRefereeTool} />
               );
             })}
           </div>

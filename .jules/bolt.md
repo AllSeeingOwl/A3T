@@ -114,3 +114,7 @@
 ## 2024-05-18 - [Extract non-component exports to avoid Fast Refresh de-optimizations]
 **Learning:** Exporting non-component constants (like data arrays or static configuration objects) from files that also export React components triggers Vite's `react-refresh/only-export-components` rule. This de-optimizes Fast Refresh during local development and creates warnings in the build process.
 **Action:** Extract large static data objects (like `RED_CARD_CATEGORIES` and `CATEGORY_STYLES`) and their associated typescript interfaces into standalone utility files (e.g. `src/utils/redCardData.ts`). Import them into the React components, ensuring component files *only* export components.
+
+## 2024-05-18 - [Memoize List Items during Search Operations]
+**Learning:** In components rendering lists alongside text inputs (like the RedCardGuide search), rendering complex items directly inside a `.map` loop causes every visible item to fully re-render on every keystroke, even if its data hasn't changed.
+**Action:** Extract inline mapped list items into separate `React.memo` components. This ensures only items that are actually added, removed, or changed will re-render, reducing main thread blocking during rapid typing.
