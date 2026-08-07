@@ -50,9 +50,10 @@ GuideRedCardItem.displayName = 'GuideRedCardItem';
 interface RedCardListProps {
   categories: RedCardCategory[];
   searchTerm: string;
+  onClearSearch: () => void;
 }
 
-const RedCardList = memo(({ categories, searchTerm }: RedCardListProps) => {
+const RedCardList = memo(({ categories, searchTerm, onClearSearch }: RedCardListProps) => {
   const normalizedSearch = searchTerm.toLowerCase().trim();
 
   // ⚡ Bolt Optimization: Wrap the mapping logic in a useMemo hook to avoid recalculating
@@ -85,7 +86,13 @@ const RedCardList = memo(({ categories, searchTerm }: RedCardListProps) => {
       <div role="status" className="flex-1 p-8 text-center text-slate-400 flex flex-col items-center justify-center">
         <Search className="w-12 h-12 mb-4 opacity-50" />
         <p className="text-lg">No matching red cards found for "<span className="text-white font-medium">{searchTerm}</span>".</p>
-        <p className="text-sm mt-2 opacity-75">Try adjusting your search terms.</p>
+        <p className="text-sm mt-2 opacity-75 mb-6">Try adjusting your search terms.</p>
+        <button
+          onClick={onClearSearch}
+          className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-md border border-slate-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
+        >
+          Clear Search
+        </button>
       </div>
     );
   }
@@ -257,6 +264,7 @@ export const RedCardGuide: React.FC = () => {
           <RedCardList
             categories={activeSidebar === 'left' ? LEFT_SIDEBAR_CATEGORIES : RIGHT_SIDEBAR_CATEGORIES}
             searchTerm={searchTerm}
+            onClearSearch={() => { setSearchTerm(''); searchInputRef.current?.focus(); }}
           />
         </div>
       )}

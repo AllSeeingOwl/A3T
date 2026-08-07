@@ -145,3 +145,7 @@
 ## 2026-08-06 - Adding aria-modal="true" to custom sidebars
 **Learning:** Custom sidebars that act as modals or dialogs (having `role="dialog"`) need `aria-modal="true"` to properly indicate to screen readers that focus should be trapped within the element and outside content is inaccessible.
 **Action:** Always include `aria-modal="true"` when applying `role="dialog"` to a custom overlay or sidebar.
+
+## 2026-08-07 - Actionable Empty Search States
+**Learning:** Contextual empty states (like "No results for X") are helpful, but forcing users to manually re-focus the input to clear their text adds friction. Providing an explicit call-to-action to reset the search directly inside the empty state view creates a smoother, faster recovery path.
+**Action:** In addition to contextual text in search empty states, provide an explicit "Clear Search" button that hooks into the native state reset (e.g. `setSearchTerm('')`) and re-focuses the input automatically.
