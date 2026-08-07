@@ -118,3 +118,6 @@
 ## 2024-05-18 - [Memoize List Items during Search Operations]
 **Learning:** In components rendering lists alongside text inputs (like the RedCardGuide search), rendering complex items directly inside a `.map` loop causes every visible item to fully re-render on every keystroke, even if its data hasn't changed.
 **Action:** Extract inline mapped list items into separate `React.memo` components. This ensures only items that are actually added, removed, or changed will re-render, reducing main thread blocking during rapid typing.
+## 2024-08-07 - Uncontrolled textarea optimization in TiebreakerScreen
+**Learning:** For textareas like `CustomAnswersInput` that are primarily used for pasting or typing bulk items and don't require immediate per-character validation, using a controlled `useState` input creates unnecessary overhead by re-rendering the component on every keystroke.
+**Action:** Extract fast-updating interactive elements into their own `React.memo()` isolated child components. For inputs that don't require immediate per-character validation (like pasting bulk items into a textarea), switch from controlled `useState` inputs to uncontrolled `useRef` inputs to completely bypass the React render cycle during typing.

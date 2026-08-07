@@ -218,12 +218,15 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
 AutocompleteInput.displayName = 'AutocompleteInput';
 
 const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => void }) => {
-  const [text, setText] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleAdd = () => {
-    if (!text.trim()) return;
+    const text = inputRef.current?.value;
+    if (!text || !text.trim()) return;
     onAddItems(text);
-    setText('');
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -236,8 +239,7 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
   return (
     <div className="flex gap-2 mb-6">
       <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        ref={inputRef}
         onKeyDown={handleKeyDown}
         placeholder="Paste or type custom answers here (one per line)..."
         aria-label="Custom answers"
