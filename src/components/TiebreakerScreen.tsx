@@ -205,9 +205,17 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
             </button>
           ))}
           {suggestions.length === 0 && (
-            <div role="status" className="px-4 py-3 text-slate-500 italic flex items-center gap-2">
-              <Search aria-hidden="true" className="w-4 h-4 opacity-50" />
-              <span>No results for "<span className="text-white font-medium">{input}</span>"</span>
+            <div role="status" className="px-4 py-3 text-slate-500 flex flex-col items-center gap-2">
+              <div className="flex items-center gap-2 italic">
+                <Search aria-hidden="true" className="w-4 h-4 opacity-50" />
+                <span>No results for "<span className="text-white font-medium">{input}</span>"</span>
+              </div>
+              <button
+                onClick={() => { setInput(''); inputRef.current?.focus(); }}
+                className="mt-2 px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              >
+                Clear Search
+              </button>
             </div>
           )}
         </div>
