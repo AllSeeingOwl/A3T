@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { useGameStore } from './hooks/useGameStore';
 import { RedCardModal } from './components/RedCardModal';
 import { RedCardGuide } from './components/RedCardGuide';
+import { Loader2 } from 'lucide-react';
 
 // ⚡ Bolt Optimization: Implement route-level code splitting using React.lazy
 // This reduces the initial bundle size by loading screen components only when needed,
@@ -19,7 +20,13 @@ export const App: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen">
-      <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-arena-slate font-display text-white text-2xl uppercase tracking-widest">Loading...</div>}>
+      <Suspense fallback={
+        <div role="status" aria-live="polite" className="flex flex-col items-center justify-center min-h-screen bg-arena-slate font-display text-white text-2xl uppercase tracking-widest">
+          <Loader2 aria-hidden="true" className="w-12 h-12 mb-4 animate-spin text-arena-magenta" />
+          Loading...
+          <span className="sr-only">, please wait</span>
+        </div>
+      }>
         {currentScreen === 'LOBBY' && <LobbyHub />}
         {currentScreen === 'ARENA' && <ArenaBoard />}
         {currentScreen === 'SUMMARY' && <SummaryPodium />}

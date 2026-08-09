@@ -152,3 +152,6 @@
 ## 2026-08-07 - Actionable Empty Search States
 **Learning:** Contextual empty states (like "No results for X") are helpful, but forcing users to manually re-focus the input to clear their text adds friction. Providing an explicit call-to-action to reset the search directly inside the empty state view creates a smoother, faster recovery path.
 **Action:** In addition to contextual text in search empty states, provide an explicit "Clear Search" button that hooks into the native state reset (e.g. `setSearchTerm('')`) and re-focuses the input automatically.
+## 2026-08-08 - Accessible Loading States
+**Learning:** Using basic text like "Loading..." for async operations (like React.lazy fallback or missing state resolution) is confusing for visual users and often ignored by screen readers. A styled, animated spinner combined with `role="status"` and `aria-live="polite"` dramatically improves the UX for both sighted and non-sighted users by actively signaling that the app is working without breaking their focus.
+**Action:** Replace plain text loading states with a semantic loading container that includes a visual spinner (e.g., `Loader2` from `lucide-react`), `role="status"`, `aria-live="polite"`, and screen-reader-only descriptive text (like `<span className="sr-only">, please wait</span>`).

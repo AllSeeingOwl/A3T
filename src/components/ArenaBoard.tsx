@@ -3,6 +3,7 @@ import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ChainCard, QuestionStep, Category } from '../types/game';
 import { CATEGORY_STYLES, DEFAULT_CATEGORY_STYLE } from '../utils/categoryStyles';
+import { Loader2 } from 'lucide-react';
 
 
 
@@ -342,7 +343,13 @@ export const ArenaBoard: React.FC = () => {
   }, []);
 
   if (!activeCard || !activeQuestion) {
-    return <div className="text-white p-8">Loading or Error loading card...</div>;
+    return (
+      <div role="status" aria-live="polite" className="flex flex-col items-center justify-center min-h-[50vh] bg-arena-slate font-display text-white text-2xl uppercase tracking-widest p-8">
+        <Loader2 aria-hidden="true" className="w-12 h-12 mb-4 animate-spin text-arena-magenta" />
+        Loading or Error loading card...
+        <span className="sr-only">, please wait</span>
+      </div>
+    );
   }
 
   return (
