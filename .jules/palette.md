@@ -155,3 +155,7 @@
 ## 2026-08-08 - Accessible Loading States
 **Learning:** Using basic text like "Loading..." for async operations (like React.lazy fallback or missing state resolution) is confusing for visual users and often ignored by screen readers. A styled, animated spinner combined with `role="status"` and `aria-live="polite"` dramatically improves the UX for both sighted and non-sighted users by actively signaling that the app is working without breaking their focus.
 **Action:** Replace plain text loading states with a semantic loading container that includes a visual spinner (e.g., `Loader2` from `lucide-react`), `role="status"`, `aria-live="polite"`, and screen-reader-only descriptive text (like `<span className="sr-only">, please wait</span>`).
+
+## 2026-08-11 - Visible Labels Over Placeholders
+**Learning:** Relying solely on placeholders and `aria-label` for form inputs (like the Custom Answers textarea) creates poor UX because the visual context disappears as soon as the user starts typing.
+**Action:** Always provide an explicit, visible `<label>` element associated via `htmlFor` for form inputs to ensure persistent visual context and improve accessibility, replacing the need for standalone `aria-label` attributes.
