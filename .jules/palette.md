@@ -159,3 +159,6 @@
 ## 2026-08-11 - Visible Labels Over Placeholders
 **Learning:** Relying solely on placeholders and `aria-label` for form inputs (like the Custom Answers textarea) creates poor UX because the visual context disappears as soon as the user starts typing.
 **Action:** Always provide an explicit, visible `<label>` element associated via `htmlFor` for form inputs to ensure persistent visual context and improve accessibility, replacing the need for standalone `aria-label` attributes.
+## 2024-03-24 - Semantic State over aria-invalid for Max Length
+**Learning:** Using `aria-invalid={true}` when an input reaches its maximum allowed length (but isn't structurally invalid) is semantically misleading for screen readers, as the input is full, not necessarily broken.
+**Action:** Prefer visual feedback (error states) combined with `aria-describedby` linked to a character counter, rather than forcing `aria-invalid` on a valid but full input.

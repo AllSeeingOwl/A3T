@@ -32,8 +32,9 @@ const TeamInput = memo(({ id, label, defaultValue, colorClass, inputRef }: TeamI
       <input
         id={id}
         aria-describedby={`char-count-${id}`}
+        aria-invalid={count >= 50}
         type="text"
-        className={`w-full bg-arena-slate text-white p-3 rounded border border-arena-navy ${id === 'team1' ? 'focus:border-arena-magenta' : 'focus:border-arena-cobalt'} focus:outline-none text-xl`}
+        className={`w-full bg-arena-slate text-white p-3 rounded border ${count >= 50 ? 'border-red-500 focus:border-red-400' : `border-arena-navy ${id === 'team1' ? 'focus:border-arena-magenta' : 'focus:border-arena-cobalt'}`} focus:outline-none text-xl`}
         defaultValue={defaultValue}
         ref={inputRef}
         placeholder="Enter Team Name"
