@@ -227,11 +227,13 @@ export const RedCardGuide: React.FC = () => {
 
           {/* Search Bar */}
           <div className="p-4 bg-slate-800/80 border-b border-slate-700">
+            <label htmlFor="search-guide-input" className="block text-sm text-slate-400 mb-2 font-medium">Search Red Cards</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-slate-400" />
               </div>
               <input
+                id="search-guide-input"
                 ref={searchInputRef}
                 type="text"
                 autoFocus
