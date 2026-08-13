@@ -202,7 +202,7 @@ export const LobbyHub: React.FC = () => {
               id="start-match-tooltip"
               role="tooltip"
               aria-hidden="true"
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible peer-focus-visible:opacity-100 peer-focus-visible:visible transition-all duration-200 whitespace-nowrap pointer-events-none"
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 px-3 py-2 bg-slate-800 text-white text-sm rounded border border-slate-600 shadow-lg opacity-0 invisible peer-hover:opacity-100 peer-hover:visible peer-focus-visible:opacity-100 peer-focus-visible:visible transition-all duration-200 whitespace-nowrap pointer-events-none"
             >
               Select a deck to start the match
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>

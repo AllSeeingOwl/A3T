@@ -162,3 +162,6 @@
 ## 2024-03-24 - Semantic State over aria-invalid for Max Length
 **Learning:** Using `aria-invalid={true}` when an input reaches its maximum allowed length (but isn't structurally invalid) is semantically misleading for screen readers, as the input is full, not necessarily broken.
 **Action:** Prefer visual feedback (error states) combined with `aria-describedby` linked to a character counter, rather than forcing `aria-invalid` on a valid but full input.
+## 2026-08-11 - Accessible tooltips on disabled buttons issue fix
+**Learning:** The previous learning "Accessible Tooltips on Disabled Buttons" used `peer-focus-visible` to keep the tooltip accessible without showing it on mouse click due to `group-focus-within`. However, multiple instances of tooltips on disabled buttons across the application were still using `group-focus-within:opacity-100 group-focus-within:visible`. Also, `peer` and `peer-hover` need to be applied instead of `group` and `group-hover`.
+**Action:** Replace `group` wrappers with `peer`, replace `group-hover:opacity-100 group-hover:visible` with `peer-hover:opacity-100 peer-hover:visible`, and replace `group-focus-visible:opacity-100 group-focus-visible:visible` (or `group-focus-within`) with `peer-focus-visible:opacity-100 peer-focus-visible:visible`.
