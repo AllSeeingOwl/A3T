@@ -264,7 +264,7 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
             <Plus className="w-5 h-5 mr-1" /> Add
             <span
               aria-hidden="true"
-              className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible peer-hover:opacity-100 peer-hover:visible peer-focus-visible:opacity-100 peer-focus-visible:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50 flex items-center gap-1.5"
+              className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50 flex items-center gap-1.5"
             >
               <span>Add Items</span>
               <kbd className="font-sans text-[10px] bg-slate-700 border border-slate-500 px-1 py-0.5 rounded text-slate-300 shadow-inner">Cmd/Ctrl + Enter</kbd>
@@ -427,7 +427,7 @@ export const TiebreakerScreen: React.FC = () => {
 
           {/* Reveal Mode Conditonal UI */}
           {revealMode === 'idle' && (
-            <div className="mt-8 flex justify-center relative group">
+            <div className="mt-8 flex justify-center relative">
               <button
                 onClick={checklist.length >= 10 ? startRevealMode : undefined}
                 aria-disabled={checklist.length < 10}
