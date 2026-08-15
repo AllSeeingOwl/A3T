@@ -508,7 +508,7 @@ export const ArenaBoard: React.FC = () => {
                  </>
                ) : (
                  <>
-                 <div className="relative group flex">
+                 <div className="relative flex">
                 <button
                 onClick={questionStage === 'REVEALED_ANSWER' ? undefined : handleCorrect}
                 aria-disabled={questionStage === 'REVEALED_ANSWER'}

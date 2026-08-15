@@ -184,7 +184,7 @@ export const LobbyHub: React.FC = () => {
           </fieldset>
         </div>
 
-        <div className="relative group mt-12 flex justify-center">
+        <div className="relative mt-12 flex justify-center">
           <button
             type="submit"
             aria-disabled={!selectedDeckId}
