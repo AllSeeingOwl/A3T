@@ -178,7 +178,7 @@ export const RedCardGuide: React.FC = () => {
           {/* Right Access Button */}
           <button
             onClick={() => setActiveSidebar('right')}
-            className={`peer fixed top-1/2 -translate-y-1/2 right-0 rounded-l-xl bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none flex items-center justify-center`}
+            className={`fixed top-1/2 -translate-y-1/2 right-0 rounded-l-xl bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none flex items-center justify-center`}
             aria-label="Open Right Red Card Guide (Gameplay, Referee)"
           >
             <BookOpen aria-hidden="true" className="w-6 h-6 group-hover:scale-110 transition-transform" />

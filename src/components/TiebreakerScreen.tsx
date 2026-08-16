@@ -256,10 +256,10 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
           className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-gold focus:border-arena-gold resize-y min-h-[60px]"
           rows={2}
         />
-        <div className="relative flex group">
+        <div className="relative flex">
           <button
             onClick={handleAdd}
-            className={`peer px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none bg-slate-700 hover:bg-slate-600 text-white`}
+            className={`group px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none bg-slate-700 hover:bg-slate-600 text-white`}
           >
             <Plus className="w-5 h-5 mr-1" /> Add
             <span
