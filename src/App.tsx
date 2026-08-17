@@ -19,19 +19,27 @@ export const App: React.FC = () => {
   const currentScreen = useGameStore((state) => state.currentScreen);
 
   return (
-    <div className="w-full min-h-screen">
-      <Suspense fallback={
-        <div role="status" aria-live="polite" className="flex flex-col items-center justify-center min-h-screen bg-arena-slate font-display text-white text-2xl uppercase tracking-widest">
-          <Loader2 aria-hidden="true" className="w-12 h-12 mb-4 animate-spin text-arena-magenta" />
-          Loading...
-          <span className="sr-only">, please wait</span>
-        </div>
-      }>
-        {currentScreen === 'LOBBY' && <LobbyHub />}
-        {currentScreen === 'ARENA' && <ArenaBoard />}
-        {currentScreen === 'SUMMARY' && <SummaryPodium />}
-        {currentScreen === 'TIEBREAKER' && <TiebreakerScreen />}
-      </Suspense>
+    <div className="w-full relative">
+      <a
+        href="#main-content"
+        className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:z-[100] focus-visible:top-0 focus-visible:left-0 focus-visible:p-4 focus-visible:bg-arena-navy focus-visible:text-white focus-visible:border-2 focus-visible:border-arena-magenta focus-visible:rounded-br-lg font-display uppercase tracking-wider focus:outline-none"
+      >
+        Skip to main content
+      </a>
+      <main id="main-content" tabIndex={-1} className="w-full min-h-screen flex flex-col focus:outline-none">
+        <Suspense fallback={
+          <div role="status" aria-live="polite" className="flex flex-col items-center justify-center min-h-screen bg-arena-slate font-display text-white text-2xl uppercase tracking-widest">
+            <Loader2 aria-hidden="true" className="w-12 h-12 mb-4 animate-spin text-arena-magenta" />
+            Loading...
+            <span className="sr-only">, please wait</span>
+          </div>
+        }>
+          {currentScreen === 'LOBBY' && <LobbyHub />}
+          {currentScreen === 'ARENA' && <ArenaBoard />}
+          {currentScreen === 'SUMMARY' && <SummaryPodium />}
+          {currentScreen === 'TIEBREAKER' && <TiebreakerScreen />}
+        </Suspense>
+      </main>
 
       {/* Kept RedCardModal eager to avoid replacing the entire screen with a loading state when triggered */}
       <RedCardModal />
