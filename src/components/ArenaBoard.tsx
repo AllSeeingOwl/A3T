@@ -178,20 +178,20 @@ const RedCardFooter = memo(() => {
 
   return (
     <section aria-label="Red Card Controls" className="bg-arena-navy border-t border-slate-700 p-4 fixed bottom-0 w-full flex flex-wrap justify-center gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-20">
-      <button aria-label="Issue Category Violation Red Card" onClick={() => handleRedCard('CATEGORY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-        Category
+      <button onClick={() => handleRedCard('CATEGORY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        <span className="sr-only">Issue </span>Category<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button aria-label="Issue Medium Violation Red Card" onClick={() => handleRedCard('MEDIUM_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-        Medium
+      <button onClick={() => handleRedCard('MEDIUM_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        <span className="sr-only">Issue </span>Medium<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button aria-label="Issue Canon Violation Red Card" onClick={() => handleRedCard('CANON_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-        Canon
+      <button onClick={() => handleRedCard('CANON_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        <span className="sr-only">Issue </span>Canon<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button aria-label="Issue Gameplay Violation Red Card" onClick={() => handleRedCard('GAMEPLAY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-        Gameplay
+      <button onClick={() => handleRedCard('GAMEPLAY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        <span className="sr-only">Issue </span>Gameplay<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button aria-label="Open Referee Tools" onClick={() => handleRedCard('REFEREE_TOOLS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-amber-500 text-amber-500 rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
-        Referee Tools
+      <button onClick={() => handleRedCard('REFEREE_TOOLS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-amber-500 text-amber-500 rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+        <span className="sr-only">Open </span>Referee Tools
       </button>
     </section>
   );
@@ -396,11 +396,13 @@ export const ArenaBoard: React.FC = () => {
               <button
                 autoFocus
                 onClick={() => setShowEasyModal(false)}
-                aria-label="Cancel Easy Mode Selection (Escape)"
                 className="mt-8 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none rounded focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate flex items-center justify-center gap-2 mx-auto group"
               >
-                <span>Cancel</span>
-                <kbd className="font-sans text-xs bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 shadow-inner group-hover:text-slate-300">Esc</kbd>
+                <span>Cancel <span className="sr-only">Easy Mode Selection</span></span>
+                <kbd className="font-sans text-xs bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 shadow-inner group-hover:text-slate-300">
+                  <span aria-hidden="true">Esc</span>
+                  <span className="sr-only">(Escape)</span>
+                </kbd>
               </button>
             </div>
           </div>
