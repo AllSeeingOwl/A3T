@@ -169,6 +169,10 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
           placeholder="Start typing an answer..."
           className="w-full bg-slate-800 text-white rounded-lg p-4 pr-12 border-2 border-emerald-500/50 focus:outline-none focus:border-emerald-500 text-xl font-medium placeholder-slate-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
           autoComplete="off"
+            role="combobox"
+            aria-expanded={input.length > 0}
+            aria-controls="autocomplete-suggestions"
+            aria-haspopup="listbox"
         />
         {input.length > 0 && (
           <button
@@ -188,10 +192,11 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
         )}
       </div>
       {input.length > 0 && (
-        <div tabIndex={0} className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto focus-visible:ring-2 focus-visible:ring-emerald-500 focus:outline-none">
+        <div id="autocomplete-suggestions" role="listbox" tabIndex={0} className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto focus-visible:ring-2 focus-visible:ring-emerald-500 focus:outline-none">
           {suggestions.map(suggestion => (
             <button
               key={suggestion.id}
+              role="option"
               onClick={() => { onMarkCorrect(suggestion.id); setInput(''); }}
               className="w-full text-left px-4 py-3 text-white hover:bg-slate-700 border-b border-slate-700/50 last:border-0 focus:outline-none focus:bg-slate-700 transition-colors flex justify-between items-center group"
             >

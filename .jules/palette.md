@@ -171,3 +171,6 @@
 ## 2026-08-17 - Add skip-to-content link
 **Learning:** Implementing skip-to-content links requires a valid, focusable semantic target like a `<main id="main-content" tabIndex={-1}>` wrapper around the core content to effectively bypass top-level navigation blocks for keyboard and screen reader users.
 **Action:** Always provide a visually hidden skip-to-content link near the top of the body that becomes visible on `focus`, paired with an appropriately ID'd semantic `<main>` tag that includes `tabIndex={-1}` to allow programmatic focus without interrupting natural tab flow.
+## 2026-08-19 - Added proper autocomplete ARIA roles to custom input
+**Learning:** Custom Autocomplete dropdowns missing `role="combobox"` and `role="listbox"` make it impossible for screen reader users to know that suggestions appear below the text input.
+**Action:** Always add `role="combobox"`, `aria-expanded`, `aria-controls`, and `aria-haspopup="listbox"` to the input, and ensure the suggestion container uses `role="listbox"` and each suggestion uses `role="option"`.
