@@ -174,3 +174,6 @@
 ## 2026-08-19 - Added proper autocomplete ARIA roles to custom input
 **Learning:** Custom Autocomplete dropdowns missing `role="combobox"` and `role="listbox"` make it impossible for screen reader users to know that suggestions appear below the text input.
 **Action:** Always add `role="combobox"`, `aria-expanded`, `aria-controls`, and `aria-haspopup="listbox"` to the input, and ensure the suggestion container uses `role="listbox"` and each suggestion uses `role="option"`.
+## 2026-08-20 - Adding focus-visible to interactive inline text elements
+**Learning:** When using interaction states like `hover` and `focus` to unblur or modify visually hidden inline text (like the Host Peek feature), relying solely on `focus:blur-none` leaves keyboard users without a visual indicator of where their focus currently is, which is an accessibility failure. Additionally, adding horizontal padding to inline elements to give focus rings breathing room can cause horizontal layout shifts.
+**Action:** Always include a visual focus ring (`focus-visible:ring-2 focus-visible:outline-none`) when making inline text elements interactive. Pair horizontal padding (`px-1`) with a negative horizontal margin (`-mx-1`) to prevent layout shifts when the element is hovered or focused.

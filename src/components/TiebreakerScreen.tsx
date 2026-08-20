@@ -29,7 +29,7 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
       className={`text-lg flex-1 transition-all duration-300 ${
         item.status === 'tick' ? 'text-emerald-400 line-through' :
         item.status === 'cross' ? 'text-red-400 line-through' :
-        isBlurred && item.status === 'unmarked' ? 'text-transparent bg-slate-900 rounded select-none blur-[4px] hover:blur-none hover:text-slate-300 hover:bg-transparent focus:blur-none focus:text-slate-300 focus:bg-transparent cursor-help focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 px-1' :
+        isBlurred && item.status === 'unmarked' ? 'text-transparent bg-slate-900 rounded select-none blur-[4px] hover:blur-none hover:text-slate-300 hover:bg-transparent focus:blur-none focus:text-slate-300 focus:bg-transparent cursor-help px-1 -mx-1 focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none' :
         'text-white'
     }`}>
       {item.text}
