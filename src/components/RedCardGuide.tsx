@@ -169,7 +169,7 @@ export const RedCardGuide: React.FC = () => {
             <BookOpen aria-hidden="true" className="w-6 h-6 group-hover:scale-110 transition-transform" />
             <span
               aria-hidden="true"
-              className={`absolute left-full ml-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide`}
+              className={`absolute left-full ml-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50`}
             >
               Category, Medium & Canon
             </span>
@@ -184,7 +184,7 @@ export const RedCardGuide: React.FC = () => {
             <BookOpen aria-hidden="true" className="w-6 h-6 group-hover:scale-110 transition-transform" />
             <span
               aria-hidden="true"
-              className={`absolute right-full mr-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide`}
+              className={`absolute right-full mr-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50`}
             >
               Gameplay & Referee Tools
             </span>

@@ -202,7 +202,7 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
             >
               <span>{suggestion.text}</span>
               {suggestions.length === 1 && (
-                <span className="text-xs text-slate-400 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity flex items-center gap-2">
+                <span aria-hidden="true" className="text-xs text-slate-400 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity flex items-center gap-2">
                   <span>Select</span>
                   <kbd className="font-sans bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-slate-300 shadow-inner">Enter</kbd>
                 </span>
