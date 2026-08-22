@@ -128,6 +128,23 @@ export const RedCardGuide: React.FC = () => {
   const [activeSidebar, setActiveSidebar] = useState<'left' | 'right' | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const leftBtnRef = useRef<HTMLButtonElement>(null);
+  const rightBtnRef = useRef<HTMLButtonElement>(null);
+  const prevSidebarRef = useRef<'left' | 'right' | null>(null);
+
+  useEffect(() => {
+    if (activeSidebar) {
+      prevSidebarRef.current = activeSidebar;
+    } else if (prevSidebarRef.current) {
+      if (prevSidebarRef.current === 'left') {
+        leftBtnRef.current?.focus();
+      } else if (prevSidebarRef.current === 'right') {
+        rightBtnRef.current?.focus();
+      }
+      prevSidebarRef.current = null;
+    }
+  }, [activeSidebar]);
+
   // Ref to track current search term for the escape handler without needing to add it to deps
   const searchTermRef = useRef(searchTerm);
   useEffect(() => {
@@ -162,6 +179,7 @@ export const RedCardGuide: React.FC = () => {
         <>
           {/* Left Access Button */}
           <button
+            ref={leftBtnRef}
             onClick={() => setActiveSidebar('left')}
             className={`fixed top-1/2 -translate-y-1/2 left-0 rounded-r-xl bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none flex items-center justify-center`}
             aria-label="Open Left Red Card Guide (Category, Medium, Canon)"
@@ -177,6 +195,7 @@ export const RedCardGuide: React.FC = () => {
 
           {/* Right Access Button */}
           <button
+            ref={rightBtnRef}
             onClick={() => setActiveSidebar('right')}
             className={`fixed top-1/2 -translate-y-1/2 right-0 rounded-l-xl bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none flex items-center justify-center`}
             aria-label="Open Right Red Card Guide (Gameplay, Referee)"
