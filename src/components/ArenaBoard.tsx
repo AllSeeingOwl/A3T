@@ -431,7 +431,7 @@ export const ArenaBoard: React.FC = () => {
                  <div className={`absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-all duration-300 flex items-center justify-center z-10 cursor-pointer ${
                      questionStage === 'LIST_REVEALED'
                        ? 'opacity-0 pointer-events-none'
-                       : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus:opacity-0 group-focus:backdrop-blur-none'
+                       : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus-visible:opacity-0 group-focus-visible:backdrop-blur-none'
                    }`}>
                     <span aria-hidden="true" className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
                        Hover or Focus to Reveal List
@@ -475,7 +475,7 @@ export const ArenaBoard: React.FC = () => {
              <div className={`absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-all duration-300 flex items-center justify-center z-10 cursor-pointer ${
                  questionStage === 'REVEALED_ANSWER'
                    ? 'opacity-0 pointer-events-none'
-                   : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus:opacity-0 group-focus:backdrop-blur-none'
+                   : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus-visible:opacity-0 group-focus-visible:backdrop-blur-none'
                }`}>
                 <span aria-hidden="true" className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
                    {questionStage === 'STEAL_WINDOW' ? 'Wait for steal timer or Hover/Focus to Override' : 'Hover or Focus to Reveal Answer'}
