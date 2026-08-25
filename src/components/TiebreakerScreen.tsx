@@ -216,6 +216,7 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
                 <span>No results for "<span className="text-white font-medium">{input}</span>"</span>
               </div>
               <button
+                type="button"
                 onClick={() => { setInput(''); inputRef.current?.focus(); }}
                 className="mt-2 px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >

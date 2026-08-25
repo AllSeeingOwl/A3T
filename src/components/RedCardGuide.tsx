@@ -88,6 +88,7 @@ const RedCardList = memo(({ categories, searchTerm, onClearSearch }: RedCardList
         <p className="text-lg">No matching red cards found for "<span className="text-white font-medium">{searchTerm}</span>".</p>
         <p className="text-sm mt-2 opacity-75 mb-6">Try adjusting your search terms.</p>
         <button
+          type="button"
           onClick={onClearSearch}
           className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-md border border-slate-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
         >
