@@ -183,3 +183,6 @@
 ## 2026-08-22 - Focus Restoration for Custom Sidebars
 **Learning:** When custom sidebars or modals unmount their trigger button while active (e.g., conditionally hiding the 'open' button), closing the sidebar causes keyboard focus to be lost entirely (resetting to the document body). This drastically disrupts keyboard navigation flow for screen reader and keyboard-only users.
 **Action:** Implement focus restoration by storing the previously active sidebar state/element using a `useRef`. When the sidebar closes, use a `useEffect` to call `.focus()` on the trigger button's `useRef` as soon as it re-mounts.
+## 2026-08-25 - Explicit type for generic buttons
+**Learning:** Standard interaction buttons (such as 'Clear Search', 'Close', or general toggles) that are not meant to submit a form can accidentally trigger form submissions if their surrounding DOM structure changes (e.g. if a component is later nested within a <form> tag). Browsers default to type="submit" for <button> elements.
+**Action:** Explicitly define type="button" on standard interaction buttons to safely decouple their behavior from their position in the DOM hierarchy and prevent accidental form submissions.
