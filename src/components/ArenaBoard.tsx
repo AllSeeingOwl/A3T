@@ -346,7 +346,7 @@ export const ArenaBoard: React.FC = () => {
     return (
       <div role="status" aria-live="polite" className="flex flex-col items-center justify-center min-h-[50vh] bg-arena-slate font-display text-white text-2xl uppercase tracking-widest p-8">
         <Loader2 aria-hidden="true" className="w-12 h-12 mb-4 animate-spin text-arena-magenta" />
-        Loading or Error loading card...
+        Loading...
         <span className="sr-only">, please wait</span>
       </div>
     );
