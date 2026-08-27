@@ -3,7 +3,7 @@ import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { ChainCard, QuestionStep, Category } from '../types/game';
 import { CATEGORY_STYLES, DEFAULT_CATEGORY_STYLE } from '../utils/categoryStyles';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye } from 'lucide-react';
 
 
 
@@ -434,7 +434,7 @@ export const ArenaBoard: React.FC = () => {
                        : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus-visible:opacity-0 group-focus-visible:backdrop-blur-none'
                    }`}>
                     <span aria-hidden="true" className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
-                       Hover or Focus to Reveal List
+                       <Eye className="w-5 h-5" /> Hover or Focus to Reveal List
                     </span>
                  </div>
                  <div className="text-left space-y-2">
@@ -478,7 +478,7 @@ export const ArenaBoard: React.FC = () => {
                    : 'group-hover:opacity-0 group-hover:backdrop-blur-none group-focus-visible:opacity-0 group-focus-visible:backdrop-blur-none'
                }`}>
                 <span aria-hidden="true" className="text-slate-400 font-display uppercase tracking-widest flex items-center gap-2">
-                   {questionStage === 'STEAL_WINDOW' ? 'Wait for steal timer or Hover/Focus to Override' : 'Hover or Focus to Reveal Answer'}
+                   {questionStage === 'STEAL_WINDOW' ? 'Wait for steal timer or Hover/Focus to Override' : <><Eye className="w-5 h-5" /> Hover or Focus to Reveal Answer</>}
                 </span>
              </div>
              <div className="text-center">

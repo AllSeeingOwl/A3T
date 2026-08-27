@@ -1,3 +1,3 @@
-## 2026-08-26 - Loading State Copy Polish
-**Learning:** The application had an ambiguous "Loading or Error loading card..." state coupled with an animated `Loader2` spinner. In the context of an async operation where a user is waiting for the next gameplay beat, combining loading and error states into a single string causes unnecessary cognitive load and makes the interface feel unreliable or unpolished.
-**Action:** When implementing semantic loading containers (`role="status"`, `aria-live="polite"`), ensure the copy strictly reflects a loading state ("Loading..."). Error boundaries or distinct error states should handle failures separately to maintain a confident user experience.
+## YYYY-MM-DD - [Visual Affordances for Obfuscated Content]
+**Learning:** Adding a well-known icon (like an 'Eye') to hidden or obfuscated content areas ('Hover or Focus to Reveal') significantly improves the discoverability and user intuition of the interaction, while maintaining accessibility by using aria-hidden.
+**Action:** When creating hover-to-reveal or focus-to-reveal UI patterns, always pair the descriptive text with a corresponding visual icon (e.g., Eye, Search) with aria-hidden="true" to improve scannability without cluttering screen reader output.
