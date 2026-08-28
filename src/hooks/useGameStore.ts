@@ -20,6 +20,7 @@ interface GameActions {
   nextCard: () => void;
   endGame: () => void;
   resetGame: () => void;
+  addCustomDeck: (deck: Deck) => void;
 }
 
 export type GameStore = GameState & GameActions & { defaultDecks: Deck[] };
@@ -145,4 +146,15 @@ export const useGameStore = create<GameStore>((set) => ({
   endGame: () => set({ currentScreen: 'SUMMARY' }),
 
   resetGame: () => set(initialState),
+
+  addCustomDeck: (deck) =>
+    set((state) => {
+      // Prevent duplicate scanned decks (especially relevant in Strict Mode)
+      if (state.defaultDecks.some((d) => d.deckId === deck.deckId)) {
+        return state;
+      }
+      return {
+        defaultDecks: [deck, ...state.defaultDecks],
+      };
+    }),
 }));
