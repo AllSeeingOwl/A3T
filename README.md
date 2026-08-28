@@ -9,7 +9,6 @@ A3T is an interactive tabletop-companion quiz application built to serve as a di
 - **[Game Design Document](./docs/Game-Design-Document.md)** — Complete ruleset, difficulty tiers, and host guidelines
 - **[Rules Reference](./docs/Rules-Reference.md)** — Quick lookup for gameplay rules and Red Card system
 - **[Question Writer Guidelines](./docs/Question-Writer-Guidelines.md)** — Guide for creating and validating questions
-- **[Google Sheets Sync Setup](./docs/Google-Sheets-Sync-Setup.md)** — Guide for connecting a private Google Sheet to automatically sync questions
 - **[Technical Specification](./Digital%20PoC%20Technical%20Specification.md)** — Architecture and implementation details
 - **[Contributing](./CONTRIBUTING.md)** — Guidelines for contributing code and questions
 
