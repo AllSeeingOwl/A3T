@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect, memo } from 'react';
 import { useGameStore } from '../hooks/useGameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { sanitizeHTML } from '../utils/sanitize';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2, Circle, QrCode } from 'lucide-react';
 import { Deck } from '../types/game';
+import { QRScannerModal } from './QRScannerModal';
 
 interface TeamInputProps {
   id: string;
@@ -105,10 +106,11 @@ export const LobbyHub: React.FC = () => {
 
   // ⚡ Bolt Optimization: Use useShallow to prevent the Lobby from re-rendering
   // on unrelated game store changes.
-  const { startMatch, defaultDecks } = useGameStore(
+  const { startMatch, defaultDecks, addCustomDeck } = useGameStore(
     useShallow((state) => ({
       startMatch: state.startMatch,
       defaultDecks: state.defaultDecks,
+      addCustomDeck: state.addCustomDeck,
     }))
   );
 
@@ -119,13 +121,43 @@ export const LobbyHub: React.FC = () => {
   const teamBRef = useRef<HTMLInputElement>(null);
 
   const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const scanButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // ⚡ Bolt Optimization: Preload the heavy ArenaBoard component in the background
     // while the user configures the match. This eliminates the Suspense fallback
     // delay when clicking "Start Match", ensuring an instantaneous transition.
     import('./ArenaBoard').catch(() => {}); // Suppress unhandled rejections if fetch fails
-  }, []);
+
+    // Handle URL ?scan= parameter for physical QR scanning
+    const urlParams = new URLSearchParams(window.location.search);
+    const scanId = urlParams.get('scan');
+    if (scanId) {
+      // Defer state update to prevent cascading renders
+      setTimeout(() => {
+        // Find the card in existing decks
+        const allCards = defaultDecks.flatMap(d => d.cards);
+        const foundCard = allCards.find(c => c.cardId === scanId);
+
+        if (foundCard) {
+          const customDeckId = `scanned-${scanId}`;
+          const newDeck = {
+            deckId: customDeckId,
+            deckName: `Scanned: ${foundCard.parentTheme || 'Custom Card'}`,
+            deckDescription: 'Scanned from physical card QR code.',
+            cards: [foundCard]
+          };
+          addCustomDeck(newDeck);
+          setSelectedDeckId(customDeckId);
+        }
+
+        // Clean up URL without reloading
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      }, 0);
+    }
+  }, [defaultDecks, addCustomDeck]);
 
   const handleStart = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -143,6 +175,44 @@ export const LobbyHub: React.FC = () => {
       const sanitizedTeamB = sanitizeHTML(safeRawB).trim() || 'Team 2';
       startMatch(deck, sanitizedTeamA, sanitizedTeamB);
     }
+  };
+
+  const handleScanSuccess = (decodedText: string) => {
+    setIsScannerOpen(false);
+
+    // Check if the QR code is a URL parameter link or raw card ID
+    let scanId = decodedText;
+    try {
+      if (decodedText.startsWith('http')) {
+        const url = new URL(decodedText);
+        const urlScanId = url.searchParams.get('scan');
+        if (urlScanId) {
+          scanId = urlScanId;
+        }
+      }
+    } catch {
+      // Ignore URL parsing errors, assume it's a raw ID
+    }
+
+    const allCards = defaultDecks.flatMap(d => d.cards);
+    const foundCard = allCards.find(c => c.cardId === scanId);
+
+    if (foundCard) {
+      const customDeckId = `scanned-${scanId}`;
+      const newDeck = {
+        deckId: customDeckId,
+        deckName: `Scanned: ${foundCard.parentTheme || 'Custom Card'}`,
+        deckDescription: 'Scanned from physical card QR code.',
+        cards: [foundCard]
+      };
+      addCustomDeck(newDeck);
+      setSelectedDeckId(customDeckId);
+    }
+
+    // Restore focus to scanner button after modal closes
+    setTimeout(() => {
+      scanButtonRef.current?.focus();
+    }, 0);
   };
 
   return (
@@ -170,7 +240,18 @@ export const LobbyHub: React.FC = () => {
         </div>
 
         <div className="w-full max-w-4xl bg-arena-navy p-8 rounded-xl shadow-lg border border-slate-700">
-          <h2 id="deck-selection-title" className="text-3xl font-display text-white mb-6 uppercase text-center">Select Deck</h2>
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+            <h2 id="deck-selection-title" className="text-3xl font-display text-white uppercase text-center sm:text-left">Select Deck</h2>
+            <button
+              ref={scanButtonRef}
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg border border-slate-600 transition-colors focus-visible:ring-2 focus-visible:ring-arena-magenta focus-visible:outline-none font-display tracking-wide uppercase text-sm"
+            >
+              <QrCode className="w-4 h-4" aria-hidden="true" />
+              Scan Card
+            </button>
+          </div>
           <fieldset aria-labelledby="deck-selection-title" className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <legend className="sr-only">Choose a deck to play</legend>
             {defaultDecks.map((deck) => (
@@ -210,6 +291,16 @@ export const LobbyHub: React.FC = () => {
           )}
         </div>
       </form>
+
+      {isScannerOpen && (
+        <QRScannerModal
+          onScanSuccess={handleScanSuccess}
+          onClose={() => {
+            setIsScannerOpen(false);
+            scanButtonRef.current?.focus();
+          }}
+        />
+      )}
     </div>
   );
 };
