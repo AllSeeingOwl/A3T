@@ -153,7 +153,7 @@ const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme, onEnd
           {teams.teamB.score}
         </span>
       </div>
-      <button
+      <button type="button"
         onClick={() => { if (window.confirm('Are you sure you want to finish the match early? This action cannot be undone.')) { onEndGame(); } }}
         aria-label="End Game and View Summary"
         className="absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 px-4 py-1 bg-slate-800 border border-slate-600 hover:bg-slate-700 text-slate-300 rounded-full font-display uppercase text-xs tracking-wider transition-colors shadow-md focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none z-10"
@@ -178,19 +178,19 @@ const RedCardFooter = memo(() => {
 
   return (
     <section aria-label="Red Card Controls" className="bg-arena-navy border-t border-slate-700 p-4 fixed bottom-0 w-full flex flex-wrap justify-center gap-4 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-20">
-      <button onClick={() => handleRedCard('CATEGORY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+      <button type="button" onClick={() => handleRedCard('CATEGORY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
         <span className="sr-only">Issue </span>Category<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button onClick={() => handleRedCard('MEDIUM_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+      <button type="button" onClick={() => handleRedCard('MEDIUM_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
         <span className="sr-only">Issue </span>Medium<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button onClick={() => handleRedCard('CANON_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+      <button type="button" onClick={() => handleRedCard('CANON_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
         <span className="sr-only">Issue </span>Canon<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button onClick={() => handleRedCard('GAMEPLAY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+      <button type="button" onClick={() => handleRedCard('GAMEPLAY_VIOLATIONS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-arena-crimson text-arena-crimson rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
         <span className="sr-only">Issue </span>Gameplay<span className="sr-only"> Violation Red Card</span>
       </button>
-      <button onClick={() => handleRedCard('REFEREE_TOOLS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-amber-500 text-amber-500 rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+      <button type="button" onClick={() => handleRedCard('REFEREE_TOOLS')} className="px-6 py-2 bg-arena-crimson/20 hover:bg-arena-crimson/40 border border-amber-500 text-amber-500 rounded font-display uppercase transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
         <span className="sr-only">Open </span>Referee Tools
       </button>
     </section>
@@ -380,20 +380,20 @@ export const ArenaBoard: React.FC = () => {
             >
               <h2 id="easy-mode-title" className="text-3xl font-display text-white uppercase mb-6">Who Said Easy?</h2>
               <div className="flex gap-4 justify-center">
-                <button
+                <button type="button"
                   onClick={() => { setEasyModeTeam('teamA'); setShowEasyModal(false); }}
                   className="px-6 py-4 bg-arena-magenta/20 hover:bg-arena-magenta text-white border border-arena-magenta rounded font-display text-xl uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-magenta focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
                 >
                   <span className="sr-only">Select </span>{teams.teamA.name}<span className="sr-only"> for Easy Mode penalty</span>
                 </button>
-                <button
+                <button type="button"
                   onClick={() => { setEasyModeTeam('teamB'); setShowEasyModal(false); }}
                   className="px-6 py-4 bg-arena-cobalt/20 hover:bg-arena-cobalt text-white border border-arena-cobalt rounded font-display text-xl uppercase transition-colors focus-visible:ring-2 focus-visible:ring-arena-cobalt focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate"
                 >
                   <span className="sr-only">Select </span>{teams.teamB.name}<span className="sr-only"> for Easy Mode penalty</span>
                 </button>
               </div>
-              <button
+              <button type="button"
                 autoFocus
                 onClick={() => setShowEasyModal(false)}
                 className="mt-8 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none rounded focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate flex items-center justify-center gap-2 mx-auto group"
@@ -501,17 +501,17 @@ export const ArenaBoard: React.FC = () => {
             <div className="flex gap-6">
                {(questionStage === 'LIST_ACTIVE' || questionStage === 'LIST_REVEALED') ? (
                  <>
-                   <button onClick={() => { addScore(activeTeam, activeCard.listQuestion.points); nextCard(); }} className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg bg-arena-gold hover:bg-yellow-500 text-arena-slate focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+                   <button type="button" onClick={() => { addScore(activeTeam, activeCard.listQuestion.points); nextCard(); }} className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg bg-arena-gold hover:bg-yellow-500 text-arena-slate focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
                      List Completed (+{activeCard.listQuestion.points})
                    </button>
-                   <button onClick={nextCard} className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg bg-slate-600 hover:bg-slate-500 text-white focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
+                   <button type="button" onClick={nextCard} className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg bg-slate-600 hover:bg-slate-500 text-white focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate">
                      List Failed / Next Chain
                    </button>
                  </>
                ) : (
                  <>
                  <div className="relative flex">
-                <button
+                <button type="button"
                 onClick={questionStage === 'REVEALED_ANSWER' ? undefined : handleCorrect}
                 aria-disabled={questionStage === 'REVEALED_ANSWER'}
                 aria-describedby={questionStage === 'REVEALED_ANSWER' ? "correct-disabled-tooltip" : undefined}
@@ -526,7 +526,7 @@ export const ArenaBoard: React.FC = () => {
                 </div>
               )}
               </div>
-              <button
+              <button type="button"
               onClick={handleMissedOrNext}
               className={`px-10 py-4 text-white rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate ${questionStage === 'REVEALED_ANSWER' ? 'bg-arena-cobalt hover:bg-blue-500' : 'bg-slate-600 hover:bg-slate-500'}`}
             >
@@ -537,13 +537,13 @@ export const ArenaBoard: React.FC = () => {
             </div>
           ) : (
             <div className="flex gap-6">
-              <button
+              <button type="button"
                 onClick={handleEasyCorrect}
                 className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate bg-emerald-600 hover:bg-emerald-500 text-white"
               >
                 {teams[easyModeTeam].name} Correct (0 pts)
               </button>
-              <button
+              <button type="button"
                 onClick={handleEasyIncorrect}
                 className="px-10 py-4 rounded-lg font-display text-xl uppercase tracking-wider transition-all shadow-lg focus-visible:ring-2 focus-visible:ring-arena-crimson focus:outline-none focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate bg-arena-crimson hover:bg-red-500 text-white"
               >
@@ -553,7 +553,7 @@ export const ArenaBoard: React.FC = () => {
           )}
 
           {(questionStage === 'HIDDEN' || questionStage === 'STEAL_WINDOW') && !easyModeTeam && (
-            <button
+            <button type="button"
               onClick={handleEasyTrigger}
               className="mt-4 px-8 py-3 bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500 text-amber-500 rounded-lg font-display uppercase tracking-wider transition-all focus-visible:ring-2 focus-visible:ring-amber-500 focus:outline-none"
             >
