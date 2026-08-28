@@ -35,7 +35,7 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
       {item.text}
     </span>
     <div className="flex gap-1 ml-3">
-      <button
+      <button type="button"
         onClick={() => onUpdateStatus(item.id, 'tick')}
         className={`group relative p-1.5 rounded hover:bg-emerald-500/20 text-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-400 focus:outline-none ${item.status === 'tick' ? 'bg-emerald-500/20 ring-1 ring-emerald-500/50' : ''}`}
         aria-label={`Mark ${item.text} correct`}
@@ -44,7 +44,7 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
         <Check aria-hidden="true" className="w-5 h-5" />
         <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Correct</span>
       </button>
-      <button
+      <button type="button"
         onClick={() => onUpdateStatus(item.id, 'cross')}
         className={`group relative p-1.5 rounded hover:bg-red-500/20 text-red-500 focus-visible:ring-2 focus-visible:ring-red-400 focus:outline-none ${item.status === 'cross' ? 'bg-red-500/20 ring-1 ring-red-500/50' : ''}`}
         aria-label={`Mark ${item.text} incorrect`}
@@ -54,7 +54,7 @@ const ChecklistItemRow = memo(({ item, onUpdateStatus, isBlurred = false }: { it
         <span aria-hidden="true" className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50">Mark Incorrect</span>
       </button>
       {item.status !== 'unmarked' && (
-        <button
+        <button type="button"
           onClick={() => onUpdateStatus(item.id, 'unmarked')}
           className="group relative p-1.5 rounded hover:bg-slate-600 text-slate-400 focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none"
           aria-label={`Reset ${item.text}`}
@@ -175,7 +175,7 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
             aria-haspopup="listbox"
         />
         {input.length > 0 && (
-          <button
+          <button type="button"
             onClick={() => { setInput(''); inputRef.current?.focus(); }}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 group"
             aria-label="Clear search input (Escape)"
@@ -194,7 +194,7 @@ const AutocompleteInput = memo(({ checklist, onMarkCorrect }: { checklist: Check
       {input.length > 0 && (
         <div id="autocomplete-suggestions" role="listbox" tabIndex={0} className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto focus-visible:ring-2 focus-visible:ring-emerald-500 focus:outline-none">
           {suggestions.map(suggestion => (
-            <button
+            <button type="button"
               key={suggestion.id}
               role="option"
               onClick={() => { onMarkCorrect(suggestion.id); setInput(''); }}
@@ -263,7 +263,7 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
           rows={2}
         />
         <div className="relative flex">
-          <button
+          <button type="button"
             onClick={handleAdd}
             className={`group px-4 py-2 rounded font-display uppercase tracking-wider transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-arena-gold focus:outline-none bg-slate-700 hover:bg-slate-600 text-white`}
           >
@@ -434,7 +434,7 @@ export const TiebreakerScreen: React.FC = () => {
           {/* Reveal Mode Conditonal UI */}
           {revealMode === 'idle' && (
             <div className="mt-8 flex justify-center relative">
-              <button
+              <button type="button"
                 onClick={checklist.length >= 10 ? startRevealMode : undefined}
                 aria-disabled={checklist.length < 10}
                 aria-describedby={checklist.length < 10 ? "start-reveal-tooltip" : undefined}
@@ -535,13 +535,13 @@ export const TiebreakerScreen: React.FC = () => {
           <div className="relative z-10">
             <h3 className="text-2xl font-display text-white mb-6 uppercase">Declare the Winner</h3>
             <div className="flex justify-center gap-8">
-              <button
+              <button type="button"
                 onClick={() => handleWinner('teamA')}
                 className="px-8 py-4 bg-arena-magenta/20 hover:bg-arena-magenta text-white border border-arena-magenta rounded-lg font-display text-2xl uppercase transition-all shadow-[0_0_15px_rgba(236,72,153,0.3)] focus-visible:ring-2 focus-visible:ring-arena-magenta focus:outline-none"
               >
                 {teams.teamA.name} Wins
               </button>
-              <button
+              <button type="button"
                 onClick={() => handleWinner('teamB')}
                 className="px-8 py-4 bg-arena-cobalt/20 hover:bg-arena-cobalt text-white border border-arena-cobalt rounded-lg font-display text-2xl uppercase transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] focus-visible:ring-2 focus-visible:ring-arena-cobalt focus:outline-none"
               >

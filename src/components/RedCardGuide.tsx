@@ -179,7 +179,7 @@ export const RedCardGuide: React.FC = () => {
       {!activeSidebar && (
         <>
           {/* Left Access Button */}
-          <button
+          <button type="button"
             ref={leftBtnRef}
             onClick={() => setActiveSidebar('left')}
             className={`fixed top-1/2 -translate-y-1/2 left-0 rounded-r-xl bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none flex items-center justify-center`}
@@ -195,7 +195,7 @@ export const RedCardGuide: React.FC = () => {
           </button>
 
           {/* Right Access Button */}
-          <button
+          <button type="button"
             ref={rightBtnRef}
             onClick={() => setActiveSidebar('right')}
             className={`fixed top-1/2 -translate-y-1/2 right-0 rounded-l-xl bg-arena-crimson hover:bg-red-600 text-white p-3 shadow-lg z-40 transition-all group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-slate focus-visible:ring-arena-crimson focus:outline-none flex items-center justify-center`}
@@ -228,7 +228,7 @@ export const RedCardGuide: React.FC = () => {
               Red Cards
             </h2>
             <div className="flex items-center gap-2">
-              <button
+              <button type="button"
                 onClick={handleCloseSidebar}
                 className="group relative p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson"
                 aria-label="Close Red Card Guide (Escape)"
@@ -264,7 +264,7 @@ export const RedCardGuide: React.FC = () => {
                 aria-label="Search red cards by title, description, or example quotes"
               />
               {searchTerm.length > 0 && (
-                <button
+                <button type="button"
                   onClick={() => { setSearchTerm(''); searchInputRef.current?.focus(); }}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center p-1.5 text-slate-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-crimson rounded-r-md group"
                   aria-label="Clear search input (Escape)"
