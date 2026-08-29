@@ -1,3 +1,3 @@
-## 2023-11-20 - [Explicit button types]
-**Learning:** React defaults `<button>` elements to `type="submit"` when placed inside a form. The app contains `<button>` tags lacking a type attribute scattered across components like `ArenaBoard` and `TiebreakerScreen`. If these are later nested inside forms for layout reasons, they could trigger unexpected form submissions and reload the page.
-**Action:** Added explicit `type="button"` attributes to all non-submission buttons across the repository.
+## 2024-05-18 - Avoid Blanket `aria-label` Overrides
+**Learning:** Overriding visible text on a button with a blanket `aria-label` (e.g., button says "Finish Match", `aria-label` says "End Game and View Summary") breaks voice-control software. Voice users will attempt to command the button using its visible text, which will fail if the accessible name does not contain that text.
+**Action:** Instead of `aria-label`, allow the visible text to form the accessible name. Add contextual descriptions by appending text inside `<span className="sr-only">`. If formatting elements exist, hide them with `aria-hidden="true"`.
