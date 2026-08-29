@@ -155,10 +155,10 @@ const ScoreboardHeader = memo(({ teams, activeTeam, deckName, parentTheme, onEnd
       </div>
       <button type="button"
         onClick={() => { if (window.confirm('Are you sure you want to finish the match early? This action cannot be undone.')) { onEndGame(); } }}
-        aria-label="End Game and View Summary"
         className="absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 px-4 py-1 bg-slate-800 border border-slate-600 hover:bg-slate-700 text-slate-300 rounded-full font-display uppercase text-xs tracking-wider transition-colors shadow-md focus-visible:ring-2 focus-visible:ring-slate-400 focus:outline-none z-10"
       >
         Finish Match
+        <span className="sr-only"> and View Summary</span>
       </button>
     </div>
   );
