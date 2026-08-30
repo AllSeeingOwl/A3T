@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { X, Camera } from 'lucide-react';
+import { X, Camera, Loader2 } from 'lucide-react';
 
 interface QRScannerModalProps {
   onScanSuccess: (decodedText: string) => void;
@@ -10,6 +10,7 @@ interface QRScannerModalProps {
 export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onScanSuccess, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [hasCameras, setHasCameras] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -35,13 +36,16 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onScanSuccess, o
               // Ignore scan errors, as they happen continuously when no QR code is in frame
             }
           );
+          setIsLoading(false);
         } else {
           setHasCameras(false);
           setError('No cameras found on your device.');
+          setIsLoading(false);
         }
       } catch (err) {
         console.error('Error starting scanner:', err);
         setError('Failed to access camera. Please ensure permissions are granted.');
+        setIsLoading(false);
       }
     };
 
@@ -100,8 +104,15 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onScanSuccess, o
           </p>
 
           <div className="w-full bg-black rounded-lg overflow-hidden border border-slate-700 min-h-[300px] flex items-center justify-center relative">
+            {isLoading && !error && (
+              <div role="status" aria-live="polite" className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-10 text-arena-magenta">
+                <Loader2 aria-hidden="true" className="w-10 h-10 mb-4 animate-spin" />
+                <span className="text-sm uppercase tracking-widest font-display">Accessing Camera...</span>
+                <span className="sr-only">Please grant camera permissions if prompted.</span>
+              </div>
+            )}
             {error ? (
-              <div className="text-red-400 text-center p-6 flex flex-col items-center gap-2">
+              <div className="text-red-400 text-center p-6 flex flex-col items-center gap-2 relative z-20">
                 <Camera className="w-8 h-8 opacity-50 mb-2" aria-hidden="true" />
                 <p>{error}</p>
                 {!hasCameras && (
@@ -111,7 +122,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onScanSuccess, o
                 )}
               </div>
             ) : (
-              <div id="qr-reader" className="w-full h-full"></div>
+              <div id="qr-reader" className={`w-full h-full ${isLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}`}></div>
             )}
           </div>
         </div>
