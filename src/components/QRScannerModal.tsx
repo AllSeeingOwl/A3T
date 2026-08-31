@@ -90,10 +90,17 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onScanSuccess, o
             ref={closeRef}
             type="button"
             onClick={onClose}
-            aria-label="Close Scanner"
-            className="text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-arena-magenta focus-visible:outline-none rounded-full p-1"
+            aria-label="Close Scanner (Escape)"
+            className="text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-arena-magenta focus-visible:outline-none rounded-full p-1 group relative"
           >
             <X className="w-6 h-6" aria-hidden="true" />
+            <span
+              aria-hidden="true"
+              className="absolute right-0 top-full mt-2 whitespace-nowrap bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 border border-slate-600 shadow-md font-sans tracking-wide z-50 flex items-center gap-1.5"
+            >
+              <span>Close Scanner</span>
+              <kbd className="font-sans text-[10px] bg-slate-700 border border-slate-500 px-1 py-0.5 rounded text-slate-300 shadow-inner">Esc</kbd>
+            </span>
           </button>
         </div>
 
@@ -112,7 +119,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onScanSuccess, o
               </div>
             )}
             {error ? (
-              <div className="text-red-400 text-center p-6 flex flex-col items-center gap-2 relative z-20">
+              <div role="alert" className="text-red-400 text-center p-6 flex flex-col items-center gap-2 relative z-20">
                 <Camera className="w-8 h-8 opacity-50 mb-2" aria-hidden="true" />
                 <p>{error}</p>
                 {!hasCameras && (
