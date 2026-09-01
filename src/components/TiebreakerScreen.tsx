@@ -253,6 +253,7 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
   return (
     <div className="mb-6">
       <label htmlFor="custom-answers-input" className="block text-sm text-slate-400 mb-2 uppercase tracking-wider">Custom Answers (Bulk Add)</label>
+      <span id="custom-answers-hint" className="sr-only">Press Command or Control plus Enter to bulk add custom answers</span>
       <div className="flex gap-2">
         <textarea
           id="custom-answers-input"
@@ -261,6 +262,8 @@ const CustomAnswersInput = memo(({ onAddItems }: { onAddItems: (val: string) => 
           placeholder="Paste or type custom answers here (one per line)..."
           className="flex-1 bg-slate-800 text-white rounded p-3 border border-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-arena-gold focus:border-arena-gold resize-y min-h-[60px]"
           rows={2}
+          aria-keyshortcuts="Control+Enter Meta+Enter"
+          aria-describedby="custom-answers-hint"
         />
         <div className="relative flex">
           <button type="button"
