@@ -55,6 +55,13 @@ from src.routers.games import router as games_router, ws_router
 app.include_router(games_router)
 app.include_router(ws_router)
 
+# Import and include generator and analyzer routers
+from api.routers.generate import router as generate_router
+from api.routers.analyze import analyze_router, validate_router
+app.include_router(generate_router)
+app.include_router(analyze_router)
+app.include_router(validate_router)
+
 # ---------------------------------------------------------------------------
 # MCP Tool Declarations
 # ---------------------------------------------------------------------------
