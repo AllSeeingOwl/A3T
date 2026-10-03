@@ -4,6 +4,7 @@ import os
 import sys
 from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from mcp.server.mcpserver import MCPServer
@@ -48,6 +49,14 @@ app = FastAPI(
     title="A3T Question Validator API",
     description="HTTP API and MCP Server for A3T Trivia Questions and Multiplayer Session Management",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Import and include multiplayer game routers
@@ -311,7 +320,8 @@ def run_stdio():
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--http":
         import uvicorn
-        logger.info("Starting FastAPI HTTP server on port 8000...")
-        uvicorn.run("src.mcp_server:app", host="0.0.0.0", port=8000, reload=False)
+        port = int(os.getenv("PORT", 8000))
+        logger.info(f"Starting FastAPI HTTP server on port {port}...")
+        uvicorn.run("src.mcp_server:app", host="0.0.0.0", port=port, reload=False)
     else:
         run_stdio()

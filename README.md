@@ -10,6 +10,7 @@ A3T is an interactive tabletop-companion quiz application built to serve as a di
 - **[Rules Reference](./docs/Rules-Reference.md)** — Quick lookup for gameplay rules and Red Card system
 - **[Question Writer Guidelines](./docs/Question-Writer-Guidelines.md)** — Guide for creating and validating questions
 - **[Technical Specification](./Digital%20PoC%20Technical%20Specification.md)** — Architecture and implementation details
+- **[Render Deployment Guide](./docs/RENDER_DEPLOYMENT.md)** — Step-by-step setup guide and Render Blueprint details for hosting A3T on Render
 - **[Contributing](./CONTRIBUTING.md)** — Guidelines for contributing code and questions
 
 ---
@@ -164,5 +165,5 @@ To run the Web UI locally:
 
 ## 🌐 Deployment
 
-The frontend application is deployed to **GitHub Pages**:
-- **Live Application:** [https://allseeingowl.github.io/A3T/](https://allseeingowl.github.io/A3T/)
+- **Render Blueprint Deployment:** See the **[Render Deployment Guide](./docs/RENDER_DEPLOYMENT.md)** for deploying the full app (Frontend & Python API) to Render via `render.yaml`.
+- **GitHub Pages:** [https://allseeingowl.github.io/A3T/](https://allseeingowl.github.io/A3T/)
