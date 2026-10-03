@@ -12,7 +12,7 @@ export default defineConfig({
     // providing strong defense-in-depth against third-party asset tampering.
     sri()
   ],
-  base: '/A3T/',
+  base: process.env.VITE_BASE_PATH || '/A3T/',
   // 🛡️ Sentinel: Enforce strict MIME-type checking during local development and previews
   // to prevent MIME-sniffing vulnerabilities. This mitigates risks where the browser
   // might incorrectly interpret non-executable files as executable scripts.
