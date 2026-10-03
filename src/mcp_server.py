@@ -46,9 +46,14 @@ mcp_server = MCPServer(
 # Initialize FastAPI app for HTTP server capability
 app = FastAPI(
     title="A3T Question Validator API",
-    description="HTTP API and MCP Server for A3T Trivia Questions",
+    description="HTTP API and MCP Server for A3T Trivia Questions and Multiplayer Session Management",
     version="1.0.0"
 )
+
+# Import and include multiplayer game routers
+from src.routers.games import router as games_router, ws_router
+app.include_router(games_router)
+app.include_router(ws_router)
 
 # ---------------------------------------------------------------------------
 # MCP Tool Declarations
