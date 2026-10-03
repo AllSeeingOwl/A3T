@@ -12,6 +12,120 @@ A3T is an interactive tabletop-companion quiz application built to serve as a di
 - **[Technical Specification](./Digital%20PoC%20Technical%20Specification.md)** — Architecture and implementation details
 - **[Contributing](./CONTRIBUTING.md)** — Guidelines for contributing code and questions
 
+---
+
+## 🤖 A3T Question-Validator MCP Server
+
+The project includes a production-ready **Model Context Protocol (MCP)** server for validating, analyzing, and managing trivia questions in the A3T repository.
+
+### 🛠️ Features & Available MCP Tools
+
+The server exposes 8 primary MCP tools:
+
+1. **`validate_question`**: Check CSV schema compliance and safety rules for a single question.
+2. **`check_duplicates`**: Search for similar questions in `data/questions.csv` using fuzzy string matching (`fuzzywuzzy`).
+3. **`analyze_difficulty`**: Analyze difficulty tier balance across the dataset against the target split (20% Casual / 40% Fan / 30% Hardcore / 10% Expert).
+4. **`check_safety`**: Verify all 9 Safety Checks from `docs/Question-Writer-Guidelines.md` for a single question or an entire deck.
+5. **`generate_draft`**: Scaffold a new question template given a topic/theme, category, and difficulty tier.
+6. **`list_themes`**: Retrieve all available themes and sub-themes from the Theme Encyclopedia.
+7. **`find_questions_by_domain`**: Filter questions by core domain (`Animation`, `Video Games`, `Pro Wrestling`).
+8. **`validate_chain`**: Validate a 3-question sequence for link integrity, category flow, and safety compliance.
+
+---
+
+### 🛡️ The 9 Safety Checks
+
+Every question and chain is validated against the 9 Safety Rules:
+
+- **CHECK 1 (Medium Specification):** Verifies explicit medium/version/platform (e.g. video game vs. anime).
+- **CHECK 2 (Primary Source Test):** Ensures canon is restricted to on-screen, in-game, or in-ring events.
+- **CHECK 3 (Cross-Over Containment):** Validates classification under valid A3T domains (`Animation`, `Video Games`, `Pro Wrestling`).
+- **CHECK 4 (Time-Lock Protocol):** Ensures time-sensitive facts (champions, records, patches) are anchored with dates or events.
+- **CHECK 5 (Subjectivity Ban):** Disallows opinion words unless tied to objective metrics (e.g., Metacritic score).
+- **CHECK 6 (List Question Protocol):** Enforces 3-5 items ("Goldilocks range"), closed loop pools, and explicit quantity tags.
+- **CHECK 7 (Specifics Trap):** Prevents singular trap phrasing when multiple answers exist.
+- **CHECK 8 (Bridge or Bench Rule):** Validates link connection integrity between adjacent questions in a chain.
+- **CHECK 9 (Deck Balance Rule):** Ensures standard decks maintain category balance (~33% per pillar, no single pillar > 50%).
+
+---
+
+### 📦 Standard Response Format
+
+All MCP tool calls return JSON adhering to the unified schema:
+
+```json
+{
+  "success": true,
+  "message": "Human-readable summary of the tool execution.",
+  "data": {},
+  "violations": [],
+  "suggestions": []
+}
+```
+
+---
+
+### 🚀 Setup & Running the MCP Server
+
+#### 1. Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+#### 2. Start the MCP Server (STDIO Mode)
+
+```bash
+./scripts/start_mcp.sh
+# or
+python3 -m src.mcp_server
+```
+
+#### 3. Start the MCP Server (HTTP / FastAPI Mode)
+
+```bash
+./scripts/start_mcp.sh http
+# or
+python3 -m src.mcp_server --http
+```
+When running in HTTP mode, endpoints are accessible at `http://localhost:8000/api/...` with automatic interactive docs at `http://localhost:8000/docs`.
+
+#### 4. Run Unit Tests
+
+```bash
+pytest
+```
+
+---
+
+### 💡 Example API Calls
+
+#### Validating a Question (`validate_question`)
+
+```json
+{
+  "Category / Domain": "Video Games",
+  "Difficulty": "Fan (Level 2)",
+  "Question Type": "Standard",
+  "Question": "In the video game Super Mario Bros., on which console did it originally debut in North America in 1985?",
+  "Answer": "Nintendo Entertainment System (NES)"
+}
+```
+
+#### Checking Safety (`check_safety`)
+
+```json
+{
+  "Category / Domain": "Pro Wrestling",
+  "Difficulty": "Casual (Level 1)",
+  "Question Type": "Standard",
+  "Question": "Who was the WWE Champion at WrestleMania 40 in 2024?",
+  "Answer": "Cody Rhodes"
+}
+```
+
+---
+
 ## 🎯 Question Database
 
 Questions are stored in [`data/questions.csv`](./data/questions.csv).
@@ -23,69 +137,32 @@ Questions are stored in [`data/questions.csv`](./data/questions.csv).
 3. Ensure all Safety Checks pass
 4. Submit a pull request with your new questions
 
-### Using Questions in Development
+---
 
-```typescript
-import { useQuestionDatabase } from '@/hooks/useQuestionDatabase';
+## 🛠️ Local Development (Frontend)
 
-const { loadQuestions, getQuestionsByDifficulty } = useQuestionDatabase();
-```
+To run the Web UI locally:
 
-## 🚀 Tech Stack
+1. **Install Node.js dependencies:**
+   ```bash
+   pnpm install
+   ```
 
-This project is built using a modern frontend stack:
-- **React**
-- **TypeScript** (with strict configurations)
-- **Vite** (for fast development and building)
-- **Tailwind CSS** (for styling with a custom dark-synthwave theme)
-- **Zustand** (for global game state management)
+2. **Start the Vite dev server:**
+   ```bash
+   pnpm dev
+   ```
 
-## 📂 Project Structure
+3. **Run tests & typechecks:**
+   ```bash
+   pnpm test
+   pnpm typecheck
+   pnpm lint
+   ```
 
-The project follows a modular structure:
-
-- **`src/components/`**: Modular, UI presentation components.
-  - `LobbyHub.tsx`: Team setup and deck selection screen.
-  - `ArenaBoard.tsx`: Active gameplay interface.
-  - `RedCardModal.tsx`: Whistle-blowing referee layout.
-  - `SummaryPodium.tsx`: Final scores and winner's podium.
-- **`src/data/`**: Contains `defaultDecks.json`, which holds seed data with default thematic chains (including a custom UK-themed pack).
-- **`src/hooks/`**: Contains `useGameStore.ts` for central game state management using Zustand.
-- **`src/types/`**: Contains `game.ts` with strict TypeScript interfaces and game configurations.
-
-For a deeper dive into the architecture, refer to the [`Digital PoC Technical Specification.md`](./Digital%20PoC%20Technical%20Specification.md) included in this repository.
-
-## 🛠️ Local Development
-
-To run this project locally, ensure you have Node.js installed.
-
-1. **Clone the repository:**
-   \`\`\`bash
-   git clone <repository-url>
-   cd always-a-trivial-triple-threat
-   \`\`\`
-
-2. **Install dependencies:**
-   For reliable dependency installation, use:
-   \`\`\`bash
-   npm ci
-   \`\`\`
-
-3. **Start the development server:**
-   \`\`\`bash
-   npm run dev &
-   \`\`\`
-   This will start the local development server, typically available at `http://localhost:5173`.
-
-4. **Build for production:**
-   \`\`\`bash
-   npm run build
-   \`\`\`
-   This will compile TypeScript and build the Vite production application.
+---
 
 ## 🌐 Deployment
 
-The application is configured to be deployed to **GitHub Pages** using official GitHub Actions (`actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages`).
-
+The frontend application is deployed to **GitHub Pages**:
 - **Live Application:** [https://allseeingowl.github.io/A3T/](https://allseeingowl.github.io/A3T/)
-- **Configuration Note:** The repository's Pages setting must be manually configured to use 'GitHub Actions' as the source. The Vite base path is configured to `/A3T/`.
