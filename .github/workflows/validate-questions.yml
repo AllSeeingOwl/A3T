@@ -1,111 +1,72 @@
-name: Validate Questions CSV
+name: Validate Questions
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'data/questions.csv'
   pull_request:
-    branches: [ main ]
     paths:
       - 'data/questions.csv'
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
-  validate-csv:
+  validate:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          node-version: '20'
+          fetch-depth: 0  # Full history to compare
 
-      - name: Install papaparse
-        run: npm install papaparse
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-      - name: Validate CSV
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install fuzzywuzzy python-levenshtein PyYAML
+
+      - name: Get changed questions
+        id: changed-files
+        run: |
+          git fetch origin main:main
+          git diff main HEAD -- data/questions.csv > /tmp/questions_diff.patch
+          python scripts/validate_questions_pr.py --diff /tmp/questions_diff.patch --output /tmp/validation_report.json
+
+      - name: Generate PR comment
+        id: pr-comment
+        run: |
+          python scripts/generate_pr_comment.py --report /tmp/validation_report.json --output /tmp/pr_comment.md
+
+      - name: Post validation report to PR
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const Papa = require('papaparse');
-
-            const csvData = fs.readFileSync('data/questions.csv', 'utf8');
-            const result = Papa.parse(csvData, { header: true, skipEmptyLines: true });
-
-            let errors = [];
-            const seenQuestions = new Set();
-
-            const requiredColumns = ['Category / Domain', 'Difficulty', 'Question Type', 'Question', 'Answer'];
-            const validDifficulties = ['Casual (Level 1)', 'Fan (Level 2)', 'Hardcore (Level 3)', 'Triple Threat (Expert)'];
-            const validDomains = ['Animation', 'Video Games', 'Pro Wrestling', 'Video Games / Animation', 'Video Games / Wrestling', 'Animation / Wrestling', 'All Three'];
-
-            // Check required columns
-            const headers = result.meta.fields || [];
-            const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-            if (missingColumns.length > 0) {
-              errors.push(`Missing required columns: ${missingColumns.join(', ')}`);
-            }
-
-            result.data.forEach((row, index) => {
-              // Skip empty rows or structural rows (like "Sample Chain" headers)
-              if (!row['Question'] || !row['Answer'] || !row['Category / Domain']) return;
-
-              const rowNum = index + 2; // +1 for 0-index, +1 for header
-
-              // Validate Required Fields
-              if (!row['Question']) errors.push(`Row ${rowNum}: Missing Question`);
-              if (!row['Answer']) errors.push(`Row ${rowNum}: Missing Answer`);
-              if (!row['Category / Domain']) errors.push(`Row ${rowNum}: Missing Category / Domain`);
-              if (!row['Difficulty']) errors.push(`Row ${rowNum}: Missing Difficulty`);
-              if (!row['Question Type']) errors.push(`Row ${rowNum}: Missing Question Type`);
-
-              // Validate Difficulty
-              if (row['Difficulty'] && !validDifficulties.some(d => row['Difficulty'].includes(d))) {
-                errors.push(`Row ${rowNum}: Invalid Difficulty '${row['Difficulty']}'`);
-              }
-
-              // Validate Domain (loose matching for combinations)
-              if (row['Category / Domain']) {
-                const domainStr = row['Category / Domain'].toLowerCase();
-                const hasAnim = domainStr.includes('animation');
-                const hasVG = domainStr.includes('video games') || domainStr.includes('video game');
-                const hasWrestle = domainStr.includes('wrestling');
-
-                if (!hasAnim && !hasVG && !hasWrestle) {
-                   errors.push(`Row ${rowNum}: Invalid Category / Domain '${row['Category / Domain']}'`);
-                }
-              }
-
-              // Validate Question Type
-              if (row['Question Type'] && !['Standard', 'List Question'].includes(row['Question Type'])) {
-                errors.push(`Row ${rowNum}: Invalid Question Type '${row['Question Type']}'`);
-              }
-
-              // Duplicate check
-              if (row['Question']) {
-                const normalizedQ = row['Question'].toLowerCase().trim();
-                if (seenQuestions.has(normalizedQ)) {
-                  errors.push(`Row ${rowNum}: Duplicate question found: "${row['Question']}"`);
-                }
-                seenQuestions.add(normalizedQ);
-              }
+            const comment = fs.readFileSync('/tmp/pr_comment.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
             });
 
-            if (errors.length > 0) {
-              const errorMessage = '### ❌ CSV Validation Failed\n\n' + errors.map(e => `- ${e}`).join('\n');
+      - name: Check validation status
+        run: |
+          python -c "
+          import json
+          with open('/tmp/validation_report.json') as f:
+              report = json.load(f)
 
-              if (context.eventName === 'pull_request') {
-                github.rest.issues.createComment({
-                  issue_number: context.issue.number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: errorMessage
-                });
-              }
-
-              core.setFailed(`CSV validation failed with ${errors.length} errors.`);
-            } else {
-              console.log('✅ CSV validation passed successfully.');
-            }
+          critical_failures = report.get('critical_failures', 0)
+          if critical_failures > 0:
+              print(f'CRITICAL: {critical_failures} critical violations found')
+              exit(1)
+          else:
+              print('✓ All validations passed')
+              exit(0)
+          "

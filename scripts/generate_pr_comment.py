@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+import os
+import json
+import argparse
+
+
+def generate_markdown(report: dict) -> str:
+    total = report.get("total_questions", 0)
+    passed = report.get("passed", 0)
+    failed = report.get("failed", 0)
+    warnings = report.get("warnings", 0)
+    critical_failures = report.get("critical_failures", 0)
+
+    lines = []
+    lines.append("## ✅ Question Validation Report\n")
+    lines.append(f"Analyzed: **{total}** new/modified question{'s' if total != 1 else ''} added\n")
+    lines.append("### Quick Summary:")
+    lines.append(f"- ✓ Passed: **{passed}**")
+    lines.append(f"- ✗ Failed: **{failed}**")
+    lines.append(f"- ⚠️ Warnings: **{warnings}**\n")
+
+    lines.append("### Safety Checks Breakdown:")
+
+    # Map checks 1-9 to standard check names
+    check_names = {
+        1: "CHECK 1: Medium Specification",
+        2: "CHECK 2: Primary Source Test",
+        3: "CHECK 3: Cross-Over Containment",
+        4: "CHECK 4: Time-Lock Protocol",
+        5: "CHECK 5: Subjectivity Ban",
+        6: "CHECK 6: List Question Protocol",
+        7: "CHECK 7: Specifics Trap",
+        8: "CHECK 8: Bridge or Bench Rule",
+        9: "CHECK 9: Deck Balance Rule"
+    }
+
+    by_q = report.get("by_question", [])
+    for check_id in range(1, 10):
+        check_name = check_names[check_id]
+        fails_for_check = []
+        for q_item in by_q:
+            if check_id in q_item.get("failed_checks", []):
+                q_idx = q_item.get("index", 0) + 1
+                q_text = q_item.get("question", "")
+                q_short = (q_text[:30] + "...") if len(q_text) > 30 else q_text
+                fails_for_check.append(f'Q#{q_idx} "{q_short}"')
+
+        total_q = max(total, 1)
+        passed_q = total_q - len(fails_for_check)
+
+        if not fails_for_check:
+            lines.append(f"✓ **{check_name}** - PASS ({passed_q}/{total_q})")
+        else:
+            lines.append(f"✗ **{check_name}** - FAIL ({passed_q}/{total_q})")
+            for fail_msg in fails_for_check:
+                lines.append(f"  └─ {fail_msg}")
+
+    lines.append("")
+
+    # Difficulty Distribution
+    diff_analysis = report.get("difficulty_analysis", {})
+    current_diff = diff_analysis.get("current", {})
+    target_diff = diff_analysis.get("target", {})
+    status_diff = diff_analysis.get("status", "PASS")
+
+    curr_c = int(current_diff.get("Casual (Level 1)", 0) * 100)
+    curr_f = int(current_diff.get("Fan (Level 2)", 0) * 100)
+    curr_h = int(current_diff.get("Hardcore (Level 3)", 0) * 100)
+    curr_e = int(current_diff.get("Triple Threat (Expert)", 0) * 100)
+
+    targ_c = int(target_diff.get("Casual (Level 1)", 0.20) * 100)
+    targ_f = int(target_diff.get("Fan (Level 2)", 0.40) * 100)
+    targ_h = int(target_diff.get("Hardcore (Level 3)", 0.30) * 100)
+    targ_e = int(target_diff.get("Triple Threat (Expert)", 0.10) * 100)
+
+    lines.append("### Difficulty Distribution:")
+    lines.append(f"**Current:** {curr_c}% Casual | {curr_f}% Fan | {curr_h}% Hardcore | {curr_e}% Expert")
+    lines.append(f"**Target:** {targ_c}% Casual | {targ_f}% Fan | {targ_h}% Hardcore | {targ_e}% Expert")
+    lines.append(f"**Status:** {status_diff}\n")
+
+    # Duplicate Detection
+    duplicates = report.get("duplicates", [])
+    if duplicates:
+        lines.append("### Duplicate Detection:")
+        for dup in duplicates:
+            sim = int(dup.get("similarity", 0) * 100)
+            lines.append(f"⚠️ New Q matches existing question at **{sim}% similarity**")
+            lines.append(f"  Existing: \"{dup.get('existing_match')}\"")
+            lines.append(f"  New: \"{dup.get('new_question')}\"")
+            lines.append(f"  Action: {dup.get('action')}\n")
+
+    # Issues & Suggestions
+    issues = []
+    suggestions_list = []
+    for q_item in by_q:
+        q_idx = q_item.get("index", 0) + 1
+        violations = q_item.get("violations", [])
+        suggs = q_item.get("suggestions", [])
+        if violations:
+            q_text = q_item.get("question", "")
+            issues.append(f"**Q#{q_idx}**: {q_text}")
+            for v in violations:
+                issues.append(f"• {v}")
+        for s in suggs:
+            suggestions_list.append(s)
+
+    if issues:
+        lines.append("### Issues to Fix:")
+        for issue in issues:
+            lines.append(issue)
+        lines.append("")
+
+    if suggestions_list:
+        lines.append("### Suggestions Before Merge:")
+        for sug in set(suggestions_list):
+            lines.append(f"• {sug}")
+        lines.append("")
+
+    if critical_failures > 0 or failed > 0:
+        lines.append("### Status: ⚠️ CHANGES REQUESTED\n")
+        lines.append("👉 Please update questions and push new commits. Validation will run automatically.\n")
+    else:
+        lines.append("### Status: ✅ APPROVED FOR MERGE\n")
+        lines.append("👉 All checks passed! Ready for review and auto-merge.\n")
+
+    lines.append("_Generated by A3T Question Validator_")
+
+    return "\n".join(lines)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate PR comment markdown from validation report.")
+    parser.add_argument("--report", required=True, help="Path to input validation report JSON")
+    parser.add_argument("--output", default="/tmp/pr_comment.md", help="Path to output markdown file")
+    args = parser.parse_args()
+
+    if os.path.exists(args.report):
+        with open(args.report, "r", encoding="utf-8") as f:
+            report = json.load(f)
+    else:
+        report = {}
+
+    comment_md = generate_markdown(report)
+
+    os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
+    with open(args.output, "w", encoding="utf-8") as f:
+        f.write(comment_md)
+
+    print(f"PR comment generated successfully at {args.output}")
+
+
+if __name__ == "__main__":
+    main()

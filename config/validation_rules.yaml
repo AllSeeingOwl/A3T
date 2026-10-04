@@ -1,0 +1,55 @@
+safety_checks:
+  check_1_medium_specification:
+    enabled: true
+    severity: critical
+    description: "Medium must be specified (game version, year, etc.)"
+  check_2_primary_source:
+    enabled: true
+    severity: critical
+    description: "Facts must come from on-screen/in-game/in-ring sources"
+  check_3_cross_over_containment:
+    enabled: true
+    severity: high
+    description: "Classify by media, not IP (game vs. film, etc.)"
+  check_4_time_lock:
+    enabled: true
+    severity: high
+    description: "Time-specific facts must be locked to dates"
+  check_5_subjectivity:
+    enabled: true
+    severity: medium
+    description: "No opinions unless tied to metrics"
+  check_6_list_questions:
+    enabled: true
+    severity: high
+    description: "List questions must have 3-5 items, closed loop"
+  check_7_specifics:
+    enabled: true
+    severity: medium
+    description: "Singular vs. plural phrasing must be correct"
+  check_8_link_integrity:
+    enabled: true
+    severity: high
+    description: "Question links must be natural, not forced"
+  check_9_deck_balance:
+    enabled: true
+    severity: low
+    description: "Maintain 33% per category, no >50% dominance"
+
+duplicate_detection:
+  enabled: true
+  fuzzy_match_threshold: 0.85
+  warn_at: 0.80
+  block_at: 0.95
+
+difficulty_target:
+  Casual (Level 1): 0.20
+  Fan (Level 2): 0.40
+  Hardcore (Level 3): 0.30
+  Triple Threat (Expert): 0.10
+
+severity_levels:
+  critical: "Block merge - must fix before approval"
+  high: "Warning - should fix before merge"
+  medium: "Suggestion - nice to have"
+  low: "Info - no action required"

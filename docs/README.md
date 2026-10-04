@@ -11,6 +11,7 @@ Here you can find all the necessary rules, reference materials, and technical sp
 - **[Question Writer Guidelines](./Question-Writer-Guidelines.md)** — The comprehensive guide for creating, validating, and balancing trivia questions. Includes Safety Checks, Templates, and the Theme Encyclopedia.
 - **[Technical Specification](../Digital%20PoC%20Technical%20Specification.md)** — The architectural and implementation details for the digital game board and host controller.
 - **[Render Deployment Guide](./RENDER_DEPLOYMENT.md)** — Setup guide and Blueprint configuration for deploying A3T Web & API services on Render.
+- **[GitHub Workflows & Automated PRs](./GITHUB_WORKFLOWS.md)** — Automated PR question validation, quality reports, auto-merge, and deployment workflows.
 - **[Contributing](../CONTRIBUTING.md)** — Guidelines for contributing code and questions to the project.
 
 ## 🎯 Question Database

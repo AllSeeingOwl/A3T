@@ -11,6 +11,7 @@ A3T is an interactive tabletop-companion quiz application built to serve as a di
 - **[Question Writer Guidelines](./docs/Question-Writer-Guidelines.md)** — Guide for creating and validating questions
 - **[Technical Specification](./Digital%20PoC%20Technical%20Specification.md)** — Architecture and implementation details
 - **[Render Deployment Guide](./docs/RENDER_DEPLOYMENT.md)** — Step-by-step setup guide and Render Blueprint details for hosting A3T on Render
+- **[GitHub Workflows & Automated PRs](./docs/GITHUB_WORKFLOWS.md)** — Automated PR question validation, quality reports, auto-merge, and deployment workflows
 - **[Contributing](./CONTRIBUTING.md)** — Guidelines for contributing code and questions
 
 ---

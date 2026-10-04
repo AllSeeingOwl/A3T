@@ -1,0 +1,5 @@
+# Questions can only be merged with approval from admins
+data/questions.csv @AllSeeingOwl
+
+# Workflows require admin approval
+.github/workflows/ @AllSeeingOwl
