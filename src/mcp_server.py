@@ -71,6 +71,13 @@ app.include_router(generate_router)
 app.include_router(analyze_router)
 app.include_router(validate_router)
 
+# Import and include analytics and admin routers
+from api.routers.analytics import router as analytics_router, ws_analytics_router
+from api.routers.admin import router as admin_router
+app.include_router(analytics_router)
+app.include_router(ws_analytics_router)
+app.include_router(admin_router)
+
 # ---------------------------------------------------------------------------
 # MCP Tool Declarations
 # ---------------------------------------------------------------------------

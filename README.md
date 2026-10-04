@@ -168,3 +168,15 @@ To run the Web UI locally:
 
 - **Render Blueprint Deployment:** See the **[Render Deployment Guide](./docs/RENDER_DEPLOYMENT.md)** for deploying the full app (Frontend & Python API) to Render via `render.yaml`.
 - **GitHub Pages:** [https://allseeingowl.github.io/A3T/](https://allseeingowl.github.io/A3T/)
+
+## Analytics & Admin Dashboard
+
+A standalone React interface in `dashboard/` provides real-time game statistics, question difficulty accuracy analysis, player leaderboards, and moderation controls.
+
+### Running the Dashboard
+```bash
+cd dashboard
+pnpm install
+pnpm dev
+```
+Access the dashboard at `http://localhost:3001`. See [`dashboard/README.md`](dashboard/README.md) for full endpoint and architectural details.
