@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-from api.db import Base
+from api.db import Base, fix_database_url
 import api.models
 
 config = context.config
@@ -19,7 +19,8 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 def get_url():
-    return os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+    raw_url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+    return fix_database_url(raw_url)
 
 def run_migrations_offline() -> None:
     url = get_url()
