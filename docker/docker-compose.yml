@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: a3t_dev
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: a3t_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U a3t_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    environment:
+      DATABASE_URL: postgresql://a3t_dev:dev_password@db:5432/a3t_db
+      PYTHONUNBUFFERED: 1
+      ENVIRONMENT: development
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ..:/app  # Hot reload in development
+    command: uvicorn api.app:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ../src:/app/src
+      - ../package.json:/app/package.json
+      - ../package-lock.json:/app/package-lock.json
+    ports:
+      - "5173:5173"
+    command: npm run dev
+
+volumes:
+  postgres_data:

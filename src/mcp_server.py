@@ -7,7 +7,24 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from mcp.server.mcpserver import MCPServer
+try:
+    from mcp.server.mcpserver import MCPServer
+except (ImportError, ModuleNotFoundError):
+    # Fallback if mcp package structure varies
+    try:
+        from mcp.server import Server as MCPServer
+    except Exception:
+        class MCPServer:
+            def __init__(self, name: str, version: str = "1.0.0", description: str = ""):
+                self.name = name
+                self.version = version
+                self.description = description
+            def tool(self):
+                def decorator(func):
+                    return func
+                return decorator
+            def run(self, transport="stdio"):
+                pass
 
 from src.csv_parser import load_questions_from_csv, parse_csv_content
 from src.validators import (
@@ -31,7 +48,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     handlers=[
         logging.FileHandler(LOG_FILE),
-        logging.StreamHandler(sys.stderr)
+        logging.StreamHandler(sys.stdout)
     ]
 )
 logger = logging.getLogger("a3t_mcp_server")
