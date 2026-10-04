@@ -15,26 +15,26 @@ jobs:
 
     steps:
       - name: Checkout code
-       uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Set up Python
-       uses: actions/setup-python@v4
-       with:
-         python-version: '3.10'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
       - name: Export CSV to JSON
-       run: |
-         python scripts/export_to_json.py --input data/questions.csv --output src/data/questions.json
+        run: |
+          python scripts/export_to_json.py --input data/questions.csv --output src/data/questions.json
 
       - name: Commit JSON export
-       run: |
-         git config --local user.email "action@github.com"
-         git config --local user.name "Github Action"
-         git add src/data/questions.json
-         git commit -m "chore: update questions.json from CSV"
-         git push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Github Action"
+          git add src/data/questions.json
+          git commit -m "chore: update questions.json from CSV"
+          git push
 
       - name: Trigger GitHub Pages build
-       run: |
-         echo "✅ GitHub Pages will auto-build from main branch"
-         echo "Questions updated and live!"
+        run: |
+          echo "✅ GitHub Pages will auto-build from main branch"
+          echo "Questions updated and live!"
