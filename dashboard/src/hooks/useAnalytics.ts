@@ -70,7 +70,7 @@ export interface FlaggedQuestion {
 
 export interface WsEvent {
   event: string;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 const API_BASE = '/api';
@@ -200,7 +200,7 @@ export function useAnalytics() {
         setError(errData.detail || 'Authentication failed');
         return false;
       }
-    } catch (e) {
+    } catch {
       setError('Failed to authenticate');
       return false;
     }
@@ -275,16 +275,25 @@ export function useAnalytics() {
   };
 
   useEffect(() => {
-    setLoading(true);
-    Promise.all([
-      fetchOverview(),
-      fetchQuestions(),
-      fetchDailyStats(),
-      fetchLeaderboard(),
-      fetchCategoryBreakdown(),
-      fetchDifficultyBreakdown(),
-      isAuthenticated ? fetchFlaggedQuestions() : Promise.resolve(),
-    ]).finally(() => setLoading(false));
+    let isMounted = true;
+    async function loadData() {
+      await Promise.all([
+        fetchOverview(),
+        fetchQuestions(),
+        fetchDailyStats(),
+        fetchLeaderboard(),
+        fetchCategoryBreakdown(),
+        fetchDifficultyBreakdown(),
+        isAuthenticated ? fetchFlaggedQuestions() : Promise.resolve(),
+      ]);
+      if (isMounted) {
+        setLoading(false);
+      }
+    }
+    loadData();
+    return () => {
+      isMounted = false;
+    };
   }, [fetchOverview, fetchQuestions, fetchDailyStats, fetchLeaderboard, fetchCategoryBreakdown, fetchDifficultyBreakdown, fetchFlaggedQuestions, isAuthenticated]);
 
   useEffect(() => {

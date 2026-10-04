@@ -23,13 +23,13 @@ export const PlayerLeaderboard: React.FC<PlayerLeaderboardProps> = ({ leaderboar
   };
 
   const filteredAndSortedLeaderboard = useMemo(() => {
-    let list = leaderboard.filter((p) =>
+    const list = leaderboard.filter((p) =>
       p.player_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     list.sort((a, b) => {
-      let valA = a[sortField];
-      let valB = b[sortField];
+      const valA = a[sortField];
+      const valB = b[sortField];
       if (valA < valB) return sortAsc ? -1 : 1;
       if (valA > valB) return sortAsc ? 1 : -1;
       return 0;
