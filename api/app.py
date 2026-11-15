@@ -3,6 +3,11 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.observability import init_sentry
+
+# Start Sentry before the app is built so it can hook into FastAPI.
+init_sentry()
+
 from src.routers.games import router as games_router, ws_router as games_ws_router
 from api.routers.generate import router as generate_router
 from api.routers.analyze import analyze_router, validate_router

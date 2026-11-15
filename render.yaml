@@ -18,10 +18,11 @@ services:
         value: 3.12.3
       - key: ANTHROPIC_API_KEY
         sync: false
+      # Supabase session pooler URL, set in the Render dashboard.
       - key: DATABASE_URL
-        fromDatabase:
-          name: a3t-db
-          property: connectionString
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
 
   # ---------------------------------------------------------------------------
   # 2. A3T Frontend Web App (Static Site)
@@ -39,9 +40,5 @@ services:
       - key: VITE_BASE_PATH
         value: /
 
-databases:
-  - name: a3t-db
-    databaseName: a3t
-    user: a3t
-    region: oregon
-    plan: free
+# The database is hosted on Supabase, not Render: free Render databases
+# expire after 30 days.
