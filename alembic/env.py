@@ -9,7 +9,12 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 from api.db import Base, fix_database_url
+from api.observability import init_sentry
 import api.models
+
+# Migrations run before the web server starts, so a database failure here
+# (like an expired database) would otherwise never reach Sentry.
+init_sentry()
 
 config = context.config
 
