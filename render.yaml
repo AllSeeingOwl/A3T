@@ -39,6 +39,9 @@ services:
     envVars:
       - key: VITE_BASE_PATH
         value: /
+      # Sentry error reporting for the browser; read at build time.
+      - key: VITE_SENTRY_DSN
+        sync: false
 
 # The database is hosted on Supabase, not Render: free Render databases
 # expire after 30 days.
