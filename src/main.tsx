@@ -2,6 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
 import './index.css';
+import { initSentry } from './utils/sentry';
+
+// Start Sentry error reporting (only when VITE_SENTRY_DSN is set at build time).
+initSentry();
 
 // 🛡️ Sentinel: Frame-busting script to prevent Clickjacking.
 // Since GitHub Pages only allows meta tags and CSP 'frame-ancestors'
