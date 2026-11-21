@@ -12,7 +12,7 @@ from fuzzywuzzy import fuzz
 from src.game_models import (
     Player, Question, Answer, GameSession, Leaderboard, get_utc_now
 )
-from src.csv_parser import load_questions_from_csv
+from src.question_source import load_questions
 
 logger = logging.getLogger("a3t_game_manager")
 
@@ -32,27 +32,32 @@ class GameManager:
                 return pin
 
     def _load_questions_for_deck(self, deck_id: str) -> List[Question]:
-        """Load questions from CSV or fallback JSON data."""
-        raw_questions = load_questions_from_csv()
+        """Load questions from Supabase (or the CSV fallback), else sample data."""
+        raw_questions = load_questions()
         questions = []
         q_id = 1
 
-        # Filter by deck_id if specified, or use available CSV questions
+        # Filter by deck_id if specified, or use all available questions
         for row in raw_questions:
+            question_text = (row.get("Question") or "").strip()
+            answer_text = (row.get("Answer") or "").strip()
+            # Questions still being written can't be played or scored.
+            if not question_text or not answer_text:
+                continue
             row_deck = row.get("Deck / Theme", "")
-            if deck_id == "all" or not deck_id or row_deck.lower() == deck_id.lower() or not raw_questions:
+            if deck_id == "all" or not deck_id or row_deck.lower() == deck_id.lower():
                 q = Question(
                     id=q_id,
                     deck_id=deck_id,
                     category=row.get("Category / Domain") or "General",
-                    question=row.get("Question") or "Sample Question",
-                    answer=row.get("Answer") or "Sample Answer",
+                    question=question_text,
+                    answer=answer_text,
                     difficulty=row.get("Difficulty") or "Casual (Level 1)"
                 )
                 questions.append(q)
                 q_id += 1
 
-        # If CSV gave no matching questions, supply fallback sample questions
+        # If no questions matched, supply fallback sample questions
         if not questions:
             fallback_data = [
                 {"category": "Animation", "question": "What is Wilma Flintstone's maiden name?", "answer": "Slaghoople", "difficulty": "Fan (Level 2)"},
