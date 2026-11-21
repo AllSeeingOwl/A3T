@@ -1,6 +1,12 @@
 # A3T Question Database
 
-The `questions.csv` file contains the master database of trivia questions for **Always A (Trivial) Triple Threat (A3T)**.
+> **The live question database is now the A3T-Q&A-Database Google Sheet.** It syncs
+> automatically to the Supabase `questions` table (see
+> [`scripts/sheets_sync/`](../scripts/sheets_sync/README.md)), and the game loads its
+> questions from there. `questions.csv` is only a fallback for when the database
+> can't be reached, such as local development without Supabase, and may be out of date.
+
+The `questions.csv` file contains a snapshot of the trivia questions for **Always A (Trivial) Triple Threat (A3T)**.
 
 ## 📝 CSV Schema
 

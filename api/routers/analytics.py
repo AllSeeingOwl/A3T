@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Any, Optional
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 from src.game_manager import game_manager
-from src.csv_parser import load_questions_from_csv
+from src.question_source import load_questions
 from api.analytics_manager import analytics_manager
 
 router = APIRouter(prefix="/api/analytics", tags=["analytics"])
@@ -68,7 +68,7 @@ def get_overview():
 
 @router.get("/questions")
 def get_question_analytics():
-    raw_questions = load_questions_from_csv()
+    raw_questions = load_questions()
 
     question_stats: Dict[str, Dict[str, Any]] = {}
     for game_id, answers in game_manager.game_answers.items():

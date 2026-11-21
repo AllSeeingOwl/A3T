@@ -26,7 +26,8 @@ except (ImportError, ModuleNotFoundError):
             def run(self, transport="stdio"):
                 pass
 
-from src.csv_parser import load_questions_from_csv, parse_csv_content
+from src.csv_parser import parse_csv_content
+from src.question_source import load_questions
 from src.validators import (
     validate_question as val_q,
     check_duplicates as chk_dup,
@@ -123,11 +124,11 @@ def validate_question(question: Dict[str, Any]) -> Dict[str, Any]:
 @mcp_server.tool()
 def check_duplicates(question_text: str, threshold: int = 80) -> Dict[str, Any]:
     """
-    Find similar questions in the CSV database using fuzzy matching (fuzzywuzzy).
+    Find similar questions in the question database using fuzzy matching (fuzzywuzzy).
     """
     logger.info("Tool called: check_duplicates (threshold=%d)", threshold)
     try:
-        db = load_questions_from_csv()
+        db = load_questions()
         result = chk_dup(question_text, db, threshold=threshold)
         logger.info("check_duplicates found %d matches", result["data"]["duplicate_count"])
         return result
@@ -149,7 +150,7 @@ def analyze_difficulty(questions: Optional[List[Dict[str, Any]]] = None) -> Dict
     """
     logger.info("Tool called: analyze_difficulty")
     try:
-        dataset = questions if questions is not None else load_questions_from_csv()
+        dataset = questions if questions is not None else load_questions()
         result = anz_diff(dataset)
         logger.info("analyze_difficulty completed for %d questions", len(dataset))
         return result
@@ -237,7 +238,7 @@ def find_questions_by_domain(domain: str) -> Dict[str, Any]:
     """
     logger.info("Tool called: find_questions_by_domain (domain='%s')", domain)
     try:
-        db = load_questions_from_csv()
+        db = load_questions()
         result = find_domain(domain, db)
         logger.info("find_questions_by_domain matched %d questions", result["data"]["count"])
         return result
