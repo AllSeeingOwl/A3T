@@ -39,14 +39,19 @@ class GameManager:
 
         # Filter by deck_id if specified, or use all available questions
         for row in raw_questions:
+            question_text = (row.get("Question") or "").strip()
+            answer_text = (row.get("Answer") or "").strip()
+            # Questions still being written can't be played or scored.
+            if not question_text or not answer_text:
+                continue
             row_deck = row.get("Deck / Theme", "")
-            if deck_id == "all" or not deck_id or row_deck.lower() == deck_id.lower() or not raw_questions:
+            if deck_id == "all" or not deck_id or row_deck.lower() == deck_id.lower():
                 q = Question(
                     id=q_id,
                     deck_id=deck_id,
                     category=row.get("Category / Domain") or "General",
-                    question=row.get("Question") or "Sample Question",
-                    answer=row.get("Answer") or "Sample Answer",
+                    question=question_text,
+                    answer=answer_text,
                     difficulty=row.get("Difficulty") or "Casual (Level 1)"
                 )
                 questions.append(q)

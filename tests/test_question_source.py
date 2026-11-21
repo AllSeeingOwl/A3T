@@ -88,3 +88,17 @@ def test_game_uses_database_questions(monkeypatch):
     assert [q.question for q in questions] == ["Who voices the Genie?"]
     assert questions[0].answer == "Robin Williams"
     assert questions[0].category == "Animation"
+
+
+def test_game_skips_unanswered_questions(monkeypatch):
+    monkeypatch.setattr(question_source, "load_questions_from_db", lambda: [
+        row_to_question(_db_row(id="Q-0001", question="Answered?", answer="Yes",
+                                question_type="Standard")),
+        row_to_question(_db_row(id="Q-0024", question="Who did John Cena defeat?",
+                                answer=None, question_type="Standard")),
+        row_to_question(_db_row(id="Q-0025", question="Blank answer?", answer="   ",
+                                question_type="Standard")),
+    ])
+    questions = GameManager()._load_questions_for_deck("all")
+    assert [q.question for q in questions] == ["Answered?"]
+    assert [q.id for q in questions] == [1]
