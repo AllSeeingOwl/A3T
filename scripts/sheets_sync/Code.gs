@@ -6,6 +6,10 @@
  * sheet's ID column, then deletes rows in Supabase that are no longer in the
  * sheet.
  *
+ * List questions written with the Question cell merged down several rows (one
+ * answer per row) are stored as a single question, with the answers joined by
+ * ", ".
+ *
  * Setup (once): see scripts/sheets_sync/README.md.
  *   1. Paste this file into Extensions -> Apps Script.
  *   2. Project Settings -> Script properties: add SUPABASE_URL and
@@ -17,7 +21,6 @@ const SHEET_NAME = 'Master Database';
 const TABLE = 'questions';
 const ID_HEADER = 'ID';
 const ID_PREFIX = 'Q-';
-const ZELDA_MARKER = '[merged] Name three Legend of Zelda games where Ganon';
 
 // Sheet header -> Supabase column. Columns are found by header text, so
 // reordering columns in the sheet is fine; renaming a header is not.
@@ -50,13 +53,12 @@ function onOpen() {
 }
 
 /**
- * One-time setup: adds the ID column, merges the split Zelda question,
- * installs the triggers and runs the first full sync.
+ * One-time setup: adds the ID column, installs the triggers and runs the
+ * first full sync. Safe to run again.
  */
 function setupOnce() {
   const sheet = getSheet_();
   ensureIdColumn_(sheet);
-  mergeZeldaRows_(sheet);
   installTriggers_();
   const result = sync_();
   Logger.log('Setup complete. ' + result);
@@ -88,10 +90,20 @@ function sync_() {
     const values = sheet.getDataRange().getValues();
     const headers = values[0].map(h => String(h).trim());
     const runAt = new Date().toISOString();
+    const parentOf = mergedQuestionRows_(sheet, headers.indexOf('Question'));
 
     const rows = [];
+    const byRow = {};
     const seen = {};
     for (let r = 1; r < values.length; r++) {
+      const parent = parentOf[r + 1];
+      if (parent) {
+        // Continuation row of a merged Question cell: fold its answer in.
+        const target = byRow[parent];
+        const extra = cleanValue_('answer', values[r][headers.indexOf('Answer')]);
+        if (target && extra) target.answer = target.answer ? target.answer + ', ' + extra : extra;
+        continue;
+      }
       const record = { sheet_row: r + 1, synced_at: runAt };
       headers.forEach((h, c) => {
         const col = COLUMN_MAP[h];
@@ -103,6 +115,7 @@ function sync_() {
           '. Clear the ID on the copied row and sync again.');
       }
       seen[record.id] = r + 1;
+      byRow[r + 1] = record;
       rows.push(record);
     }
 
@@ -204,26 +217,18 @@ function assignMissingIds_(sheet) {
   if (changed) sheet.getRange(2, idCol + 1, ids.length, 1).setValues(ids);
 }
 
-/** Merges the Zelda question that is split across rows into one row. */
-function mergeZeldaRows_(sheet) {
-  const values = sheet.getDataRange().getValues();
-  const headers = values[0].map(h => String(h).trim());
-  const qCol = headers.indexOf('Question');
-  const aCol = headers.indexOf('Answer');
-
-  const rows = [];
-  for (let r = 1; r < values.length; r++) {
-    if (String(values[r][qCol]).indexOf(ZELDA_MARKER) === 0) rows.push(r);
-  }
-  if (rows.length < 2) return; // already merged
-
-  const answers = rows.map(r => String(values[r][aCol]).trim()).filter(a => a);
-  const first = rows[0] + 1; // 1-based sheet row
-  sheet.getRange(first, qCol + 1)
-    .setValue(String(values[rows[0]][qCol]).replace('[merged] ', ''));
-  sheet.getRange(first, aCol + 1).setValue(answers.join(', '));
-  // Delete the extra rows from the bottom up so row numbers don't shift.
-  for (let i = rows.length - 1; i >= 1; i--) sheet.deleteRow(rows[i] + 1);
+/**
+ * Maps each continuation row of a merged Question cell to the merge's top row
+ * (1-based sheet rows).
+ */
+function mergedQuestionRows_(sheet, qCol) {
+  const parentOf = {};
+  if (qCol === -1 || sheet.getLastRow() < 2) return parentOf;
+  sheet.getRange(1, qCol + 1, sheet.getLastRow(), 1).getMergedRanges().forEach(m => {
+    const top = m.getRow();
+    for (let r = top + 1; r <= m.getLastRow(); r++) parentOf[r] = top;
+  });
+  return parentOf;
 }
 
 function installTriggers_() {
