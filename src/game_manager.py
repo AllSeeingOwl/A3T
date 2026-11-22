@@ -243,14 +243,19 @@ class GameManager:
         if not questions:
             raise ValueError("No questions available for this game.")
 
+        if session.status == "completed":
+            raise ValueError("This game has ended.")
+
         if session.status == "waiting":
             session.status = "in_progress"
             session.current_question_index = 0
+        elif session.current_question_index < len(questions) - 1:
+            session.current_question_index += 1
         else:
-            if session.current_question_index < len(questions) - 1:
-                session.current_question_index += 1
-            else:
-                session.status = "completed"
+            # Past the last question: finish the game instead of repeating it.
+            session.status = "completed"
+            session.updated_at = get_utc_now()
+            raise ValueError("No more questions: the game is complete.")
 
         session.updated_at = get_utc_now()
         return questions[session.current_question_index]

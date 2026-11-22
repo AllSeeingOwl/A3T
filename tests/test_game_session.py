@@ -172,3 +172,25 @@ def test_game_not_found_errors():
 
     res2 = client.post(f"/api/games/{fake_id}/join", json={"player_name": "Dave"})
     assert res2.status_code == 400
+
+
+def test_next_question_stops_after_last_question():
+    game_id = client.post("/api/games", json={
+        "host_name": "Dana",
+        "deck_id": "uk-invasion-01"
+    }).json()["game_id"]
+    total = len(game_manager.game_questions[UUID(game_id)])
+
+    served = [client.post(f"/api/games/{game_id}/next-question").json()["question"]
+              for _ in range(total)]
+    assert len(set(served)) == total
+
+    # Asking for one more finishes the game rather than repeating the last question.
+    res = client.post(f"/api/games/{game_id}/next-question")
+    assert res.status_code == 400
+    assert res.json()["detail"] == "No more questions: the game is complete."
+    assert client.get(f"/api/games/{game_id}").json()["status"] == "completed"
+
+    res = client.post(f"/api/games/{game_id}/next-question")
+    assert res.status_code == 400
+    assert res.json()["detail"] == "This game has ended."
