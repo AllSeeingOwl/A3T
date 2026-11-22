@@ -27,11 +27,14 @@ router = APIRouter(prefix="/api/games", tags=["games"])
 
 @router.post("", response_model=CreateGameResponse)
 def create_game(payload: CreateGameRequest):
-    session = game_manager.create_game(
-        host_name=payload.host_name,
-        deck_id=payload.deck_id,
-        max_players=payload.max_players or 8
-    )
+    try:
+        session = game_manager.create_game(
+            host_name=payload.host_name,
+            deck_id=payload.deck_id,
+            max_players=payload.max_players or 8
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     return CreateGameResponse(
         game_id=session.id,
         pin=session.pin,

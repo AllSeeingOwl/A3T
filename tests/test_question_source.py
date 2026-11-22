@@ -1,6 +1,10 @@
 from src import question_source
 from src.question_source import load_questions, row_to_question
-from src.game_manager import GameManager
+import pytest
+from fastapi.testclient import TestClient
+
+from api.app import app
+from src.game_manager import GameManager, is_safety_checked
 
 
 def _db_row(**overrides):
@@ -81,8 +85,9 @@ def test_game_uses_database_questions(monkeypatch):
     monkeypatch.setattr(question_source, "load_questions_from_db", lambda: [
         row_to_question(_db_row(deck_theme="Sample Chain", question="Who voices the Genie?",
                                 answer="Robin Williams", question_type="Standard",
-                                category="Animation", difficulty="Casual (Level 1)")),
-        row_to_question(_db_row()),
+                                category="Animation", difficulty="Casual (Level 1)",
+                                safety_checks_passed=True)),
+        row_to_question(_db_row(safety_checks_passed=True)),
     ])
     questions = GameManager()._load_questions_for_deck("Sample Chain")
     assert [q.question for q in questions] == ["Who voices the Genie?"]
@@ -93,12 +98,49 @@ def test_game_uses_database_questions(monkeypatch):
 def test_game_skips_unanswered_questions(monkeypatch):
     monkeypatch.setattr(question_source, "load_questions_from_db", lambda: [
         row_to_question(_db_row(id="Q-0001", question="Answered?", answer="Yes",
-                                question_type="Standard")),
+                                question_type="Standard", safety_checks_passed=True)),
         row_to_question(_db_row(id="Q-0024", question="Who did John Cena defeat?",
-                                answer=None, question_type="Standard")),
+                                answer=None, question_type="Standard",
+                                safety_checks_passed=True)),
         row_to_question(_db_row(id="Q-0025", question="Blank answer?", answer="   ",
-                                question_type="Standard")),
+                                question_type="Standard", safety_checks_passed=True)),
     ])
     questions = GameManager()._load_questions_for_deck("all")
     assert [q.question for q in questions] == ["Answered?"]
     assert [q.id for q in questions] == [1]
+
+
+def test_game_skips_questions_without_safety_checks(monkeypatch):
+    monkeypatch.setattr(question_source, "load_questions_from_db", lambda: [
+        row_to_question(_db_row(id="Q-0001", question="Checked?", answer="Yes",
+                                question_type="Standard", safety_checks_passed=True)),
+        row_to_question(_db_row(id="Q-0002", question="Not checked?", answer="Yes",
+                                question_type="Standard", safety_checks_passed=False)),
+    ])
+    questions = GameManager()._load_questions_for_deck("all")
+    assert [q.question for q in questions] == ["Checked?"]
+
+
+def test_game_needs_at_least_one_safety_checked_question(monkeypatch):
+    monkeypatch.setattr(question_source, "load_questions_from_db", lambda: [
+        row_to_question(_db_row(safety_checks_passed=False)),
+    ])
+    with pytest.raises(ValueError, match="No safety-checked questions"):
+        GameManager()._load_questions_for_deck("all")
+
+
+def test_create_game_api_refuses_without_safety_checked_questions(monkeypatch):
+    monkeypatch.setattr(question_source, "load_questions_from_db", lambda: [
+        row_to_question(_db_row(safety_checks_passed=False)),
+    ])
+    res = TestClient(app).post("/api/games", json={"host_name": "Eve", "deck_id": "all"})
+    assert res.status_code == 400
+    assert res.json()["detail"] == "No safety-checked questions available for this deck."
+
+
+@pytest.mark.parametrize("value,expected", [
+    (True, True), (False, False), ("TRUE", True), ("true", True), (" TRUE ", True),
+    ("FALSE", False), ("", False), (None, False),
+])
+def test_is_safety_checked(value, expected):
+    assert is_safety_checked({"Safety Checks Passed": value}) is expected
