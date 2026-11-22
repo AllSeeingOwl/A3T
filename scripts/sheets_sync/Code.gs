@@ -23,7 +23,9 @@ const ID_HEADER = 'ID';
 const ID_PREFIX = 'Q-';
 
 // Sheet header -> Supabase column. Columns are found by header text, so
-// reordering columns in the sheet is fine; renaming a header is not.
+// reordering columns in the sheet is fine; renaming a header is not. A column
+// that isn't in the sheet is cleared in Supabase on every sync, so deleting a
+// column from the sheet also clears its old values.
 const COLUMN_MAP = {
   'ID': 'id',
   'Deck / Theme': 'deck_theme',
@@ -89,6 +91,9 @@ function sync_() {
 
     const values = sheet.getDataRange().getValues();
     const headers = values[0].map(h => String(h).trim());
+    ['ID', 'Question'].forEach(h => {
+      if (headers.indexOf(h) === -1) throw new Error('Header "' + h + '" not found in row 1 of "' + SHEET_NAME + '".');
+    });
     const runAt = new Date().toISOString();
     const parentOf = mergedQuestionRows_(sheet, headers.indexOf('Question'));
 
@@ -105,6 +110,11 @@ function sync_() {
         continue;
       }
       const record = { sheet_row: r + 1, synced_at: runAt };
+      // Start every mapped column empty so columns missing from the sheet are cleared.
+      Object.keys(COLUMN_MAP).forEach(h => {
+        const col = COLUMN_MAP[h];
+        record[col] = cleanValue_(col, '');
+      });
       headers.forEach((h, c) => {
         const col = COLUMN_MAP[h];
         if (col) record[col] = cleanValue_(col, values[r][c]);

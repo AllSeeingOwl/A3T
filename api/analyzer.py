@@ -10,7 +10,7 @@ from api.prompts import (
 )
 from api.generator import _call_claude_with_retry, _parse_json_response
 from src.csv_parser import load_questions_from_csv
-from src.validators import check_safety as local_check_safety
+from src.validators import check_safety as local_check_safety, normalize_domain
 
 logger = logging.getLogger("a3t_analyzer")
 
@@ -113,7 +113,7 @@ def analyze_csv_dataset(csv_path: Optional[str] = None) -> Dict[str, Any]:
 
     for idx, q in enumerate(questions):
         diff = q.get("Difficulty", "Fan (Level 2)").strip() or "Fan (Level 2)"
-        dom = q.get("Category / Domain", "Video Games").strip() or "Video Games"
+        dom = normalize_domain(q.get("Category / Domain", "")) or "Video Games"
 
         by_difficulty[diff] = by_difficulty.get(diff, 0) + 1
         by_domain[dom] = by_domain.get(dom, 0) + 1
