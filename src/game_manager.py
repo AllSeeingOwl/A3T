@@ -17,6 +17,14 @@ from src.question_source import load_questions
 logger = logging.getLogger("a3t_game_manager")
 
 
+def is_safety_checked(row: Dict[str, Any]) -> bool:
+    """True if a question row has "Safety Checks Passed" set to TRUE."""
+    value = row.get("Safety Checks Passed")
+    if isinstance(value, bool):
+        return value
+    return str(value or "").strip().upper() == "TRUE"
+
+
 class GameManager:
     def __init__(self):
         self.sessions: Dict[UUID, GameSession] = {}
@@ -32,7 +40,13 @@ class GameManager:
                 return pin
 
     def _load_questions_for_deck(self, deck_id: str) -> List[Question]:
-        """Load questions from Supabase (or the CSV fallback), else sample data."""
+        """
+        Load the playable questions for a deck from Supabase (or the CSV
+        fallback). Only questions that have an answer and have passed the
+        safety checks are used.
+
+        Raises ValueError if the deck has no playable questions.
+        """
         raw_questions = load_questions()
         questions = []
         q_id = 1
@@ -43,6 +57,9 @@ class GameManager:
             answer_text = (row.get("Answer") or "").strip()
             # Questions still being written can't be played or scored.
             if not question_text or not answer_text:
+                continue
+            # Nothing reaches players until it has passed the safety checks.
+            if not is_safety_checked(row):
                 continue
             row_deck = row.get("Deck / Theme", "")
             if deck_id == "all" or not deck_id or row_deck.lower() == deck_id.lower():
@@ -57,22 +74,8 @@ class GameManager:
                 questions.append(q)
                 q_id += 1
 
-        # If no questions matched, supply fallback sample questions
         if not questions:
-            fallback_data = [
-                {"category": "Animation", "question": "What is Wilma Flintstone's maiden name?", "answer": "Slaghoople", "difficulty": "Fan (Level 2)"},
-                {"category": "Video Games", "question": "Name the four ghosts from Pac-Man.", "answer": "Blinky, Pinky, Inky, Clyde", "difficulty": "Casual (Level 1)"},
-                {"category": "Pro Wrestling", "question": "Who was the WWE Champion in 2024?", "answer": "Cody Rhodes", "difficulty": "Casual (Level 1)"}
-            ]
-            for idx, item in enumerate(fallback_data, start=1):
-                questions.append(Question(
-                    id=idx,
-                    deck_id=deck_id,
-                    category=item["category"],
-                    question=item["question"],
-                    answer=item["answer"],
-                    difficulty=item["difficulty"]
-                ))
+            raise ValueError("No safety-checked questions available for this deck.")
 
         return questions
 

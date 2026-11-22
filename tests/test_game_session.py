@@ -11,7 +11,7 @@ client = TestClient(app)
 def test_create_game_session():
     response = client.post("/api/games", json={
         "host_name": "Alice",
-        "deck_id": "uk-invasion-01",
+        "deck_id": "all",
         "max_players": 8
     })
     assert response.status_code == 200
@@ -30,7 +30,7 @@ def test_join_game_session_by_pin():
     # First create a game
     create_res = client.post("/api/games", json={
         "host_name": "HostPlayer",
-        "deck_id": "uk-invasion-01"
+        "deck_id": "all"
     })
     create_data = create_res.json()
     pin = create_data["pin"]
@@ -59,7 +59,7 @@ def test_next_question_and_submit_answer():
     # Create game
     create_data = client.post("/api/games", json={
         "host_name": "HostPlayer",
-        "deck_id": "uk-invasion-01"
+        "deck_id": "all"
     }).json()
     game_id = create_data["game_id"]
 
@@ -93,7 +93,7 @@ def test_leaderboard_end_game_and_history():
     # Create game and join a player
     create_data = client.post("/api/games", json={
         "host_name": "PlayerOne",
-        "deck_id": "uk-invasion-01"
+        "deck_id": "all"
     }).json()
     game_id = create_data["game_id"]
 
@@ -141,7 +141,7 @@ def test_leaderboard_end_game_and_history():
 def test_websocket_realtime_events():
     create_data = client.post("/api/games", json={
         "host_name": "HostPlayer",
-        "deck_id": "uk-invasion-01"
+        "deck_id": "all"
     }).json()
     game_id = create_data["game_id"]
 
@@ -177,7 +177,7 @@ def test_game_not_found_errors():
 def test_next_question_stops_after_last_question():
     game_id = client.post("/api/games", json={
         "host_name": "Dana",
-        "deck_id": "uk-invasion-01"
+        "deck_id": "all"
     }).json()["game_id"]
     total = len(game_manager.game_questions[UUID(game_id)])
 

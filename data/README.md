@@ -5,6 +5,10 @@
 > [`scripts/sheets_sync/`](../scripts/sheets_sync/README.md)), and the game loads its
 > questions from there. `questions.csv` is only a fallback for when the database
 > can't be reached, such as local development without Supabase, and may be out of date.
+>
+> **Games only use questions that have an Answer and have "Safety Checks Passed"
+> ticked (`TRUE`).** If a deck has none, creating a game fails with
+> "No safety-checked questions available for this deck."
 
 The `questions.csv` file contains a snapshot of the trivia questions for **Always A (Trivial) Triple Threat (A3T)**.
 
