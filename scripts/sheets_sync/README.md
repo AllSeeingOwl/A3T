@@ -15,6 +15,9 @@ questions there, and Supabase follows.
   `, `. Those extra rows don't get their own ID.
 - Columns are matched by header text, so you can reorder columns but **don't rename
   the headers** (see `COLUMN_MAP` in `Code.gs`).
+- Deleting a column from the sheet clears that column in Supabase on the next sync.
+  The **ID** and **Question** columns are required, and the sync stops with an error
+  if either is missing.
 
 ## One-time setup
 

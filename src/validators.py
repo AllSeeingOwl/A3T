@@ -15,6 +15,22 @@ VALID_DOMAINS = {
     "Pro Wrestling / Animation"
 }
 
+# Other names accepted for a pillar, e.g. the sheet's "Wrestling".
+DOMAIN_ALIASES = {
+    "wrestling": "Pro Wrestling",
+}
+
+
+def normalize_domain(category: Optional[str]) -> str:
+    """
+    Return a Category / Domain with any alias replaced by its pillar name, so
+    "Wrestling" and "Video Games / Wrestling" are treated as "Pro Wrestling"
+    and "Video Games / Pro Wrestling". Other text is returned stripped.
+    """
+    parts = [p.strip() for p in (category or "").split("/")]
+    return " / ".join(DOMAIN_ALIASES.get(p.lower(), p) for p in parts if p)
+
+
 VALID_DIFFICULTIES = [
     "Casual (Level 1)",
     "Fan (Level 2)",
@@ -127,7 +143,7 @@ def check_3_crossover_containment(question: Dict[str, Any]) -> Tuple[bool, Optio
     if not category:
         return False, "CHECK 3 Failure: Missing Category / Domain.", "Assign one of the core domains: Animation, Video Games, or Pro Wrestling."
 
-    if category not in VALID_DOMAINS:
+    if normalize_domain(category) not in VALID_DOMAINS:
         return False, f"CHECK 3 Failure: Invalid domain '{category}'. Non-A3T category (e.g. general live-action TV).", f"Must be one of: {', '.join(sorted(VALID_DOMAINS))}."
 
     return True, None, None
@@ -261,7 +277,7 @@ def check_9_deck_balance(questions: List[Dict[str, Any]]) -> Tuple[bool, Optiona
     total = len(questions)
 
     for q in questions:
-        cat = q.get("Category / Domain", "Unknown").strip()
+        cat = normalize_domain(q.get("Category / Domain", "Unknown")) or "Unknown"
         category_counts[cat] = category_counts.get(cat, 0) + 1
 
     for cat, count in category_counts.items():
@@ -292,7 +308,7 @@ def validate_question(question: Dict[str, Any]) -> Dict[str, Any]:
 
     # Domain check
     domain = question.get("Category / Domain", "").strip()
-    if domain and domain not in VALID_DOMAINS:
+    if domain and normalize_domain(domain) not in VALID_DOMAINS:
         violations.append(f"Invalid Category / Domain: '{domain}'")
         suggestions.append(f"Must be one of: {', '.join(sorted(VALID_DOMAINS))}")
 
@@ -523,6 +539,7 @@ def generate_draft(topic: str, category: str = "Video Games", difficulty: str = 
     """
     Creates a question scaffold based on topic, category, and difficulty.
     """
+    category = normalize_domain(category)
     if category not in VALID_DOMAINS:
         category = "Video Games"
 
@@ -603,10 +620,10 @@ def find_questions_by_domain(domain: str, questions_db: List[Dict[str, Any]]) ->
     Filters questions by Animation / Video Games / Pro Wrestling.
     """
     matched = []
-    domain_clean = domain.strip().lower()
+    domain_clean = normalize_domain(domain).lower()
 
     for q in questions_db:
-        cat = q.get("Category / Domain", "").strip().lower()
+        cat = normalize_domain(q.get("Category / Domain", "")).lower()
         if domain_clean in cat:
             matched.append(q)
 
@@ -664,7 +681,7 @@ def validate_chain(chain_questions: List[Dict[str, Any]]) -> Dict[str, Any]:
             suggestions.append(sug_8)
 
     # Check category flow (discourage mono-category Game -> Game -> Game)
-    cats = [q.get("Category / Domain", "").strip() for q in chain_questions]
+    cats = [normalize_domain(q.get("Category / Domain", "")) for q in chain_questions]
     if len(set(cats)) == 1 and cats[0]:
         violations.append(f"Chain category flow warning: All 3 questions are in '{cats[0]}'. Weave between categories for better engagement.")
         suggestions.append("Vary domains across the 3 questions in the chain.")
